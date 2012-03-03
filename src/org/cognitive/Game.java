@@ -1,14 +1,11 @@
 package org.cognitive;
 
-import java.io.File;
-import java.io.FileInputStream;
+import entities.AbstractMoveableEntity;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,11 +15,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.util.ResourceLoader;
 
 
 /**
@@ -35,6 +29,7 @@ public class Game {
   public static final Logger LOGGER = Logger.getLogger(Game.class.getName());
   public int x = 100, y = 200;
   public int dx = 1, dy = 1;
+  private Texture marie;
   
   private static enum State {
     INTRO, MAIN_MENU, GAME;
@@ -47,6 +42,8 @@ public class Game {
   private Texture nibbler;
   private Texture snake;
   private Texture katana;
+  
+  private Box box;
   
   private long getTime() {
     return (Sys.getTime() * 1000) / Sys.getTimerResolution();
@@ -134,6 +131,8 @@ public class Game {
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    
+    box = new Box(15, 15, 128, 128);
   }
   
   public void run() {
@@ -179,8 +178,9 @@ public class Game {
     nibbler = loadTexture("nibble");
     snake = loadTexture("solid_snake");
     katana = loadTexture("katana");
-    objects.add(new TexturedObject(15,15, nibbler));
-    objects.add(new TexturedObject(100, 150, snake));
+    //marie = loadTexture("marie");
+    objects.add(new TexturedObject(15,15, 128, 128, nibbler));
+    objects.add(new TexturedObject(100, 150, 128, 128, snake));
 
   }
 
@@ -205,11 +205,11 @@ public class Game {
           if (Keyboard.getEventKey() == Keyboard.KEY_ESCAPE && Keyboard.getEventKeyState()) {
             state = State.MAIN_MENU;
           }
-          if (Keyboard.getEventKey() == Keyboard.KEY_B && Keyboard.getEventKeyState()) {
-            objects.add(new Box(15, 15));
-          }
           else if (Keyboard.getEventKey() == Keyboard.KEY_S && Keyboard.getEventKeyState()) {
-            objects.add(new TexturedObject(15, 15, snake));
+            objects.add(new TexturedObject(15, 15, 128, 128, snake));
+          }
+          else if (Keyboard.getEventKey() == Keyboard.KEY_M && Keyboard.getEventKeyState()) {
+            objects.add(new TexturedObject(Mouse.getX(), Mouse.getY(),64, 64,  katana));
           }
           break;
       }
@@ -223,7 +223,20 @@ public class Game {
   public void processMouse() {
 
   }
+  private static class Box extends AbstractMoveableEntity {
 
+    public Box(double x, double y, double width, double height) {
+      super(x, y, width, height);
+    }
+
+    
+    @Override
+    public void draw() {
+      glColor3f(1.0f, 0.0f, 0.0f);
+      glRectd(x, y, x+width, y+height);
+    }
+    
+  }
   public void render() {
     
     switch(state) {
@@ -254,9 +267,9 @@ public class Game {
     
     
     int delta = getDelta();
-    
+    box.draw();
     for (GameObject object : objects) {
-      if (Mouse.isButtonDown(0) && object.inBounds(Mouse.getX(), 480 - Mouse.getY()) && !somethingIsSelected) {
+      if (Mouse.isButtonDown(0) && object.inBounds(Mouse.getX(), DISPLAY_HEIGHT - Mouse.getY()) && !somethingIsSelected) {
         somethingIsSelected = true;
         object.selected = true;
       }

@@ -9,13 +9,15 @@ package org.cognitive;
  * @date Feb 27, 2012
  */
 public abstract class GameObject {
-    public int x, y;
+  public int x, y, width, height;
     public boolean selected = false;
 
   
-    GameObject(int x, int y) {
+    GameObject(int x, int y, int width, int height) {
       this.x = x;
       this.y = y;
+      this.width = width;
+      this.height = height;
     }
     
    
@@ -24,7 +26,7 @@ public abstract class GameObject {
       
     }
     boolean inBounds(int mousex, int mousey) {
-      if (mousex > x && mousex < x + 50 && mousey > y && mousey < y + 50) {
+      if (mousex > x && mousex < x + width && mousey > y && mousey < y + height) {
         return true;
       }
       else {
