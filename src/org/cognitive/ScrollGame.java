@@ -23,8 +23,9 @@ public class ScrollGame {
   public static final int DISPLAY_HEIGHT = 480;
   public static final int DISPLAY_WIDTH = 640;
   public static final Logger LOGGER = Logger.getLogger(ScrollGame.class.getName());
+  
 
-  private static SpriteSheet textureManager = new SpriteSheet(16,16, "sheet");
+  public static TextureManager tManager = new TextureManager();
   
   private static enum State {
     INTRO, MAIN_MENU, GAME;
@@ -66,9 +67,11 @@ public class ScrollGame {
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glScalef(1f/16f, 1f/16f, 1f);
+    //glScalef(1f/32f, 1f/32f, 1f);
+    tManager.load("world", "world", 32);
+    tManager.define(0, "character", 1, 1); // Sheet 0, slot 0,0 is character.
     
-    box = new AbstractTexturedMoveableEntity(15, 15, 0, 0); // Position x, y, spriteID x, y
+    box = new AbstractTexturedMoveableEntity(15, 15, "character"); // Position x, y, sprite named "character"
   }
   
   

@@ -1,12 +1,11 @@
 /*
  */
-package org.cognitive;
+package org.cognitive.texturemanager;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.cognitive.ScrollGame;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -14,14 +13,20 @@ import org.newdawn.slick.opengl.TextureLoader;
  *
  * @author Kristoffer Berdal <web@flexd.net>
  * @studnr 180212
- * @date Mar 2, 2012
+ * @date Mar 3, 2012
  */
 public class SpriteSheet {
-  
-  public SpriteSheet(int dimension_x, int dimension_y, String filename) {
-    Texture sheet = load(filename);
+
+  private Texture sheet;
+  private String name;
+  private int slotSize;
+
+  public SpriteSheet(String name, String filename, int slotSize) {
+    this.name = name;
+    this.slotSize = slotSize;
+    this.sheet = load(filename);
   }
-  
+
   public final Texture load(String textureName) {
     try {
       Texture texture = TextureLoader.getTexture("PNG", getClass().getResourceAsStream("/res/" + textureName + ".png"));
@@ -31,8 +36,13 @@ public class SpriteSheet {
     }
     return null;
   }
-  
-  public Texture getTexture(int x, int y) {
-    return null;
+  public int getWidth() {
+    return sheet.getImageWidth();
+  }
+  public int getHeight() {
+    return sheet.getImageHeight();
+  }
+  public Texture getTexture() {
+    return this.sheet;
   }
 }

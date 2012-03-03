@@ -2,11 +2,8 @@
  */
 package entities;
 
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.io.IOException;
-import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.opengl.Texture;
+import org.cognitive.texturemanager.Sprite;
+import org.cognitive.ScrollGame;
 import static org.lwjgl.opengl.GL11.*;
 
 /*
@@ -16,40 +13,48 @@ import static org.lwjgl.opengl.GL11.*;
  * @date Mar 2, 2012
  */
 public class AbstractTexturedMoveableEntity extends AbstractMoveableEntity {
-    private Texture texture;
-    
-    public AbstractTexturedMoveableEntity(double x, double y, int sheetX, int sheetY) {
-      super(x, y, 16, 16);
-      texture = null;
-    }
 
-    
-    @Override
-    public void draw() {
-      this.texture.bind();
+  private Sprite sprite;
 
-      glColor4f(1.0f,1.0f,1.0f, 1.0f);
-      //glColor4f(colorRed,colorGreen,colorBlue, 1.0f);
-      glBegin(GL_QUADS);
-        glTexCoord2d(0,0);
-        glVertex2d(x,y);
-        glTexCoord2d(1,0);
-        glVertex2d(x + width, y);
-        glTexCoord2d(1,1);
-        glVertex2d(x + width, y + height);
-        glTexCoord2d(0,1);
-        glVertex2d(x, y + height);
-      glEnd();
-    }
+  public AbstractTexturedMoveableEntity(double x, double y, String spriteName) {
+    super(x, y, 32, 32);
+
+    sprite = ScrollGame.tManager.getByName(spriteName);
     
-    public final Texture loadTexture(String textureName) {
-    try {
-      texture = TextureLoader.getTexture("PNG", getClass().getResourceAsStream("/res/" + textureName + ".png"));
-      return texture;
-    } catch (IOException ex) {
-      Logger.getLogger(AbstractTexturedMoveableEntity.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return null;
+    this.width = ScrollGame.tManager.sheets.get(0).getWidth();
+    this.height = ScrollGame.tManager.sheets.get(0).getHeight();
+
   }
-    
+
+  @Override
+  public void draw() {
+    this.sprite.getTexture().bind();
+    int x1 = sprite.getsX() * 1/((int)this.width/32); // 1/40 (40 32x32 tiles per sheet in width)
+    int x2  = x1 + 1/((int)this.width/32);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    System.out.println("Spritesheet width: " + this.width + ", height: " + this.height);
+    System.out.println("sX: " + sprite.getsX() + ", sY: " + sprite.getsY() + " x1: " + x1 + ", x2: " + x2);
+    //glColor4f(colorRed,colorGreen,colorBlue, 1.0f);
+    glBegin(GL_QUADS);
+      glTexCoord2d(x1, 0);
+      glVertex2d(x, y);
+      glTexCoord2d(x2, 0);
+      glVertex2d(x + 32, y);
+      glTexCoord2d(x2, 1);
+      glVertex2d(x + 32, y + 32);
+      glTexCoord2d(x1, 1);
+      glVertex2d(x, y + 32);
+     
+    glEnd();
   }
+ /*
+       * glTexCoord2d(0, 0);
+      glVertex2d(x, y);
+      glTexCoord2d(1, 0);
+      glVertex2d(x + width, y);
+      glTexCoord2d(1, 1);
+      glVertex2d(x + width, y + height);
+      glTexCoord2d(0, 1);
+      glVertex2d(x, y + height);
+       */
+}
