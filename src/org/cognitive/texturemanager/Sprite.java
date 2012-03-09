@@ -17,14 +17,20 @@ public class Sprite {
   private int sX;
   private int sY;
   private Texture texture;
+  private int sheetID = 0;
 
-  public Sprite(Texture texture, String name, int sX, int sY) {
+  public Sprite(Texture texture, int sheetID, String name, int sX, int sY) {
     this.texture = texture;
     this.name = name;
     this.sX = sX;
     this.sY = sY;
+    this.sheetID = sheetID;
   }
 
+  public int getSheetID() {
+    return sheetID;
+  }
+  
   public String getName() {
     return name;
   }

@@ -25,11 +25,20 @@ public class TextureManager {
     sheets.add(sheet);
   }
   
-  public void define(int sheetID, String name, int sX, int sY) {
-    Sprite sprite = new Sprite(sheets.get(sheetID).getTexture(), name, sX, sY); // 
+  public void define(String sheetName, String name, int sX, int sY) {
+    int sheetID = getSheetIDByName(sheetName);
+    Sprite sprite = new Sprite(sheets.get(sheetID).getTexture(), sheetID, name, sX, sY); // 
     sprites.add(sprite);
   }
-  public Sprite getByName(String name) {
+  public int getSheetIDByName(String name) {
+    for (SpriteSheet sheet : sheets) {
+      if (sheet.getName().equals(name)) {
+        return sheets.indexOf(sheet);
+      }
+    }
+    return 0; // default to 0
+  }
+  public Sprite getSpriteByName(String name) {
     for (Sprite sprite : sprites) {
       if (sprite.getName().equals(name)) {
         return sprite;

@@ -1,6 +1,7 @@
 package org.cognitive;
 
-import entities.AbstractTexturedMoveableEntity;
+import entities.Tile;
+import java.awt.Font;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.io.IOException;
@@ -13,6 +14,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.TrueTypeFont;
 
 
 /**
@@ -20,11 +23,13 @@ import org.lwjgl.opengl.DisplayMode;
  * @see <a href="http://lwjgl.org/">LWJGL Home Page</a>
  */
 public class ScrollGame {
-  public static final int DISPLAY_HEIGHT = 480;
-  public static final int DISPLAY_WIDTH = 640;
+  public static final int DISPLAY_HEIGHT = 600;
+  public static final int DISPLAY_WIDTH = 800;
   public static final Logger LOGGER = Logger.getLogger(ScrollGame.class.getName());
   
-
+  java.awt.Font awtFont = new Font("Times New Roman", 1, 16);
+  public org.newdawn.slick.Font font;
+  
   public static TextureManager tManager = new TextureManager();
   
   private static enum State {
@@ -35,7 +40,7 @@ public class ScrollGame {
   private long lastFrame;
 
   
-  private AbstractTexturedMoveableEntity box;
+  private Tile box;
   
   private long getTime() {
     return (Sys.getTime() * 1000) / Sys.getTimerResolution();
@@ -56,22 +61,25 @@ public class ScrollGame {
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);*/
     //glEnable(GL_TEXTURE_2D);               
-
+    
+    font = new TrueTypeFont(awtFont, false);
+    
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    glViewport(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
     glOrtho(0, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, 1, -1);
     glMatrixMode(GL_MODELVIEW);
-    //glEnable(GL_TEXTURE_2D);
-    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+  
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     //glScalef(1f/32f, 1f/32f, 1f);
-    tManager.load("world", "world", 32);
-    tManager.define(0, "character", 1, 1); // Sheet 0, slot 0,0 is character.
+    tManager.load("world", "world", 32); // spritesheet name, filename, slotSize
+    tManager.define("world", "character", 0, 0); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
     
-    box = new AbstractTexturedMoveableEntity(15, 15, "character"); // Position x, y, sprite named "character"
+    box = new Tile(15, 15, "character"); // Position x, y, sprite named "character"
   }
   
   
@@ -85,7 +93,7 @@ public class ScrollGame {
   private void gameRender() {
     //System.out.println(getDelta());
     //texture.bind();
-    
+    font.drawString(150F, 300F, "HELLO World", Color.red);
     int delta = getDelta();
     box.draw();
 

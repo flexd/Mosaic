@@ -19,12 +19,15 @@ public class SpriteSheet {
 
   private Texture sheet;
   private String name;
-  private int slotSize;
+  private int tileSize;
+  private int width, height;
 
-  public SpriteSheet(String name, String filename, int slotSize) {
+  public SpriteSheet(String name, String filename, int tileSize) {
     this.name = name;
-    this.slotSize = slotSize;
+    this.tileSize = tileSize;
     this.sheet = load(filename);
+    this.width = upper_power_of_two(sheet.getImageWidth());
+    this.height = upper_power_of_two(sheet.getImageHeight());
   }
 
   public final Texture load(String textureName) {
@@ -36,13 +39,32 @@ public class SpriteSheet {
     }
     return null;
   }
+  
+  public int getTileSize() {
+    return tileSize;
+  }
+  
   public int getWidth() {
-    return sheet.getImageWidth();
+    return width;
   }
   public int getHeight() {
-    return sheet.getImageHeight();
+    return height;
   }
   public Texture getTexture() {
     return this.sheet;
+  }
+
+  public Object getName() {
+    return this.name;
+  }
+  private int upper_power_of_two(int v) {
+    v--;
+    v |= v >> 1;
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+    v++;
+    return v;
   }
 }
