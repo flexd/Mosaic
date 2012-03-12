@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="20" height="20" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="Ground" tilewidth="32" tileheight="32">
+  <image source="ground.png" trans="000000" width="512" height="512"/>
+ </tileset>
+ <layer name="ground" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJwTZ2BgkKASlgRidSDWoBLWHDVv1LxR80bNGzWPauaZA7EFlbAlEAMAbFQ+gQ==
+  </data>
+ </layer>
+ <layer name="growth" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFMFAKxcighMrmkQqKcJhXhEUtDBRSaOdgBJVAXIWEq4G4hgF/OMAALA4piQtiw5TS+KYXgIUJrvCjVRpCt4+S/EUrgJ7HSpFodPfTO/xg7hgsAAB6FQ9/
+  </data>
+ </layer>
+</map>

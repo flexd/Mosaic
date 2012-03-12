@@ -27,7 +27,13 @@ public class TextureManager {
   
   public void define(String sheetName, String name, int sX, int sY) {
     int sheetID = getSheetIDByName(sheetName);
-    Sprite sprite = new Sprite(sheets.get(sheetID).getTexture(), sheetID, name, sX, sY); // 
+    Sprite sprite = new Sprite(sheets.get(sheetID), name, sX, sY); // 
+    sprites.add(sprite);
+  }
+  
+  public void define(String sheetName, String name, int sNo) {
+    int sheetID = getSheetIDByName(sheetName);
+    Sprite sprite = new Sprite(sheets.get(sheetID), name, sNo); // 
     sprites.add(sprite);
   }
   public int getSheetIDByName(String name) {

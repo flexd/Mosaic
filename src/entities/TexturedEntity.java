@@ -13,35 +13,50 @@ import static org.lwjgl.opengl.GL11.*;
  * @studnr 180212
  * @date Mar 2, 2012
  */
-public class Tile extends AbstractMoveableEntity {
+public class TexturedEntity extends AbstractEntity {
 
   private Sprite sprite;
-  private int sheetWidth, sheetHeight;
-  public Tile(double x, double y, String spriteName) {
+  
+  public TexturedEntity(double x, double y, String spriteName) {
     super(x, y, 32, 32); // 32, 32 does not matter
-    sprite = ScrollGame.tManager.getSpriteByName(spriteName);
-   
-    sheetWidth = ScrollGame.tManager.sheets.get(sprite.getSheetID()).getWidth();
-    sheetHeight = ScrollGame.tManager.sheets.get(sprite.getSheetID()).getHeight();
-
+    sprite = ScrollGame.textureManager.getSpriteByName(spriteName);
   }
 
   @Override
   public void draw() {
     this.sprite.getTexture().bind();
     
-    int tileSize = ScrollGame.tManager.sheets.get(sprite.getSheetID()).getTileSize();
-    double col = this.sprite.getsX();
-    double row = this.sprite.getsY();
+    double row, col;
+    double u0, u1, v0,v1;
+    int tileSize = sprite.getTileSize();
     
-    double pxPerU = 1.0/sheetWidth;
-    double pxPerV = 1.0/sheetHeight;
-    
-    double u0 = tileSize * col * pxPerU;
-    double u1 = tileSize * (col + 1) * pxPerU;
-    
-    double v0 = tileSize * row * pxPerV;
-    double v1 = tileSize * (row + 1) * pxPerV;
+    if (sprite.isCoords()) {
+      
+      col = this.sprite.getsX();
+      row = this.sprite.getsY();
+
+      double pxPerU = 1.0/sprite.getSheetWidth();
+      double pxPerV = 1.0/sprite.getSheetHeight();
+
+      u0 = tileSize * col * pxPerU;
+      u1 = tileSize * (col + 1) * pxPerU;
+
+      v0 = tileSize * row * pxPerV;
+      v1 = tileSize * (row + 1) * pxPerV;
+    }
+    else {
+      double tilesPerWidth = sprite.getSheetWidth()/tileSize;
+      double tilesPerHeight = sprite.getSheetHeight()/tileSize;
+            
+      row = (tilesPerWidth - sprite.getsNo()) % tilesPerWidth;
+      col = sprite.getsNo() / tilesPerWidth;
+      u0 = row / tilesPerWidth;
+      u1 = (row + 1) / tilesPerWidth;
+
+      v0 = col / tilesPerHeight;
+      v1 = (col + 1) / tilesPerHeight; 
+      
+    }
     
     
     
