@@ -1,6 +1,7 @@
 package org.cognitive;
 
 import entities.AbstractEntity;
+import entities.Hero;
 import entities.Player;
 import entities.TexturedEntity;
 import java.awt.Font;
@@ -44,11 +45,11 @@ public class ScrollGame {
   private TexturedEntity tiger;
   private Player player;
   
-  private static enum State {
+  private static enum GameState {
 
     INTRO, MAIN_MENU, GAME;
   }
-  private State state = State.GAME; // INTRO should be default.
+  private GameState state = GameState.GAME; // INTRO should be default.
 
   private void drawEntities() {
     for (AbstractEntity e : entities) {
@@ -113,12 +114,13 @@ public class ScrollGame {
     //glScalef(1f/32f, 1f/32f, 1f);
     textureManager.load("characters", "rpg", 32); // spritesheet name, filename, slotSize
     textureManager.load("world", "ground", 32); // spritesheet name, filename, slotSize
-    textureManager.define("characters", "player",3, 3); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
-    textureManager.define("characters", "girl", 1, 4); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
-    textureManager.define("world", "tile0", 0,0);
+    textureManager.load("hero", "generichero-blackblue", 32); // spritesheet name, filename, slotSize
+    textureManager.define("characters", "player",0,0); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
+    textureManager.define("hero", "girl", 0, 0 ); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
+    textureManager.define("world", "tile0", 1,5);
     player = new Player(20, 20, "player"); // Position x, y, sprite named "character"
 
-    tiger = new TexturedEntity(55, 55, "girl"); // Position x, y, sprite named "character"
+    tiger = new Hero(55, 55, "girl"); // Position x, y, sprite named "character"
     entities.add(player);
     entities.add(tiger);
     generateGround();
@@ -141,12 +143,12 @@ public class ScrollGame {
       switch (state) {
         case INTRO:
           if (Keyboard.getEventKey() == Keyboard.KEY_RETURN && Keyboard.getEventKeyState()) {
-            state = State.MAIN_MENU;
+            state = GameState.MAIN_MENU;
           }
           break;
         case MAIN_MENU:
           if (Keyboard.getEventKey() == Keyboard.KEY_RETURN && Keyboard.getEventKeyState()) {
-            state = State.GAME;
+            state = GameState.GAME;
           }
           if (Keyboard.getEventKey() == Keyboard.KEY_ESCAPE && Keyboard.getEventKeyState()) {
             Display.destroy();
@@ -154,7 +156,7 @@ public class ScrollGame {
           }
         case GAME:
           if (Keyboard.getEventKey() == Keyboard.KEY_ESCAPE && Keyboard.getEventKeyState()) {
-            state = State.MAIN_MENU;
+            state = GameState.MAIN_MENU;
           }
           break;
       }
@@ -177,10 +179,23 @@ public class ScrollGame {
           new_dy = 1;
           //player.move(0, 1);
           break;
+        case Keyboard.KEY_W:
+          tiger.move(0, -1);
+          break;
+        case Keyboard.KEY_A:
+          tiger.move(-1, 0);
+          break;
+        case Keyboard.KEY_S:
+          tiger.move(0, 1);
+          break;
+        case Keyboard.KEY_D:
+          tiger.move(1, 0);
+          break;
       }
     } else {
       new_dx = 0;
       new_dy = 0;
+      tiger.move(0,0);
     }
     player.move(new_dx, new_dy);
 

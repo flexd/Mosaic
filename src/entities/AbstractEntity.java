@@ -6,31 +6,58 @@ import org.cognitive.texturemanager.Sprite;
 
 public abstract class AbstractEntity implements Entity, MoveableEntity {
 
+  protected Position pos;
   protected double dx = 0, dy = 0;
-  protected double x, y, width, height;
+  protected double width, height;
   protected Rectangle hitbox = new Rectangle();
 
+  private void updateState(double newX, double newY) {
+    if (newX > this.pos.x) {
+      setState(EntityState.MOVING_RIGHT);
+    } else if (newX < this.pos.x) {
+      setState(EntityState.MOVING_LEFT);
+    }
+    if (newY > this.pos.y) {
+      setState(EntityState.MOVING_DOWN);
+    } else if (newY < this.pos.y) {
+      setState(EntityState.MOVING_UP);
+    }
+  }
+  public static enum EntityState {
+
+    MOVING_LEFT,MOVING_RIGHT,MOVING_UP,MOVING_DOWN,STATIONARY;
+  }
+  public static class Position {
+    public double x = 0, y = 0;
+
+    public Position(double x, double y) {
+      this.x = x;
+      this.y = y;
+    }
+    
+  }
+  protected EntityState state = EntityState.STATIONARY;
+  protected EntityState lastState = state;
   public AbstractEntity(double x, double y, double width, double height) {
-    this.x = x;
-    this.y = y;
+    this.pos = new Position(x,y);
     this.width = width;
     this.height = height;
   }
 
   @Override
   public void setLocation(double x, double y) {
-    this.x = x;
-    this.y = y;
+    this.pos.x = x;
+    this.pos.y = y;
   }
 
   @Override
   public void setX(double x) {
-    this.x = x;
+    this.pos.x = x;
   }
 
   @Override
   public void setY(double y) {
-    this.y = y;
+    this.pos.y = y;
   }
 
   @Override
@@ -45,12 +72,12 @@ public abstract class AbstractEntity implements Entity, MoveableEntity {
 
   @Override
   public double getX() {
-    return x;
+    return pos.x;
   }
 
   @Override
   public double getY() {
-    return y;
+    return pos.y;
   }
 
   @Override
@@ -65,19 +92,21 @@ public abstract class AbstractEntity implements Entity, MoveableEntity {
 
   @Override
   public boolean intersects(Entity other) {
-    hitbox.setBounds((int) x, (int) y, (int) width/2, (int) height/2);
+    hitbox.setBounds((int) pos.x, (int) pos.y, (int) width/2, (int) height/2);
     return hitbox.intersects(other.getX(), other.getY(), other.getWidth(), other.getHeight());
   }
   
+  //TODO: Entities can crash/intersect when approached from the right side and get stuck, Fix it!
   @Override
   public void update(int delta) {
     boolean valid = true;
     Rectangle new_position = new Rectangle();
     Rectangle world = new Rectangle();
     world.setBounds((int)this.width,(int)this.height,(int)(ScrollGame.DISPLAY_WIDTH-this.width*2),(int)(ScrollGame.DISPLAY_HEIGHT-this.height*2));
-    double newX = this.x, newY = this.y;
+    double newX = this.pos.x, newY = this.pos.y;
     newX += delta * dx; 
     newY += delta * dy;
+    willMove(newX, newY);
     new_position.setBounds((int)(newX+this.width * 1.2/3), (int)(newY), (int)(width * 1.1/2), (int) height);
     
     for (AbstractEntity other : ScrollGame.entities) {
@@ -99,12 +128,23 @@ public abstract class AbstractEntity implements Entity, MoveableEntity {
         }
       }
     }
+    updateState(newX, newY);
     if (valid) {
-      this.x = newX;
-      this.y = newY;
+      setLocation(newX, newY);
+      //System.out.println("Entity: " + this + " State: " + state.name());
+      
     }
   }
-  
+
+  private void willMove(double newX, double newY) {
+    if (newX == this.pos.x && newY == this.pos.y) {
+      setState(EntityState.STATIONARY);
+    }
+  }
+  public void setState(EntityState newstate) {
+    lastState = state;
+    state = newstate;
+  }
   @Override
   public double getDX() {
     return dx;
@@ -123,5 +163,10 @@ public abstract class AbstractEntity implements Entity, MoveableEntity {
   @Override
   public void setDY(double dy) {
     this.dy = dy;
+  }
+  @Override
+  public void move(int dx, int dy) {
+    this.dx = dx * 0.15;
+    this.dy = dy * 0.15;
   }
 }

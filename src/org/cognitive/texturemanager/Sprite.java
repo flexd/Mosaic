@@ -2,6 +2,8 @@
  */
 package org.cognitive.texturemanager;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.newdawn.slick.opengl.Texture;
 
 /**
@@ -12,7 +14,29 @@ import org.newdawn.slick.opengl.Texture;
  */
 
 public class Sprite {
+  public int frameDelay = 64;
 
+  public static class AnimationFrame {
+    public int x=0,y=0;
+
+    public AnimationFrame(int x, int y) {
+      this.x = x;
+      this.y = y;
+    }
+    
+  }
+  public static class Animation {
+
+    public int current = 0;
+    public List <AnimationFrame> frames = new ArrayList();
+    public Animation() {
+    }
+   
+    public int length() {
+      return frames.size()-1;
+    }
+    
+  }
   private String name;
   private int sX = 0;
   private int sY = 0;
@@ -20,7 +44,11 @@ public class Sprite {
   private int tileSize = 32; // A default
   private SpriteSheet sheet;
   private boolean coords = true;
-
+  public boolean animated = false;
+  public int frameStart;
+  public int frameOffset;
+  public List<Animation> animations = new ArrayList();
+  
   public Sprite(SpriteSheet sheet, String name, int sX, int sY) {
     this.sheet = sheet;
     this.name = name;
@@ -29,7 +57,13 @@ public class Sprite {
     this.tileSize = sheet.getTileSize();
     coords = true;
   }
-  
+  public int addAnimation() {
+    animations.add(new Animation()); // 10 possible frames, why not?
+    return animations.size()-1;
+  }
+  public void addAnimationFrame(int animationID, int sX, int sY) {
+    animations.get(animationID).frames.add(new AnimationFrame(sX,sY));
+  }
   public Sprite(SpriteSheet sheet, String name, int sNo) {
     this.sheet = sheet;
     this.name = name;
@@ -37,7 +71,6 @@ public class Sprite {
     this.tileSize = sheet.getTileSize();
     coords = false;
   }
-
   public boolean isCoords() {
     return coords;
   }
@@ -60,6 +93,14 @@ public class Sprite {
 
   public int getsY() {
     return sY;
+  }
+  
+  public void setsX(int sX) {
+    this.sX = sX;
+  }
+
+  public void setsY(int sY) {
+    this.sY = sY;
   }
   public int getSheetWidth() {
     return sheet.getWidth();
