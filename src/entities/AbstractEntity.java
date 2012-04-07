@@ -1,25 +1,29 @@
 package entities;
 
 import java.awt.Rectangle;
+import org.cognitive.Position;
 import org.cognitive.ScrollGame;
 import org.cognitive.texturemanager.Sprite;
 
-public abstract class AbstractEntity implements Entity, MoveableEntity {
+public abstract class AbstractEntity implements IEntity, IMoveableEntity {
 
+  protected int elapsedDelta = 0;
   protected Position pos;
   protected double dx = 0, dy = 0;
   protected double width, height;
   protected Rectangle hitbox = new Rectangle();
-
-  private void updateState(double newX, double newY) {
-    if (newX > this.pos.x) {
+  protected boolean validMove = false;
+  
+  private void updateState(double newX, double newY, boolean valid) {
+    validMove = valid;
+    if (newX > this.pos.x && valid) {
       setState(EntityState.MOVING_RIGHT);
-    } else if (newX < this.pos.x) {
+    } else if (newX < this.pos.x && valid) {
       setState(EntityState.MOVING_LEFT);
     }
-    if (newY > this.pos.y) {
+    if (newY > this.pos.y  && valid) {
       setState(EntityState.MOVING_DOWN);
-    } else if (newY < this.pos.y) {
+    } else if (newY < this.pos.y && valid) {
       setState(EntityState.MOVING_UP);
     }
   }
@@ -27,15 +31,7 @@ public abstract class AbstractEntity implements Entity, MoveableEntity {
 
     MOVING_LEFT,MOVING_RIGHT,MOVING_UP,MOVING_DOWN,STATIONARY;
   }
-  public static class Position {
-    public double x = 0, y = 0;
-
-    public Position(double x, double y) {
-      this.x = x;
-      this.y = y;
-    }
-    
-  }
+  
   protected EntityState state = EntityState.STATIONARY;
   protected EntityState lastState = state;
   public AbstractEntity(double x, double y, double width, double height) {
@@ -91,7 +87,7 @@ public abstract class AbstractEntity implements Entity, MoveableEntity {
   }
 
   @Override
-  public boolean intersects(Entity other) {
+  public boolean intersects(IEntity other) {
     hitbox.setBounds((int) pos.x, (int) pos.y, (int) width/2, (int) height/2);
     return hitbox.intersects(other.getX(), other.getY(), other.getWidth(), other.getHeight());
   }
@@ -99,6 +95,7 @@ public abstract class AbstractEntity implements Entity, MoveableEntity {
   //TODO: Entities can crash/intersect when approached from the right side and get stuck, Fix it!
   @Override
   public void update(int delta) {
+    elapsedDelta += delta;
     boolean valid = true;
     Rectangle new_position = new Rectangle();
     Rectangle world = new Rectangle();
@@ -128,11 +125,10 @@ public abstract class AbstractEntity implements Entity, MoveableEntity {
         }
       }
     }
-    updateState(newX, newY);
+    updateState(newX, newY, valid);
     if (valid) {
       setLocation(newX, newY);
-      //System.out.println("Entity: " + this + " State: " + state.name());
-      
+      //System.out.println("IEntity: " + this + " State: " + state.name());
     }
   }
 

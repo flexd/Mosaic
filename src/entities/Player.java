@@ -33,6 +33,7 @@ public class Player extends TexturedEntity {
     this.sprite.addAnimationFrame(animationID, 3 , 3);
     this.sprite.addAnimationFrame(animationID, 4 , 3);
     this.sprite.addAnimationFrame(animationID, 5 , 3); // last frame
+    
   }
   @Override
   public void move(int dx, int dy) {

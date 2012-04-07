@@ -1,6 +1,6 @@
 package entities;
  
-public interface Entity {
+public interface IEntity {
   public void draw();
 
   public void update(int delta);
@@ -13,5 +13,5 @@ public interface Entity {
   public double getY();
   public double getHeight();
   public double getWidth();
-  public boolean intersects(Entity other);
+  public boolean intersects(IEntity other);
 }

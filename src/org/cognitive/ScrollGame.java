@@ -4,12 +4,14 @@ import entities.AbstractEntity;
 import entities.Hero;
 import entities.Player;
 import entities.TexturedEntity;
+import entities.Unit;
 import java.awt.Font;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,10 +24,6 @@ import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 
-/**
- * @author jediTofu
- * @see <a href="http://lwjgl.org/">LWJGL Home Page</a>
- */
 public class ScrollGame {
 
   public static final int DISPLAY_HEIGHT = 600;
@@ -42,8 +40,14 @@ public class ScrollGame {
   private long lastFrame;
   private int fpsCounter;
   
-  private TexturedEntity tiger;
+  private Unit unit;
   private Player player;
+
+  private void processMouse() {
+    
+  }
+  
+  
   
   private static enum GameState {
 
@@ -113,16 +117,16 @@ public class ScrollGame {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glScalef(1f/32f, 1f/32f, 1f);
     textureManager.load("characters", "rpg", 32); // spritesheet name, filename, slotSize
-    textureManager.load("world", "ground", 32); // spritesheet name, filename, slotSize
+    textureManager.load("world", "default", 32); // spritesheet name, filename, slotSize
     textureManager.load("hero", "generichero-blackblue", 32); // spritesheet name, filename, slotSize
     textureManager.define("characters", "player",0,0); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
     textureManager.define("hero", "girl", 0, 0 ); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
-    textureManager.define("world", "tile0", 1,5);
+    textureManager.define("world", "tile0", 2,3);
     player = new Player(20, 20, "player"); // Position x, y, sprite named "character"
 
-    tiger = new Hero(55, 55, "girl"); // Position x, y, sprite named "character"
+    unit = new Unit(55, 55, "girl"); // Position x, y, sprite named "character"
     entities.add(player);
-    entities.add(tiger);
+    entities.add(unit);
     generateGround();
   }
 
@@ -138,6 +142,7 @@ public class ScrollGame {
   }
 
   public void processInput() {
+    processMouse();
     int new_dx = 0, new_dy = 0;
     while (Keyboard.next()) {
       switch (state) {
@@ -179,23 +184,10 @@ public class ScrollGame {
           new_dy = 1;
           //player.move(0, 1);
           break;
-        case Keyboard.KEY_W:
-          tiger.move(0, -1);
-          break;
-        case Keyboard.KEY_A:
-          tiger.move(-1, 0);
-          break;
-        case Keyboard.KEY_S:
-          tiger.move(0, 1);
-          break;
-        case Keyboard.KEY_D:
-          tiger.move(1, 0);
-          break;
       }
     } else {
       new_dx = 0;
       new_dy = 0;
-      tiger.move(0,0);
     }
     player.move(new_dx, new_dy);
 

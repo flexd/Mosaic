@@ -1,6 +1,6 @@
 package entities;
  
-public interface MoveableEntity extends Entity {
+public interface IMoveableEntity extends IEntity {
         public double getDX();
         public double getDY();
         public void setDX(double dx);

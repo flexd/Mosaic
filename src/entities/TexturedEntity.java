@@ -16,7 +16,6 @@ import static org.lwjgl.opengl.GL11.*;
 public class TexturedEntity extends AbstractEntity {
 
   public Sprite sprite;
-  private int elapsedDelta = 0;
   public TexturedEntity(double x, double y, String spriteName) {
     super(x, y, 32, 32); // 32, 32 does not matter
     sprite = ScrollGame.textureManager.getSpriteByName(spriteName);
@@ -83,7 +82,6 @@ public class TexturedEntity extends AbstractEntity {
   @Override
   public void update(int delta) {
     super.update(delta);
-    elapsedDelta += delta;
     if (sprite.animated) {
 
       switch (state) {
@@ -116,6 +114,9 @@ public class TexturedEntity extends AbstractEntity {
     if (elapsedDelta > sprite.frameDelay) { // Seems to work nice.
       ani.current++;
       elapsedDelta = 0;
+    }
+    if (!this.validMove) {
+      ani.current = 0;
     }
     sx = ani.frames.get(ani.current).x;
     sy = ani.frames.get(ani.current).y;

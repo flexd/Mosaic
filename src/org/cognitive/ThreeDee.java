@@ -214,20 +214,20 @@ public class ThreeDee {
     pitch -= Mouse.getDY()* 0.01f;
     position.x -= distance * (float)Math.sin(Math.toRadians(yaw));
     position.z += distance * (float)Math.cos(Math.toRadians(yaw));
-    if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-            distance += 0.001f;
-    }
-    if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-      distance -= 0.001f;
-    }
-    if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-        position.x -= distance * (float)Math.sin(Math.toRadians(yaw-90));
-        position.z += distance * (float)Math.cos(Math.toRadians(yaw-90));
-    }
-    if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-        position.x -= distance * (float)Math.sin(Math.toRadians(yaw+90));
-        position.z += distance * (float)Math.cos(Math.toRadians(yaw+90));
-    }
+//    if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+//            distance += 0.001f;
+//    }
+//    if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+//      distance -= 0.001f;
+//    }
+//    if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+//        position.x -= distance * (float)Math.sin(Math.toRadians(yaw-90));
+//        position.z += distance * (float)Math.cos(Math.toRadians(yaw-90));
+//    }
+//    if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+//        position.x -= distance * (float)Math.sin(Math.toRadians(yaw+90));
+//        position.z += distance * (float)Math.cos(Math.toRadians(yaw+90));
+//    }
       if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
               distance = 0f;
       }
