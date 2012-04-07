@@ -5,7 +5,7 @@ package org.cognitive.texturemanager;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.cognitive.ScrollGame;
+import org.cognitive.Window;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -35,7 +35,7 @@ public class SpriteSheet {
       Texture texture = TextureLoader.getTexture("PNG", getClass().getResourceAsStream("/res/" + textureName + ".png"));
       return texture;
     } catch (IOException ex) {
-      Logger.getLogger(ScrollGame.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
     }
     return null;
   }

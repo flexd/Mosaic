@@ -4,7 +4,7 @@ package entities;
 
 import org.cognitive.texturemanager.Sprite.Animation;
 import org.cognitive.texturemanager.Sprite;
-import org.cognitive.ScrollGame;
+import org.cognitive.Window;
 import static org.lwjgl.opengl.GL11.*;
 
 /*
@@ -18,7 +18,7 @@ public class TexturedEntity extends AbstractEntity {
   public Sprite sprite;
   public TexturedEntity(double x, double y, String spriteName) {
     super(x, y, 32, 32); // 32, 32 does not matter
-    sprite = ScrollGame.textureManager.getSpriteByName(spriteName);
+    sprite = Window.textureManager.getSpriteByName(spriteName);
   }
 
   @Override

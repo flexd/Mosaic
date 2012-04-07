@@ -4,8 +4,14 @@
  */
 package entities;
 
-import java.util.PriorityQueue;
+import org.cognitive.Graphics;
+import org.newdawn.slick.Color;
+import org.cognitive.Window;
+
+import java.util.LinkedList;
 import org.cognitive.Position;
+import org.lwjgl.opengl.GL11;
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  *
@@ -13,9 +19,9 @@ import org.cognitive.Position;
  */
 public class Unit extends TexturedEntity {
 
-  private PriorityQueue<Order> orders = new PriorityQueue();
+  private LinkedList<Order> orders = new LinkedList();
   private double movementRate = 0.05;
-  public boolean selected = false;
+  private TilePosition tilePosition = new TilePosition();
   
   public Unit(double x, double y, String spriteName) {
     super(x, y, spriteName);
@@ -45,31 +51,58 @@ public class Unit extends TexturedEntity {
   @Override
   public void update(int delta) {
     super.update(delta);
+    tilePosition = identifyTile(pos.x, pos.y, 0, 0);
   }
 
   @Override
-  public void move(int dx, int dy) {
-    this.dx = dx * 0.15;
-    this.dy = dy * 0.15;
-
+  public void draw() {
+    super.draw();
+    if (selected) {
+      Graphics.drawString((int)pos.x+34, (int)pos.y, "Tile: " + tilePosition.x + ", " + tilePosition.y, Graphics.FontSize.Small, Color.yellow);
+      
+      if (orders.peek() != null) Graphics.drawString((int)pos.x+34, (int)pos.y+12, "Target: " + orders.peek().tileTarget.x + ", " + orders.peek().tileTarget.y,Graphics.FontSize.Small, Color.yellow);
+      Graphics.drawLineBox(hitbox.x, hitbox.y, hitbox.width , hitbox.height, true);
+   
+      executeOrders();
+    }
+    if (orders.size() > 0) {
+      glPushMatrix();
+      Graphics.drawLineBox(10, 10, 10, 10, false);
+      for (Order order : orders) {
+      
+      }
+      glPopMatrix();
+      
+    }
+  }
+  
+  public void executeOrders() {
     Order order = orders.peek();
-    TilePosition currentTile = identifyTile(pos.x, pos.y, 0, 0);
-    if (currentTile.x == order.tileTarget.x && currentTile.y == order.tileTarget.y) {
-      // Completed (this will not work, position will not be accurate lol).
-      orders.remove(order);
-    } else { // We should be moving to the position then.
-      // Major hack!
-      if (order.target.x > pos.x) {
-        this.dx = 1 * movementRate;
-      }
-      if (order.target.x < pos.x) {
-        this.dx = -1 * movementRate;
-      }
-      if (order.target.y > pos.y) {
-        this.dy = 1 * movementRate;
-      }
-      if (order.target.y < pos.y) {
-        this.dy = -1 * movementRate;
+    if (order != null) {
+     // System.out.println("We have orders to move! Target tile: " + order.tileTarget.x + "," + order.tileTarget.y);
+      TilePosition currentTile = identifyTile(pos.x, pos.y, 0, 0);
+      if (currentTile.x == order.tileTarget.x && currentTile.y == order.tileTarget.y) {
+       // System.out.println("Unit has reached destination!");
+        //System.out.println("We are at tile: " + currentTile.x + ", " + currentTile.y);
+        orders.remove(order);
+        this.dx = 0;
+        this.dy = 0;
+      } 
+      else { // We should be moving to the position then.
+        // Major hack!
+        //System.out.println("We are at tile: " + currentTile.x + ", " + currentTile.y);
+        if (order.target.x > pos.x) {
+          this.dx = 2 * movementRate;
+        }
+        if (order.target.x < pos.x) {
+          this.dx = -2 * movementRate;
+        }
+        if (order.target.y > pos.y) {
+          this.dy = 2 * movementRate;
+        }
+        if (order.target.y < pos.y) {
+          this.dy = -2 * movementRate;
+        }
       }
     }
   }
@@ -79,16 +112,7 @@ public class Unit extends TexturedEntity {
     public int x;
     public int y;
   }
-
-  public TilePosition identifyTile(double x, double y, int camerax1, int cameray1) {
-    TilePosition tilePosition = new TilePosition();
-    tilePosition.x = (int) (x + camerax1) % 32;
-    tilePosition.y = (int) (y + cameray1) % 32;
-    return tilePosition;
-  }
-
-  private class Order {
-
+  public class Order {
     public Position target;
     public TilePosition tileTarget;
 
@@ -96,5 +120,11 @@ public class Unit extends TexturedEntity {
       target = new Position(x, y);
       tileTarget = identifyTile(x, y, 0, 0); // No camera yet, so 0,0 is topleft.
     }
+}
+  public TilePosition identifyTile(double x, double y, int camerax1, int cameray1) {
+    TilePosition tilePosition = new TilePosition();
+    tilePosition.x = (int) (x + camerax1) / 32;
+    tilePosition.y = (int) (y + cameray1) / 32;
+    return tilePosition;
   }
 }

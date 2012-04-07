@@ -2,7 +2,7 @@ package entities;
 
 import java.awt.Rectangle;
 import org.cognitive.Position;
-import org.cognitive.ScrollGame;
+import org.cognitive.Window;
 import org.cognitive.texturemanager.Sprite;
 
 public abstract class AbstractEntity implements IEntity, IMoveableEntity {
@@ -13,7 +13,21 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
   protected double width, height;
   protected Rectangle hitbox = new Rectangle();
   protected boolean validMove = false;
+  public boolean selected = false;
+
+  public boolean isSelected() {
+    return selected;
+  }
+
+  public void setSelected(boolean selected) {
+    // TODO: Remove this
+    this.selected = selected;
+  }
   
+  
+  public Rectangle getHitbox() {
+    return hitbox;
+  }
   private void updateState(double newX, double newY, boolean valid) {
     validMove = valid;
     if (newX > this.pos.x && valid) {
@@ -21,9 +35,9 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
     } else if (newX < this.pos.x && valid) {
       setState(EntityState.MOVING_LEFT);
     }
-    if (newY > this.pos.y  && valid) {
+    if (newY > this.pos.y && dx == 0 && valid) {
       setState(EntityState.MOVING_DOWN);
-    } else if (newY < this.pos.y && valid) {
+    } else if (newY < this.pos.y  && dx == 0 && valid) {
       setState(EntityState.MOVING_UP);
     }
   }
@@ -88,7 +102,7 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
 
   @Override
   public boolean intersects(IEntity other) {
-    hitbox.setBounds((int) pos.x, (int) pos.y, (int) width/2, (int) height/2);
+    
     return hitbox.intersects(other.getX(), other.getY(), other.getWidth(), other.getHeight());
   }
   
@@ -99,14 +113,14 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
     boolean valid = true;
     Rectangle new_position = new Rectangle();
     Rectangle world = new Rectangle();
-    world.setBounds((int)this.width,(int)this.height,(int)(ScrollGame.DISPLAY_WIDTH-this.width*2),(int)(ScrollGame.DISPLAY_HEIGHT-this.height*2));
+    world.setBounds((int)this.width,(int)this.height,(int)(Window.DISPLAY_WIDTH-this.width*2),(int)(Window.DISPLAY_HEIGHT-this.height*2));
     double newX = this.pos.x, newY = this.pos.y;
     newX += delta * dx; 
     newY += delta * dy;
     willMove(newX, newY);
     new_position.setBounds((int)(newX+this.width * 1.2/3), (int)(newY), (int)(width * 1.1/2), (int) height);
     
-    for (AbstractEntity other : ScrollGame.entities) {
+    for (AbstractEntity other : Window.entities) {
       if (other != this) {
         if (valid) {
           if (new_position.intersects(other.getX(), other.getY(), other.getWidth(), other.getHeight())) {
@@ -130,6 +144,7 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
       setLocation(newX, newY);
       //System.out.println("IEntity: " + this + " State: " + state.name());
     }
+    hitbox.setBounds((int) pos.x, (int) pos.y, (int)(pos.x+width), (int)(pos.y+height));
   }
 
   private void willMove(double newX, double newY) {
