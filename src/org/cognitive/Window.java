@@ -15,12 +15,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cognitive.screens.Intro;
 import org.cognitive.screens.MainMenu;
+import org.cognitive.shadermanager.Shader;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.newdawn.slick.Color;
 
 public class Window {
 
@@ -30,7 +32,7 @@ public class Window {
 
   public Graphics graphics;
   public GamePlay gameplay;
-  public static TextureManager textureManager = new TextureManager();
+  public static TextureManager tm = new TextureManager();
   public static List<AbstractEntity> ground = new ArrayList();
   public static List<AbstractEntity> entities = new ArrayList();
   private int delta = 0;
@@ -48,34 +50,42 @@ public class Window {
   
   
   private int displayListGround;
-
+  private boolean lightingToggle = false;
+  private Shader lightingVS;
+  private Shader lightingFS;
   private void loadTextures() {
     //glScalef(1f/32f, 1f/32f, 1f);
-    textureManager.load("characters", "rpg", 32); // spritesheet name, filename, slotSize
-    textureManager.load("world", "default", 32); // spritesheet name, filename, slotSize
-    textureManager.load("hero", "generichero-blackblue", 32); // spritesheet name, filename, slotSize
-    textureManager.define("characters", "player",0,0); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
-    textureManager.define("hero", "hero", 0, 0 ); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
-    textureManager.define("world", "tile0", 2,3);
+    tm.load("characters", "rpg", 32); // spritesheet name, filename, slotSize
+    tm.load("world", "default", 32); // spritesheet name, filename, slotSize
+    tm.load("hero", "generichero-blackblue", 32); // spritesheet name, filename, slotSize
+    tm.define("characters", "player",0,0); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
+    tm.define("hero", "hero", 0, 0 ); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
+    tm.define("world", "tile0", 2,3);
     player = new Player(20, 20, "player"); // Position x, y, sprite named "character"
   }
   
   private void processMouse() {
+    unitSelection();
+  }
+
+ 
+  //<editor-fold defaultstate="collapsed" desc="mouse unit selection">
+  private void unitSelection() {
     boolean leftButtonDown = Mouse.isButtonDown(0); // is left mouse button down
     boolean rightButtonDown = Mouse.isButtonDown(1); // is right mouse button down.
     mouseX = Mouse.getX();
     mouseY = (-Mouse.getY()+DISPLAY_HEIGHT);
     if (Mouse.isInsideWindow()) {
       if (leftButtonDown) {
-       // System.out.println("Left mouse button is down!");
+        // System.out.println("Left mouse button is down!");
         if (leftButtonHeld) {
-         // System.out.println("Left mouse button is being held!");
+          // System.out.println("Left mouse button is being held!");
           // left mouse is pressed
           selectionBox.setBounds(iMouseX, iMouseY, mouseX, mouseY);
           Graphics.drawLineBox(iMouseX, iMouseY, mouseX, mouseY, true);
           
           //System.out.println("selectionBox x1: " + selectionBox.x + " y1: " + selectionBox.y + "x2: " + selectionBox.width + "y2: " + selectionBox.height);
-         // System.out.println("iMouseX: " + iMouseX + " iMouseY: " + iMouseY + " MouseX: " + mouseX + " MouseY: " + mouseY);
+          // System.out.println("iMouseX: " + iMouseX + " iMouseY: " + iMouseY + " MouseX: " + mouseX + " MouseY: " + mouseY);
         } else {
           //System.out.println("Left mouse button was not being held, setting state to held.");
           leftButtonHeld = true;
@@ -88,20 +98,20 @@ public class Window {
           }
           selectionBox.setBounds(0,0,0,0);
         }
-
-
+        
+        
       }
-
+      
       else {
         if (leftButtonHeld) {
-          System.out.println("Left button was down but is not any more, setting held to false");
+          //System.out.println("Left button was down but is not any more, setting held to false");
           leftButtonHeld = false;
           // Let's select some units, shall we?
-
+          
           for (AbstractEntity entity : entities) {
             if (entity instanceof Unit) { // Only units are selectable for now.
               if (entity.getHitbox().intersects(selectionBox)) {
-                System.out.println("Something intersects the selectionBox, marking it selected!");
+               // System.out.println("Something intersects the selectionBox, marking it selected!");
                 entity.setSelected(true);
               }
             }
@@ -113,21 +123,17 @@ public class Window {
           if (e instanceof Unit) {
             Unit u = (Unit)e;
             if (u.isSelected()) {
-              u.moveTo(mouseX, mouseY);
+              u.addOrder(mouseX, mouseY);
             }
           }
         }
       }
     }
   }
+  //</editor-fold>
   
   
   
-  private static enum GameState {
-
-    INTRO, MAIN_MENU, GAME;
-  }
-  private GameState state = GameState.GAME; // INTRO should be default.
 
   private void drawEntities() {
     for (AbstractEntity e : entities) {
@@ -179,6 +185,7 @@ public class Window {
   }
 
   private void gameRender() {
+    
     glCallList(displayListGround);
     drawEntities();
     
@@ -188,15 +195,15 @@ public class Window {
   public void processInput() {
     int new_dx = 0, new_dy = 0;
     while (Keyboard.next()) {
-      switch (state) {
+      switch (gameplay.getState()) {
         case INTRO:
           if (Keyboard.getEventKey() == Keyboard.KEY_RETURN && Keyboard.getEventKeyState()) {
-            state = GameState.MAIN_MENU;
+            gameplay.setState(GamePlay.GameState.MAIN_MENU);
           }
           break;
         case MAIN_MENU:
           if (Keyboard.getEventKey() == Keyboard.KEY_RETURN && Keyboard.getEventKeyState()) {
-            state = GameState.GAME;
+            gameplay.setState(GamePlay.GameState.GAME);
           }
           if (Keyboard.getEventKey() == Keyboard.KEY_ESCAPE && Keyboard.getEventKeyState()) {
             Display.destroy();
@@ -227,9 +234,15 @@ public class Window {
           camera.setDy(-1);
           //player.move(0, 1);
           break;
-        case Keyboard.KEY_SPACE:
-          camera.setDx(Mouse.getDX());
-          camera.setDy(0);
+        case Keyboard.KEY_L:
+          if (lightingToggle) {
+            lightingToggle = false;
+            System.out.println("Lighting off!");
+          }
+          else {
+            lightingToggle = true;
+            System.out.println("Lighting on!");
+          }
           break;
       }
     } else {
@@ -242,7 +255,7 @@ public class Window {
   
   public void render() {
     
-    switch (state) {
+    switch (gameplay.getState()) {
       case INTRO:
         Intro.render();
         break;
@@ -253,6 +266,17 @@ public class Window {
         gameRender();
         break;
     }
+    glPushMatrix();
+    if (lightingToggle) {
+      glEnable(GL_LIGHTING);
+    } else {
+      glDisable(GL_LIGHTING);
+    }
+    graphics.render();
+    glPopMatrix();
+    graphics.drawFPS(fps);
+    Graphics.drawString(1, 1, "Lighting: " + (lightingToggle ? "On" : "Off"), Graphics.FontSize.Large, Color.yellow);
+
   }
 
   //<editor-fold defaultstate="collapsed" desc="logging">
@@ -295,8 +319,6 @@ public class Window {
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-    
   }
   
   //<editor-fold defaultstate="collapsed" desc="fps and delta">
@@ -366,8 +388,7 @@ public class Window {
         gameplay.update(delta);
         // Clear for rendering
         glClear(GL_COLOR_BUFFER_BIT);
-        graphics.drawFPS(fps);
-        graphics.render();
+        
         render();
       } else {
         if (Display.isDirty()) {

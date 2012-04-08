@@ -18,7 +18,7 @@ public class TexturedEntity extends AbstractEntity {
   public Sprite sprite;
   public TexturedEntity(double x, double y, String spriteName) {
     super(x, y, 32, 32); // 32, 32 does not matter
-    sprite = Window.textureManager.getSpriteByName(spriteName);
+    sprite = Window.tm.getSpriteByName(spriteName);
   }
 
   @Override
@@ -66,14 +66,14 @@ public class TexturedEntity extends AbstractEntity {
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
     glBegin(GL_QUADS);
-    glTexCoord2d(u0, v0); // upper left
-    glVertex2d(pos.x, pos.y);
-    glTexCoord2d(u1, v0); // upper right
-    glVertex2d(pos.x + tileSize, pos.y);
-    glTexCoord2d(u1, v1); // bottom right
-    glVertex2d(pos.x + tileSize, pos.y + tileSize);
-    glTexCoord2d(u0, v1); // bottom left
-    glVertex2d(pos.x, pos.y + tileSize);
+      glTexCoord2d(u0, v0); // upper left
+      glVertex2d(pos.x, pos.y);
+      glTexCoord2d(u1, v0); // upper right
+      glVertex2d(pos.x + tileSize, pos.y);
+      glTexCoord2d(u1, v1); // bottom right
+      glVertex2d(pos.x + tileSize, pos.y + tileSize);
+      glTexCoord2d(u0, v1); // bottom left
+      glVertex2d(pos.x, pos.y + tileSize);
     glEnd();
 
 

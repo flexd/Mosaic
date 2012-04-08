@@ -44,7 +44,7 @@ public class Unit extends TexturedEntity {
     this.sprite.addAnimationFrame(animationID, 2, 2);
   }
 
-  public void moveTo(double x, double y) {
+  public void addOrder(double x, double y) {
     orders.add(new Order(x, y));
   }
 
