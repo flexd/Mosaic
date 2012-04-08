@@ -40,6 +40,8 @@ public class Graphics {
     int mouseX = Mouse.getX();
     int mouseY = (-Mouse.getY()+Window.DISPLAY_HEIGHT);
     
+    glPushAttrib(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);
     lightingVS.begin();
     lightingFS.begin();
     glBegin(GL_QUADS);
@@ -51,7 +53,8 @@ public class Graphics {
 
     lightingVS.end();
     lightingFS.end();
-//    
+    glPopAttrib();
+    //    
 //    FloatBuffer specularColor = BufferUtils.createFloatBuffer(4);
 //    FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
 //    FloatBuffer diffuseColor = BufferUtils.createFloatBuffer(4);

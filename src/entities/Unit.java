@@ -52,6 +52,7 @@ public class Unit extends TexturedEntity {
   public void update(int delta) {
     super.update(delta);
     tilePosition = identifyTile(pos.x, pos.y, 0, 0);
+    executeOrders();
   }
 
   @Override
@@ -63,7 +64,6 @@ public class Unit extends TexturedEntity {
       if (orders.peek() != null) Graphics.drawString((int)pos.x+34, (int)pos.y+12, "Target: " + orders.peek().tileTarget.x + ", " + orders.peek().tileTarget.y,Graphics.FontSize.Small, Color.yellow);
       Graphics.drawLineBox(hitbox.x, hitbox.y, hitbox.width , hitbox.height, true);
    
-      executeOrders();
     }
     if (orders.size() > 0) {
       glPushMatrix();
