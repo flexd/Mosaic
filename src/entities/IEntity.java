@@ -1,5 +1,7 @@
 package entities;
- 
+
+import cognitive.graphics.Vertex2f;
+
 public interface IEntity {
   public void draw();
 
@@ -14,4 +16,5 @@ public interface IEntity {
   public double getHeight();
   public double getWidth();
   public boolean intersects(IEntity other);
+  public Quad dance();
 }

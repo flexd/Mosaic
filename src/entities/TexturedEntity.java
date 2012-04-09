@@ -2,6 +2,7 @@
  */
 package entities;
 
+import cognitive.graphics.Vertex2f;
 import org.cognitive.texturemanager.Sprite.Animation;
 import org.cognitive.texturemanager.Sprite;
 import cognitive.Window;
@@ -20,9 +21,11 @@ public class TexturedEntity extends AbstractEntity {
     super(x, y, 32, 32); // 32, 32 does not matter
     sprite = Window.tm.getSpriteByName(spriteName);
   }
-
   @Override
   public void draw() {
+    
+  }
+  public Quad dance() {
     this.sprite.getTexture().bind();
 
     double row, col;
@@ -63,22 +66,23 @@ public class TexturedEntity extends AbstractEntity {
 
     //System.out.println("tilesize: " + tileSize + " row: " + row + " col: " + col + " width: " + sheetWidth + " height: " + sheetHeight);
     //System.out.println("u0: " + u0 + " u1: " + u1 + " v0: " + v0 + " v1: " + v1);
-    glPushAttrib(GL_CURRENT_BIT);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-    glBegin(GL_QUADS);
-      glTexCoord2d(u0, v0); // upper left
-      glVertex2d(pos.x, pos.y);
-      glTexCoord2d(u1, v0); // upper right
-      glVertex2d(pos.x + tileSize, pos.y);
-      glTexCoord2d(u1, v1); // bottom right
-      glVertex2d(pos.x + tileSize, pos.y + tileSize);
-      glTexCoord2d(u0, v1); // bottom left
-      glVertex2d(pos.x, pos.y + tileSize);
-    glEnd();
-    glPopAttrib();
-
-
+//    glPushAttrib(GL_CURRENT_BIT);
+//    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+//
+//    glBegin(GL_QUADS);
+//      glTexCoord2d(u0, v0); // upper left
+//      glVertex2d(pos.x, pos.y);
+//      glTexCoord2d(u1, v0); // upper right
+//      glVertex2d(pos.x + tileSize, pos.y);
+//      glTexCoord2d(u1, v1); // bottom right
+//      glVertex2d(pos.x + tileSize, pos.y + tileSize);
+//      glTexCoord2d(u0, v1); // bottom left
+//      glVertex2d(pos.x, pos.y + tileSize);
+//    glEnd();
+//    glPopAttrib();
+    
+    Quad out = new Quad((float)pos.x, (float)pos.y, tileSize, tileSize, 1.0f, 0f, 0f, 1.0f, false);
+    return out;
   }
 
   @Override

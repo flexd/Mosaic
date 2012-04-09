@@ -4,6 +4,8 @@
  */
 package cognitive.graphics;
 
+import entities.AbstractEntity;
+import cognitive.Window;
 import org.cognitive.shadermanager.Shader;
 import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
@@ -35,11 +37,20 @@ public class Graphics {
     renderer = new Renderer();
   }
 
-  public void render() {
-    renderer.queue(new Vertex2f(400, 400));
-    renderer.queue(new Vertex2f(400 + 50, 400));
-    renderer.queue(new Vertex2f(400 + 50, 400 + 50));
-    renderer.queue(new Vertex2f(400, 400 + 50));
+  public void render(int delta) {
+//    for (int i = 0; i < 1; i++) {
+//      renderer.queue(new Vertex2f(100+(i*20), 100+(i*20)));
+//      renderer.queue(new Vertex2f(100+(i*20) + 50, 100+(i*20)));
+//      renderer.queue(new Vertex2f(100+(i*20) + 50, 100+(i*20) + 50));
+//      renderer.queue(new Vertex2f(100+(i*20), 100+(i*20) + 50));
+//    }
+
+    
+    for (AbstractEntity e : Window.entities) {
+      e.update(delta);
+      renderer.queue(e.dance());
+    }
+
     
     renderer.flushQueue();
 

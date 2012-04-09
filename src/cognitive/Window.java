@@ -133,10 +133,7 @@ public class Window {
   
 
   private void drawEntities() {
-    for (AbstractEntity e : entities) {
-      e.update(delta);
-      e.draw();
-    }
+    
   }
 
   
@@ -240,8 +237,8 @@ public class Window {
     //graphics.camera.setCameraX(mouseX);
     //graphics.camera.setY(mouseY);
     glPushMatrix();
-    //gameRender();
-    graphics.render();
+    gameRender();
+    graphics.render(delta);
     //graphics.camera.followEntity((int)entities.get(0).getX(), (int)entities.get(0).getY());
     //graphics.camera.followMouse(true);
     glPopMatrix();
