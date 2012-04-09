@@ -81,7 +81,7 @@ public class TexturedEntity extends AbstractEntity {
 //    glEnd();
 //    glPopAttrib();
     
-    Quad out = new Quad((float)pos.x, (float)pos.y, tileSize, tileSize, 1.0f, 0f, 0f, 1.0f, false);
+    Quad out = new Quad((float)pos.x, (float)pos.y, tileSize, tileSize, 1.0f, 0f, 0f, 1.0f, sprite);
     return out;
   }
 

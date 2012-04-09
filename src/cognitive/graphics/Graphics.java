@@ -196,7 +196,7 @@ public class Graphics {
 //    glPushAttrib(GL_CURRENT_BIT);
 //    glDisable(GL_TEXTURE_2D);
 //    glDisable(GL_LIGHTING);
-//    lightingShader.begin();
+//    lightingShader.use();
 //
 //    glBegin(GL_QUADS);
 //      glVertex2d(400, 400);

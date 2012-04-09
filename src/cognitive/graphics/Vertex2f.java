@@ -10,7 +10,7 @@ package cognitive.graphics;
  */
 public class Vertex2f {
 
-  public float x, y, r, g, b, a;
+  public float x, y, r, g, b, a, tex;
   
   public Vertex2f() {
     

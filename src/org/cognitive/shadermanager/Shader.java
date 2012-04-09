@@ -45,7 +45,7 @@ public class Shader {
     catch (IOException e) {
       System.err.println("FragmentShader: " + filename + " was not loaded!");
     }
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    vertexShader   = glCreateShader(GL_VERTEX_SHADER);
  
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
@@ -63,11 +63,14 @@ public class Shader {
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
   }
-  public void begin() {
+  public void use() {
     glUseProgram(shaderProgram);
   }
-  public void end() {
-    glUseProgram(0);
+  public int uniformLocation(String name) {
+    return glGetUniformLocation(shaderProgram, name);
+  }
+  public int attribLocation(String name) {
+    return glGetAttribLocation(shaderProgram, name);
   }
   
 }
