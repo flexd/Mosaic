@@ -5,7 +5,7 @@ package org.cognitive.texturemanager;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.cognitive.Window;
+import cognitive.Window;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 

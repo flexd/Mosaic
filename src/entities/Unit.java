@@ -4,12 +4,12 @@
  */
 package entities;
 
-import org.cognitive.Graphics;
+import cognitive.graphics.Graphics;
 import org.newdawn.slick.Color;
-import org.cognitive.Window;
+import cognitive.Window;
 
 import java.util.LinkedList;
-import org.cognitive.Position;
+import cognitive.Position;
 import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -51,7 +51,7 @@ public class Unit extends TexturedEntity {
   @Override
   public void update(int delta) {
     super.update(delta);
-    tilePosition = identifyTile(pos.x, pos.y, 0, 0);
+    tilePosition = identifyTile(pos.x, pos.y);
     executeOrders();
   }
 
@@ -66,13 +66,24 @@ public class Unit extends TexturedEntity {
    
     }
     if (orders.size() > 0) {
-      glPushMatrix();
+      glPushAttrib(GL_ENABLE_BIT);
+      glPushAttrib(GL_CURRENT_BIT);
+      glDisable(GL_TEXTURE_2D);
+      glDisable(GL_LIGHTING);
       Graphics.drawLineBox(10, 10, 10, 10, false);
       for (Order order : orders) {
-      
+        
+          glColor3d(1.0, 0.0, 0.0);
+          glBegin(GL_QUADS);
+            glVertex2d(order.target.x, order.target.y);
+            glVertex2d(order.target.x + 4, order.target.y);
+            glVertex2d(order.target.x + 4, order.target.y + 4);
+            glVertex2d(order.target.x, order.target.y + 4);
+          glEnd();
+        
       }
-      glPopMatrix();
-      
+      glPopAttrib();
+      glPopAttrib();
     }
   }
   
@@ -80,7 +91,7 @@ public class Unit extends TexturedEntity {
     Order order = orders.peek();
     if (order != null) {
      // System.out.println("We have orders to move! Target tile: " + order.tileTarget.x + "," + order.tileTarget.y);
-      TilePosition currentTile = identifyTile(pos.x, pos.y, 0, 0);
+      TilePosition currentTile = identifyTile(pos.x, pos.y);
       if (currentTile.x == order.tileTarget.x && currentTile.y == order.tileTarget.y) {
        // System.out.println("Unit has reached destination!");
         //System.out.println("We are at tile: " + currentTile.x + ", " + currentTile.y);
@@ -118,13 +129,13 @@ public class Unit extends TexturedEntity {
 
     public Order(double x, double y) {
       target = new Position(x, y);
-      tileTarget = identifyTile(x, y, 0, 0); // No camera yet, so 0,0 is topleft.
+      tileTarget = identifyTile(x, y);
     }
 }
-  public TilePosition identifyTile(double x, double y, int camerax1, int cameray1) {
+  public TilePosition identifyTile(double x, double y) {
     TilePosition tilePosition = new TilePosition();
-    tilePosition.x = (int) (x + camerax1) / 32;
-    tilePosition.y = (int) (y + cameray1) / 32;
+    tilePosition.x = (int) (x + Window.graphics.camera.offsetX) / 32;
+    tilePosition.y = (int) (y + Window.graphics.camera.offsetY) / 32;
     return tilePosition;
   }
 }

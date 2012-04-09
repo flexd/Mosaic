@@ -1,8 +1,8 @@
 package entities;
 
 import java.awt.Rectangle;
-import org.cognitive.Position;
-import org.cognitive.Window;
+import cognitive.Position;
+import cognitive.Window;
 import org.cognitive.texturemanager.Sprite;
 
 public abstract class AbstractEntity implements IEntity, IMoveableEntity {
@@ -20,7 +20,7 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
   }
 
   public void setSelected(boolean selected) {
-    // TODO: Remove this
+
     this.selected = selected;
   }
   
@@ -111,34 +111,34 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
   public void update(int delta) {
     elapsedDelta += delta;
     boolean valid = true;
-    Rectangle new_position = new Rectangle();
-    Rectangle world = new Rectangle();
-    world.setBounds((int)this.width,(int)this.height,(int)(Window.DISPLAY_WIDTH-this.width*2),(int)(Window.DISPLAY_HEIGHT-this.height*2));
+//    Rectangle new_position = new Rectangle();
+//    Rectangle world = new Rectangle();
+//    world.setBounds((int)this.width,(int)this.height,(int)(Window.DISPLAY_WIDTH-this.width*2),(int)(Window.DISPLAY_HEIGHT-this.height*2));
     double newX = this.pos.x, newY = this.pos.y;
     newX += delta * dx; 
     newY += delta * dy;
     willMove(newX, newY);
-    new_position.setBounds((int)(newX+this.width * 1.2/3), (int)(newY), (int)(width * 1.1/2), (int) height);
-    
-    for (AbstractEntity other : Window.entities) {
-      if (other != this) {
-        if (valid) {
-          if (new_position.intersects(other.getX(), other.getY(), other.getWidth(), other.getHeight())) {
-            //System.out.println("Colliding!");
-            valid = false;
-            break;
-          }
-          if (!world.intersects(newX, newY, this.width, this.height)) {
-            // outside the world box!
-            valid = false;
-            break;
-          }
-        }
-        else {
-          break;
-        }
-      }
-    }
+//    new_position.setBounds((int)(newX+this.width * 1.2/3), (int)(newY), (int)(width * 1.1/2), (int) height);
+//    
+//    for (AbstractEntity other : Window.entities) {
+//      if (other != this) {
+//        if (valid) {
+//          if (new_position.intersects(other.getX(), other.getY(), other.getWidth(), other.getHeight())) {
+//            //System.out.println("Colliding!");
+//            valid = false;
+//            break;
+//          }
+//          if (!world.intersects(newX, newY, this.width, this.height)) {
+//            // outside the world box!
+//            valid = false;
+//            break;
+//          }
+//        }
+//        else {
+//          break;
+//        }
+//      }
+//    }
     updateState(newX, newY, valid);
     if (valid) {
       setLocation(newX, newY);

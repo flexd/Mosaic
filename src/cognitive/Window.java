@@ -1,5 +1,6 @@
-package org.cognitive;
+package cognitive;
 
+import cognitive.graphics.Graphics;
 import entities.AbstractEntity;
 import entities.Player;
 import entities.TexturedEntity;
@@ -30,7 +31,7 @@ public class Window {
   public static final int DISPLAY_WIDTH = 800;
   public static final Logger LOGGER = Logger.getLogger(Window.class.getName());
 
-  public Graphics graphics;
+  public static Graphics graphics;
   public GamePlay gameplay;
   public static TextureManager tm = new TextureManager();
   public static List<AbstractEntity> ground = new ArrayList();
@@ -41,18 +42,15 @@ public class Window {
   private long lastFrame;
   private int fpsCounter;
   
-  private Player player;
   boolean leftButtonHeld = false;
   private int iMouseX = 0, iMouseY = 0;
-  private int mouseX = 0, mouseY = 0;
+  public static int mouseX = 0, mouseY = 0;
   private Rectangle selectionBox = new Rectangle();
-  private Camera camera;
   
   
   private int displayListGround;
   private boolean lightingToggle = false;
-  private Shader lightingVS;
-  private Shader lightingFS;
+
   private void loadTextures() {
     //glScalef(1f/32f, 1f/32f, 1f);
     tm.load("characters", "rpg", 32); // spritesheet name, filename, slotSize
@@ -61,10 +59,11 @@ public class Window {
     tm.define("characters", "player",0,0); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
     tm.define("hero", "hero", 0, 0 ); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
     tm.define("world", "tile0", 2,3);
-    player = new Player(20, 20, "player"); // Position x, y, sprite named "character"
   }
   
   private void processMouse() {
+    mouseX = Mouse.getX() - graphics.camera.offsetX;
+    mouseY = (-Mouse.getY() + Window.DISPLAY_HEIGHT) - graphics.camera.offsetY;
     unitSelection();
   }
 
@@ -73,8 +72,6 @@ public class Window {
   private void unitSelection() {
     boolean leftButtonDown = Mouse.isButtonDown(0); // is left mouse button down
     boolean rightButtonDown = Mouse.isButtonDown(1); // is right mouse button down.
-    mouseX = Mouse.getX();
-    mouseY = (-Mouse.getY()+DISPLAY_HEIGHT);
     if (Mouse.isInsideWindow()) {
       if (leftButtonDown) {
         // System.out.println("Left mouse button is down!");
@@ -166,11 +163,10 @@ public class Window {
 
   private void setupEntities() {
     for (int i = 0; i < 1; i++) {
-      Unit unit = new Unit(55+(i*64), 55, "hero");
+      Unit unit = new Unit(300, 300, "hero");
       entities.add(unit);
     }
-    
-    entities.add(player);
+  
     generateGroundTiles();
     compileDisplayLists();
   }
@@ -180,20 +176,20 @@ public class Window {
   }
   public void update() {
     delta = getDelta();
-    camera.update();
+    graphics.camera.update();
     updateFPS();
   }
 
   private void gameRender() {
     
-    glCallList(displayListGround);
+    //glCallList(displayListGround);
     drawEntities();
     
     processMouse();
   }
 
   public void processInput() {
-    int new_dx = 0, new_dy = 0;
+
     while (Keyboard.next()) {
       switch (gameplay.getState()) {
         case INTRO:
@@ -219,21 +215,6 @@ public class Window {
     }
     if (Keyboard.getEventKeyState()) {
       switch (Keyboard.getEventKey()) {
-        case Keyboard.KEY_LEFT:
-          camera.setDx(1);
-          break;
-        case Keyboard.KEY_RIGHT:
-          camera.setDx(-1);
-          //player.move(1, 0);
-          break;
-        case Keyboard.KEY_UP:
-          camera.setDy(1);
-          //player.move(0, -1);
-          break;
-        case Keyboard.KEY_DOWN:
-          camera.setDy(-1);
-          //player.move(0, 1);
-          break;
         case Keyboard.KEY_L:
           if (lightingToggle) {
             lightingToggle = false;
@@ -245,37 +226,28 @@ public class Window {
           }
           break;
       }
-    } else {
-      new_dx = 0;
-      new_dy = 0;
     }
-    player.move(new_dx, new_dy);
 
   }
   
   public void render() {
     
-    switch (gameplay.getState()) {
-      case INTRO:
-        Intro.render();
-        break;
-      case MAIN_MENU:
-        MainMenu.render();
-        break;
-      case GAME:
-        gameRender();
-        break;
-    }
-    glPushMatrix();
     if (lightingToggle) {
       glEnable(GL_LIGHTING);
     } else {
       glDisable(GL_LIGHTING);
     }
+    //graphics.camera.setCameraX(mouseX);
+    //graphics.camera.setY(mouseY);
+    glPushMatrix();
+    //gameRender();
     graphics.render();
+    //graphics.camera.followEntity((int)entities.get(0).getX(), (int)entities.get(0).getY());
+    //graphics.camera.followMouse(true);
     glPopMatrix();
+    
     graphics.drawFPS(fps);
-    Graphics.drawString(1, 1, "Lighting: " + (lightingToggle ? "On" : "Off"), Graphics.FontSize.Large, Color.yellow);
+    graphics.drawStatic(1, 1, "Lighting: " + (lightingToggle ? "On" : "Off"), Graphics.FontSize.Large, Color.yellow);
 
   }
 
@@ -314,9 +286,9 @@ public class Window {
     glOrtho(0, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, 1, -1);
     glMatrixMode(GL_MODELVIEW);
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.5f, 0.5f, 0.8f, 1.0f);
 
-    glEnable(GL_TEXTURE_2D);
+    //glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
@@ -345,7 +317,7 @@ public class Window {
     //Display
     Display.setDisplayMode(new DisplayMode(DISPLAY_WIDTH, DISPLAY_HEIGHT));
     Display.setFullscreen(false);
-    Display.setTitle("Scroll!");
+    Display.setTitle("Generic generic game");
     Display.create();
 
     //Keyboard
@@ -361,7 +333,6 @@ public class Window {
     setupEntities(); // Add entities to lists
     graphics = new Graphics();
     gameplay = new GamePlay();
-    camera = new Camera(0,0);
     
     // set initial values for lastFrame and lastFPS
     lastFrame = getTime();
@@ -386,6 +357,7 @@ public class Window {
         processInput();
         update();
         gameplay.update(delta);
+        //System.out.println("Delta is: " + delta);
         // Clear for rendering
         glClear(GL_COLOR_BUFFER_BIT);
         

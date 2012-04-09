@@ -1,4 +1,4 @@
-package org.cognitive;
+package cognitive;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.gluPerspective;

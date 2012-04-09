@@ -4,7 +4,7 @@ package entities;
 
 import org.cognitive.texturemanager.Sprite.Animation;
 import org.cognitive.texturemanager.Sprite;
-import org.cognitive.Window;
+import cognitive.Window;
 import static org.lwjgl.opengl.GL11.*;
 
 /*
@@ -63,6 +63,7 @@ public class TexturedEntity extends AbstractEntity {
 
     //System.out.println("tilesize: " + tileSize + " row: " + row + " col: " + col + " width: " + sheetWidth + " height: " + sheetHeight);
     //System.out.println("u0: " + u0 + " u1: " + u1 + " v0: " + v0 + " v1: " + v1);
+    glPushAttrib(GL_CURRENT_BIT);
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
     glBegin(GL_QUADS);
@@ -75,6 +76,7 @@ public class TexturedEntity extends AbstractEntity {
       glTexCoord2d(u0, v1); // bottom left
       glVertex2d(pos.x, pos.y + tileSize);
     glEnd();
+    glPopAttrib();
 
 
   }

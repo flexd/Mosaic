@@ -1,6 +1,6 @@
 /*
  */
-package org.cognitive;
+package cognitive;
 
 import java.util.ArrayList;
 import java.util.List;

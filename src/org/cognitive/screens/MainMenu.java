@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 package org.cognitive.screens;
-import org.cognitive.Window;
+import cognitive.Window;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
