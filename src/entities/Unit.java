@@ -58,11 +58,12 @@ public class Unit extends TexturedEntity {
   @Override
   public void draw() {
     super.draw();
+    
     if (selected) {
       Graphics.drawString((int)pos.x+34, (int)pos.y, "Tile: " + tilePosition.x + ", " + tilePosition.y, Graphics.FontSize.Small, Color.yellow);
       
       if (orders.peek() != null) Graphics.drawString((int)pos.x+34, (int)pos.y+12, "Target: " + orders.peek().tileTarget.x + ", " + orders.peek().tileTarget.y,Graphics.FontSize.Small, Color.yellow);
-      Graphics.drawLineBox(hitbox.x, hitbox.y, hitbox.width , hitbox.height, true);
+      //Graphics.drawLineBox(hitbox.x, hitbox.y, hitbox.width , hitbox.height, true);
    
     }
     if (orders.size() > 0) {
@@ -70,7 +71,7 @@ public class Unit extends TexturedEntity {
       glPushAttrib(GL_CURRENT_BIT);
       glDisable(GL_TEXTURE_2D);
       glDisable(GL_LIGHTING);
-      Graphics.drawLineBox(10, 10, 10, 10, false);
+      //Graphics.drawLineBox(10, 10, 10, 10, false);
       for (Order order : orders) {
         
           glColor3d(1.0, 0.0, 0.0);

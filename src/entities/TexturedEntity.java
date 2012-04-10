@@ -26,62 +26,10 @@ public class TexturedEntity extends AbstractEntity {
     
   }
   public Quad dance() {
-    this.sprite.getTexture().bind();
-
-    double row, col;
-    double u0, u1, v0, v1;
     int tileSize = sprite.getTileSize();
-    double pxPerU = 1.0 / sprite.getSheetWidth();
-    double pxPerV = 1.0 / sprite.getSheetHeight();
-    if (sprite.isCoords()) {
-
-      col = this.sprite.getsX() + sprite.frameStart;
-      row = this.sprite.getsY() + sprite.frameOffset;
-
-
-
-      u0 = tileSize * col * pxPerU;
-      u1 = tileSize * (col + 1) * pxPerU;
-
-      v0 = tileSize * row * pxPerV;
-      v1 = tileSize * (row + 1) * pxPerV;
-    } else {
-      int tilesAcross = sprite.getSheetWidth() / tileSize;
-      int tilesDown = sprite.getSheetHeight() / tileSize;
-      //System.out.println("Tiles per width: " + tilesAcross);
-      //System.out.println("Tiles per height: " + tilesDown);
-
-      col = (sprite.getsNo() + sprite.frameStart) / tilesAcross;
-      row = (sprite.getsNo() + sprite.frameOffset) % tilesDown;
-
-      u0 = row * tileSize / sprite.getSheetHeight();
-      u1 = (row + 1) * tileSize / sprite.getSheetHeight();
-
-      v0 = col * tileSize / sprite.getSheetWidth();
-      v1 = (col + 1) / tilesAcross;
-      // IT FUCKING WORKS!
-    }
-
-
-
-    //System.out.println("tilesize: " + tileSize + " row: " + row + " col: " + col + " width: " + sheetWidth + " height: " + sheetHeight);
-    //System.out.println("u0: " + u0 + " u1: " + u1 + " v0: " + v0 + " v1: " + v1);
-//    glPushAttrib(GL_CURRENT_BIT);
-//    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-//
-//    glBegin(GL_QUADS);
-//      glTexCoord2d(u0, v0); // upper left
-//      glVertex2d(pos.x, pos.y);
-//      glTexCoord2d(u1, v0); // upper right
-//      glVertex2d(pos.x + tileSize, pos.y);
-//      glTexCoord2d(u1, v1); // bottom right
-//      glVertex2d(pos.x + tileSize, pos.y + tileSize);
-//      glTexCoord2d(u0, v1); // bottom left
-//      glVertex2d(pos.x, pos.y + tileSize);
-//    glEnd();
-//    glPopAttrib();
+   
     
-    Quad out = new Quad((float)pos.x, (float)pos.y, tileSize, tileSize, 1.0f, 0f, 0f, 1.0f, sprite);
+    Quad out = new Quad((float)pos.x, (float)pos.y, tileSize, tileSize, 1.0f, 0f, 0f, 0.0f, sprite);
     return out;
   }
 

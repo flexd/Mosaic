@@ -79,7 +79,7 @@ public class Window {
           // System.out.println("Left mouse button is being held!");
           // left mouse is pressed
           selectionBox.setBounds(iMouseX, iMouseY, mouseX, mouseY);
-          Graphics.drawLineBox(iMouseX, iMouseY, mouseX, mouseY, true);
+          graphics.drawLineBox(iMouseX, iMouseY, mouseX, mouseY, true);
           
           //System.out.println("selectionBox x1: " + selectionBox.x + " y1: " + selectionBox.y + "x2: " + selectionBox.width + "y2: " + selectionBox.height);
           // System.out.println("iMouseX: " + iMouseX + " iMouseY: " + iMouseY + " MouseX: " + mouseX + " MouseY: " + mouseY);
@@ -159,8 +159,8 @@ public class Window {
   
 
   private void setupEntities() {
-    for (int i = 0; i < 1; i++) {
-      Unit unit = new Unit(300, 300, "hero");
+    for (int i = 0; i < 10; i++) {
+      Unit unit = new Unit(100+(70*i), 100, "hero");
       entities.add(unit);
     }
   
@@ -180,7 +180,6 @@ public class Window {
   private void gameRender() {
     
     //glCallList(displayListGround);
-    drawEntities();
     
     processMouse();
   }

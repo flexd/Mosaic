@@ -4,6 +4,7 @@
  */
 package cognitive.graphics;
 
+import entities.Quad;
 import entities.AbstractEntity;
 import cognitive.Window;
 import org.cognitive.shadermanager.Shader;
@@ -101,11 +102,11 @@ public class Graphics {
   //</editor-fold>
   //<editor-fold defaultstate="collapsed" desc="various draw methods">
 
-  public static void drawFPS(int fps) {
+  public void drawFPS(int fps) {
     drawStatic(500, 1, "FPS: " + fps, FontSize.Medium, Color.yellow);
   }
 
-  public static void drawLineBox(int x0, int y0, int x1, int y1, boolean stippled) {
+  public void drawLineBox(int x0, int y0, int x1, int y1, boolean stippled) {
 //    glPushMatrix();
     glPushAttrib(GL_ENABLE_BIT);
     glPushAttrib(GL_POLYGON_BIT);
@@ -120,7 +121,13 @@ public class Graphics {
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // GL11.glRecti(iMouseX, iMouseY, mouseX , mouseY);
-    glRecti(x0, y0, x1, y1);
+    //glRecti(x0, y0, x1, y1);
+    Vertex2f[] vertices = new Vertex2f[4];
+    vertices[0] = new Vertex2f(x0, y0, 0, 0, 0, 1, 0, 0, 0);
+    vertices[1] = new Vertex2f(x1, y0, 0, 0, 0, 1, 0, 0, 0);
+    vertices[2] = new Vertex2f(x1, y1, 0, 0, 0, 1, 0, 0, 0);
+    vertices[3] = new Vertex2f(x0, y1, 0, 0, 0, 1, 0, 0, 0);
+    renderer.queue(vertices);
     glPopAttrib();
     glPopAttrib();
     glPopAttrib();

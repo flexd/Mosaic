@@ -62,9 +62,20 @@ public class Shader {
     }
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
+    
+    glLinkProgram(shaderProgram);
+    glValidateProgram(shaderProgram);
+    
+    glBindAttribLocation(shaderProgram, 0, "aVertexPosition");
+    glBindAttribLocation(shaderProgram, 1, "aTextureCoord");
+    glBindAttribLocation(shaderProgram, 2, "aColor");
+    glBindAttribLocation(shaderProgram, 3, "useTex");
   }
   public void use() {
     glUseProgram(shaderProgram);
+  }
+  public void stop() {
+    glUseProgram(0);
   }
   public int uniformLocation(String name) {
     return glGetUniformLocation(shaderProgram, name);
