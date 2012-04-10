@@ -50,8 +50,10 @@ public class Renderer {
     }
     vertexData.flip();
     
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, tex.getTextureID());
+    if (tex != null) { 
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, tex.getTextureID());
+    } 
     glUniform1i(texShader.uniformLocation("mytex"), 0);
     glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
     

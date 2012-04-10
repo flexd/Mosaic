@@ -29,7 +29,7 @@ public class TexturedEntity extends AbstractEntity {
     int tileSize = sprite.getTileSize();
    
     
-    Quad out = new Quad((float)pos.x, (float)pos.y, tileSize, tileSize, 1.0f, 0f, 0f, 0.0f, sprite);
+    Quad out = new Quad((float)pos.x, (float)pos.y, tileSize, tileSize, 1.0f, 0f, 0f, 0.0f);
     return out;
   }
 
