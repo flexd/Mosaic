@@ -10,7 +10,7 @@ package entities;
  */
 public class Hero extends TexturedEntity {
 
-  public Hero(double x, double y, String spriteName) {
+  public Hero(float x, float y, String spriteName) {
     super(x, y, spriteName);
     this.sprite.animated = true;
     int animationID = this.sprite.addAnimation(); // Running left!
@@ -33,8 +33,8 @@ public class Hero extends TexturedEntity {
   }
   @Override
   public void move(int dx, int dy) {
-    this.dx = dx * 0.15;
-    this.dy = dy * 0.15;
+    this.dx = dx * 0.15f;
+    this.dy = dy * 0.15f;
   }
   
 }

@@ -1,9 +1,9 @@
 package entities;
  
 public interface IMoveableEntity extends IEntity {
-        public double getDX();
-        public double getDY();
-        public void setDX(double dx);
-        public void setDY(double dy);
+        public float getDX();
+        public float getDY();
+        public void setDX(float dx);
+        public void setDY(float dy);
         public void move(int dx, int dy);
 }

@@ -4,6 +4,8 @@
  */
 package cognitive.graphics;
 
+import cognitive.Utilities;
+import org.lwjgl.Sys;
 import entities.Quad;
 import entities.AbstractEntity;
 import cognitive.Window;
@@ -26,37 +28,55 @@ import static org.lwjgl.opengl.GL15.*;
 public class Graphics {
 
   public static Camera camera = new Camera(0,0);
-  Shader lightingShader = new Shader("lighting");;
+  Shader lightingShader = new Shader("lighting");
   //<editor-fold defaultstate="collapsed" desc="font declarations and inits">
   private static org.newdawn.slick.Font bigFont = new TrueTypeFont(new Font("Georgia", 1, 20), false);
   private static org.newdawn.slick.Font mediumFont = new TrueTypeFont(new Font("Georgia", 1, 16), false);
   private static org.newdawn.slick.Font smallFont = new TrueTypeFont(new Font("Georgia", 1, 10), false);
   //</editor-fold>
+  private int fps;
+  private long lastFPS;
 
-  private Renderer renderer;
+  private int fpsCounter;
+ 
+  
+  public Renderer renderer;
   public Graphics() {
     renderer = new Renderer();
+    
+    lastFPS = Utilities.getTime();
   }
 
   public void render(int delta) {
-//    for (int i = 0; i < 1; i++) {
-//      renderer.queue(new Vertex2f(100+(i*20), 100+(i*20)));
-//      renderer.queue(new Vertex2f(100+(i*20) + 50, 100+(i*20)));
-//      renderer.queue(new Vertex2f(100+(i*20) + 50, 100+(i*20) + 50));
-//      renderer.queue(new Vertex2f(100+(i*20), 100+(i*20) + 50));
-//    }
+    glClearColor(0.5f, 0.5f, 0.8f, 1.0f);
+    glClearDepth(1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    update();
 
-    
+   // Like a cake, this has layers. We want ground at the bottom so it goes first.
+//   for (AbstractEntity e : Window.ground) {
+//      e.draw();
+//    }
     for (AbstractEntity e : Window.entities) {
       e.update(delta);
-      renderer.queue(e.dance());
+      e.draw();
     }
-
-    
+    if (Window.leftButtonHeld) {
+      drawLineBox(Window.iMouseX, Window.iMouseY, Window.mouseX, Window.mouseY, true);
+    }
     renderer.flushQueue();
+    drawFPS(fps);
+  }
+  
 
-    
-
+  
+  public void updateFPS() {
+    if (Utilities.getTime() - lastFPS > 1000) {
+      fps = fpsCounter;
+      fpsCounter = 0;
+      lastFPS += 1000;
+    }
+    fpsCounter++;
   }
   private static FloatBuffer asFloatBuffer(float[] values) {
     FloatBuffer buffer = BufferUtils.createFloatBuffer(values.length);
@@ -66,6 +86,7 @@ public class Graphics {
   }
   public void update() {
     
+    updateFPS();
   }
   //<editor-fold defaultstate="collapsed" desc="drawString">
 
@@ -79,9 +100,7 @@ public class Graphics {
   }
   
   public static void drawString(int x, int y, String string, Graphics.FontSize size, Color color) {
-    glPushAttrib(GL_ENABLE_BIT);
-    glPushAttrib(GL_CURRENT_BIT);
-    glDisable(GL_LIGHTING);
+
     switch (size) {
       case Small:
         smallFont.drawString(x, y, string, color);
@@ -96,14 +115,18 @@ public class Graphics {
         mediumFont.drawString(x, y, string, Color.yellow);
         break;
     }
-    glPopAttrib();
-    glPopAttrib();
+ 
+
+   
   }
   //</editor-fold>
-  //<editor-fold defaultstate="collapsed" desc="various draw methods">
-
+  //<editor-fold defaultstate="collapsed" desc="various drawing methods">
+  public void drawDot(float x, float y, float r, float g, float b, float a, float size) {
+    Quad quad = new Quad(x, y, size, size, r, g, b, a);
+    renderer.queue(quad);
+  }
   public void drawFPS(int fps) {
-    drawStatic(500, 1, "FPS: " + fps, FontSize.Medium, Color.yellow);
+    drawStatic(1, 0, "FPS: " + fps, FontSize.Medium, Color.yellow);
   }
 
   public void drawLineBox(int x0, int y0, int x1, int y1, boolean stippled) {
@@ -121,13 +144,8 @@ public class Graphics {
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // GL11.glRecti(iMouseX, iMouseY, mouseX , mouseY);
-    //glRecti(x0, y0, x1, y1);
-    Vertex2f[] vertices = new Vertex2f[4];
-    vertices[0] = new Vertex2f(x0, y0, 0, 0, 0, 1, 0, 0, 0);
-    vertices[1] = new Vertex2f(x1, y0, 0, 0, 0, 1, 0, 0, 0);
-    vertices[2] = new Vertex2f(x1, y1, 0, 0, 0, 1, 0, 0, 0);
-    vertices[3] = new Vertex2f(x0, y1, 0, 0, 0, 1, 0, 0, 0);
-    renderer.queue(vertices);
+    glRecti(x0, y0, x1, y1);
+
     glPopAttrib();
     glPopAttrib();
     glPopAttrib();
@@ -136,86 +154,7 @@ public class Graphics {
   
   
 }
-//  final int amountOfVertices = 4;
-//  final int vertexSize = 3;
-//  final int colorSize = 3;
-//  private FloatBuffer vertexData;
-//  private FloatBuffer colorData;
-//  
-//  int vboVertexHandle;
-//  int vboColorHandle;
-///////////////
 
-//    vertexData = BufferUtils.createFloatBuffer(amountOfVertices * vertexSize);
-//    vertexData.put(new float[]{400,400, 0,450,400, 0,450,450,0,400,450,0}); // YES?
-////            glVertex2d(400, 400);
-////            glVertex2d(400 + 50, 400);
-////            glVertex2d(400 + 50, 400 + 50);
-////            glVertex2d(400, 400 + 50);
-//    vertexData.flip();
-//    
-//    colorData = BufferUtils.createFloatBuffer(amountOfVertices * colorSize);
-//    colorData.put(new float[]{1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0});
-//    colorData.flip();
-//    
-//    vboVertexHandle = glGenBuffers();
-//    glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle);
-//    glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
-//    glBindBuffer(GL_ARRAY_BUFFER, 0);
-//    
-//    vboColorHandle = glGenBuffers();
-//    glBindBuffer(GL_ARRAY_BUFFER, vboColorHandle);
-//    glBufferData(GL_ARRAY_BUFFER, colorData, GL_STATIC_DRAW);
-//    glBindBuffer(GL_ARRAY_BUFFER, 0);
-/////////////////////
-
-//      // rendering
-//    glPushAttrib(GL_ENABLE_BIT);
-//    glPushAttrib(GL_CURRENT_BIT);
-//    glDisable(GL_TEXTURE_2D);
-//    glDisable(GL_LIGHTING);
-//    glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle);
-//    glVertexPointer(vertexSize, GL_FLOAT, 0, 0L);
-//    glBindBuffer(GL_ARRAY_BUFFER, vboColorHandle);
-//    glColorPointer(colorSize, GL_FLOAT, 0, 0L);
-//    
-//    glEnableClientState(GL_VERTEX_ARRAY);
-//    glEnableClientState(GL_COLOR_ARRAY);
-//    glDrawArrays(GL_QUADS, 0, amountOfVertices);
-//    //if (glGetError() == GL_NO_ERROR) { System.out.println("No errors!"); }
-//    glDisableClientState(GL_VERTEX_ARRAY);
-//    glDisableClientState(GL_COLOR_ARRAY);
-//
-//  
-//    
-//    glBegin(GL_QUADS);
-//      glVertex2d(200, 200);
-//      glVertex2d(200 + 50, 200);
-//      glVertex2d(200 + 50, 200 + 50);
-//      glVertex2d(200, 200 + 50);
-//    glEnd();
-//
-//
-//    glPopAttrib();
-//    glPopAttrib();
-    
-//    glPushAttrib(GL_ENABLE_BIT);
-//    glPushAttrib(GL_CURRENT_BIT);
-//    glDisable(GL_TEXTURE_2D);
-//    glDisable(GL_LIGHTING);
-//    lightingShader.use();
-//
-//    glBegin(GL_QUADS);
-//      glVertex2d(400, 400);
-//      glVertex2d(400 + 50, 400);
-//      glVertex2d(400 + 50, 400 + 50);
-//      glVertex2d(400, 400 + 50);
-//    glEnd();
-//
-//    lightingShader.end();
-//
-//    glPopAttrib();
-//    glPopAttrib();
 
 //    FloatBuffer ambientLight = BufferUtils.createFloatBuffer(4);
 //    ambientLight.put(0.9f).put(0.9f).put(0.9f).put(1.0f).flip();

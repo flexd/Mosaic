@@ -67,8 +67,8 @@ public class Shader {
     glValidateProgram(shaderProgram);
     
     glBindAttribLocation(shaderProgram, 0, "aVertexPosition");
-    glBindAttribLocation(shaderProgram, 1, "aTextureCoord");
-    glBindAttribLocation(shaderProgram, 2, "aColor");
+    glBindAttribLocation(shaderProgram, 1, "aColor");
+    glBindAttribLocation(shaderProgram, 2, "aTextureCoord");
     glBindAttribLocation(shaderProgram, 3, "useTex");
   }
   public void use() {

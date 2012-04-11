@@ -9,9 +9,9 @@ package cognitive;
  * @author kristoffer
  */
 public class Position {
-  public double x = 0, y = 0;
+  public float x = 0, y = 0;
 
-  public Position(double x, double y) {
+  public Position(float x, float y) {
     this.x = x;
     this.y = y;
   }

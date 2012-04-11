@@ -3,18 +3,17 @@ package entities;
 import cognitive.graphics.Vertex2f;
 
 public interface IEntity {
+  public Quad getVertices();
   public void draw();
-
   public void update(int delta);
-  public void setLocation(double x, double y);
-  public void setX(double x);
-  public void setY(double y);
-  public void setWidth(double width);
-  public void setHeight(double height);
-  public double getX();
-  public double getY();
-  public double getHeight();
-  public double getWidth();
+  public void setLocation(float x, float y);
+  public void setX(float x);
+  public void setY(float y);
+  public void setWidth(float width);
+  public void setHeight(float height);
+  public float getX();
+  public float getY();
+  public float getHeight();
+  public float getWidth();
   public boolean intersects(IEntity other);
-  public Quad dance();
 }

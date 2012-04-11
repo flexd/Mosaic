@@ -9,10 +9,11 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
 
   protected int elapsedDelta = 0;
   protected Position pos;
-  protected double dx = 0, dy = 0;
-  protected double width, height;
+  protected float dx = 0, dy = 0;
+  protected float width, height;
   protected Rectangle hitbox = new Rectangle();
   protected boolean validMove = false;
+  protected Quad quad;
   public boolean selected = false;
 
   public boolean isSelected() {
@@ -28,7 +29,7 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
   public Rectangle getHitbox() {
     return hitbox;
   }
-  private void updateState(double newX, double newY, boolean valid) {
+  private void updateState(float newX, float newY, boolean valid) {
     validMove = valid;
     if (newX > this.pos.x && valid) {
       setState(EntityState.MOVING_RIGHT);
@@ -48,55 +49,55 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
   
   protected EntityState state = EntityState.STATIONARY;
   protected EntityState lastState = state;
-  public AbstractEntity(double x, double y, double width, double height) {
+  public AbstractEntity(float x, float y, float width, float height) {
     this.pos = new Position(x,y);
     this.width = width;
     this.height = height;
   }
 
   @Override
-  public void setLocation(double x, double y) {
+  public void setLocation(float x, float y) {
     this.pos.x = x;
     this.pos.y = y;
   }
 
   @Override
-  public void setX(double x) {
+  public void setX(float x) {
     this.pos.x = x;
   }
 
   @Override
-  public void setY(double y) {
+  public void setY(float y) {
     this.pos.y = y;
   }
 
   @Override
-  public void setWidth(double width) {
+  public void setWidth(float width) {
     this.width = width;
   }
 
   @Override
-  public void setHeight(double height) {
+  public void setHeight(float height) {
     this.height = height;
   }
 
   @Override
-  public double getX() {
+  public float getX() {
     return pos.x;
   }
 
   @Override
-  public double getY() {
+  public float getY() {
     return pos.y;
   }
 
   @Override
-  public double getHeight() {
+  public float getHeight() {
     return height;
   }
 
   @Override
-  public double getWidth() {
+  public float getWidth() {
     return width;
   }
 
@@ -114,7 +115,7 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
 //    Rectangle new_position = new Rectangle();
 //    Rectangle world = new Rectangle();
 //    world.setBounds((int)this.width,(int)this.height,(int)(Window.DISPLAY_WIDTH-this.width*2),(int)(Window.DISPLAY_HEIGHT-this.height*2));
-    double newX = this.pos.x, newY = this.pos.y;
+    float newX = this.pos.x, newY = this.pos.y;
     newX += delta * dx; 
     newY += delta * dy;
     willMove(newX, newY);
@@ -147,7 +148,7 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
     hitbox.setBounds((int) pos.x, (int) pos.y, (int)(pos.x+width), (int)(pos.y+height));
   }
 
-  private void willMove(double newX, double newY) {
+  private void willMove(float newX, float newY) {
     if (newX == this.pos.x && newY == this.pos.y) {
       setState(EntityState.STATIONARY);
     }
@@ -157,27 +158,27 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
     state = newstate;
   }
   @Override
-  public double getDX() {
+  public float getDX() {
     return dx;
   }
 
   @Override
-  public double getDY() {
+  public float getDY() {
     return dy;
   }
 
   @Override
-  public void setDX(double dx) {
+  public void setDX(float dx) {
     this.dx = dx;
   }
 
   @Override
-  public void setDY(double dy) {
+  public void setDY(float dy) {
     this.dy = dy;
   }
   @Override
   public void move(int dx, int dy) {
-    this.dx = dx * 0.15;
-    this.dy = dy * 0.15;
+    this.dx = dx * 0.15f;
+    this.dy = dy * 0.15f;
   }
 }

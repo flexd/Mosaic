@@ -36,20 +36,15 @@ public class Window {
   public static TextureManager tm = new TextureManager();
   public static List<AbstractEntity> ground = new ArrayList();
   public static List<AbstractEntity> entities = new ArrayList();
-  private int delta = 0;
-  private int fps;
-  private long lastFPS;
-  private long lastFrame;
-  private int fpsCounter;
   
-  boolean leftButtonHeld = false;
-  private int iMouseX = 0, iMouseY = 0;
+  private int delta = 0;
+  private long lastFrame;
+  
+  public static boolean leftButtonHeld = false;
+  public static int iMouseX = 0, iMouseY = 0;
   public static int mouseX = 0, mouseY = 0;
   private Rectangle selectionBox = new Rectangle();
   
-  
-  private int displayListGround;
-  private boolean lightingToggle = false;
 
   private void loadTextures() {
     //glScalef(1f/32f, 1f/32f, 1f);
@@ -60,7 +55,12 @@ public class Window {
     tm.define("hero", "hero", 0, 0 ); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
     tm.define("world", "tile0", 2,3);
   }
-  
+  private int getDelta() {
+    long currentTime = Utilities.getTime();
+    int diff = (int) (currentTime - lastFrame);
+    lastFrame = currentTime;
+    return diff;
+  }
   private void processMouse() {
     mouseX = Mouse.getX() - graphics.camera.offsetX;
     mouseY = (-Mouse.getY() + Window.DISPLAY_HEIGHT) - graphics.camera.offsetY;
@@ -79,7 +79,7 @@ public class Window {
           // System.out.println("Left mouse button is being held!");
           // left mouse is pressed
           selectionBox.setBounds(iMouseX, iMouseY, mouseX, mouseY);
-          graphics.drawLineBox(iMouseX, iMouseY, mouseX, mouseY, true);
+          
           
           //System.out.println("selectionBox x1: " + selectionBox.x + " y1: " + selectionBox.y + "x2: " + selectionBox.width + "y2: " + selectionBox.height);
           // System.out.println("iMouseX: " + iMouseX + " iMouseY: " + iMouseY + " MouseX: " + mouseX + " MouseY: " + mouseY);
@@ -129,23 +129,6 @@ public class Window {
   }
   //</editor-fold>
   
-  
-  
-
-  private void drawEntities() {
-    
-  }
-
-  
-
-  private void compileGroundList() {
-    glNewList(displayListGround, GL_COMPILE);
-      for (AbstractEntity e : ground) {
-        e.draw();
-      }
-    glEndList();
-  }
-
   private void generateGroundTiles() {
     for (int i = 0; i < DISPLAY_WIDTH; i+=32) {
       for (int j = 0; j < DISPLAY_HEIGHT; j+=32) {
@@ -159,33 +142,16 @@ public class Window {
   
 
   private void setupEntities() {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 1; i++) {
       Unit unit = new Unit(100+(70*i), 100, "hero");
       entities.add(unit);
     }
   
     generateGroundTiles();
-    compileDisplayLists();
-  }
-  public void compileDisplayLists() {
-    displayListGround = glGenLists(1);
-    compileGroundList(); // Compile the displaylist
-  }
-  public void update() {
-    delta = getDelta();
-    graphics.camera.update();
-    updateFPS();
-  }
-
-  private void gameRender() {
-    
-    //glCallList(displayListGround);
-    
-    processMouse();
   }
 
   public void processInput() {
-
+    processMouse();
     while (Keyboard.next()) {
       switch (gameplay.getState()) {
         case INTRO:
@@ -209,44 +175,8 @@ public class Window {
           break;
       }
     }
-    if (Keyboard.getEventKeyState()) {
-      switch (Keyboard.getEventKey()) {
-        case Keyboard.KEY_L:
-          if (lightingToggle) {
-            lightingToggle = false;
-            System.out.println("Lighting off!");
-          }
-          else {
-            lightingToggle = true;
-            System.out.println("Lighting on!");
-          }
-          break;
-      }
-    }
-
   }
   
-  public void render() {
-    
-    if (lightingToggle) {
-      glEnable(GL_LIGHTING);
-    } else {
-      glDisable(GL_LIGHTING);
-    }
-    //graphics.camera.setCameraX(mouseX);
-    //graphics.camera.setY(mouseY);
-    glPushMatrix();
-    gameRender();
-    graphics.render(delta);
-    //graphics.camera.followEntity((int)entities.get(0).getX(), (int)entities.get(0).getY());
-    //graphics.camera.followMouse(true);
-    glPopMatrix();
-    
-    graphics.drawFPS(fps);
-    graphics.drawStatic(1, 1, "Lighting: " + (lightingToggle ? "On" : "Off"), Graphics.FontSize.Large, Color.yellow);
-
-  }
-
   //<editor-fold defaultstate="collapsed" desc="logging">
   static {
     try {
@@ -273,41 +203,9 @@ public class Window {
     }
   }
   //</editor-fold>
-
-  public void initGL() {
-            
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glViewport(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-    glOrtho(0, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, 1, -1);
-    glMatrixMode(GL_MODELVIEW);
-
-    glClearColor(0.5f, 0.5f, 0.8f, 1.0f);
-
-    //glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  }
   
   //<editor-fold defaultstate="collapsed" desc="fps and delta">
-  private long getTime() {
-    return (Sys.getTime() * 1000) / Sys.getTimerResolution();
-  }
-
-  private int getDelta() {
-    long currentTime = getTime();
-    int diff = (int) (currentTime - lastFrame);
-    lastFrame = getTime();
-    return diff;
-  }
-  public void updateFPS() {
-    if (getTime() - lastFPS > 1000) {
-      fps = fpsCounter;
-      fpsCounter = 0;
-      lastFPS += 1000;
-    }
-    fpsCounter++;
-  }
+  
   //</editor-fold>
   public void create() throws LWJGLException {
     //Display
@@ -324,22 +222,18 @@ public class Window {
     Mouse.create();
 
     //OpenGL
-    initGL();
     loadTextures(); // load and define textures
     setupEntities(); // Add entities to lists
     graphics = new Graphics();
     gameplay = new GamePlay();
     
-    // set initial values for lastFrame and lastFPS
-    lastFrame = getTime();
-    lastFPS = getTime();
+    // set initial value for lastFrame
+    lastFrame = Utilities.getTime();
     //resizeGL();
   }
 
   //<editor-fold defaultstate="collapsed" desc="Destroy method">
   public void destroy() {
-    // delete the displaylists
-    glDeleteLists(displayListGround, 1);
     //Methods already check if created before destroying.
     Mouse.destroy();
     Keyboard.destroy();
@@ -351,16 +245,14 @@ public class Window {
     while (!Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) { //  && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)
       if (Display.isVisible()) {
         processInput();
-        update();
+        delta = getDelta();
+        graphics.camera.update();
         gameplay.update(delta);
-        //System.out.println("Delta is: " + delta);
-        // Clear for rendering
-        glClear(GL_COLOR_BUFFER_BIT);
         
-        render();
+        graphics.render(delta);
       } else {
         if (Display.isDirty()) {
-          render();
+          graphics.render(delta);
         }
         try {
           Thread.sleep(100);

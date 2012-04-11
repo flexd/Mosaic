@@ -17,19 +17,20 @@ import static org.lwjgl.opengl.GL11.*;
 public class TexturedEntity extends AbstractEntity {
 
   public Sprite sprite;
-  public TexturedEntity(double x, double y, String spriteName) {
+  public TexturedEntity(float x, float y, String spriteName) {
     super(x, y, 32, 32); // 32, 32 does not matter
     sprite = Window.tm.getSpriteByName(spriteName);
   }
   @Override
   public void draw() {
-    
+    quad = getVertices();
+    Window.graphics.renderer.queue(quad);
   }
-  public Quad dance() {
+  @Override
+  public Quad getVertices() {
     int tileSize = sprite.getTileSize();
    
-    
-    Quad out = new Quad((float)pos.x, (float)pos.y, tileSize, tileSize, 1.0f, 0f, 0f, 0.0f);
+    Quad out = new Quad((float)pos.x, (float)pos.y, tileSize, tileSize, 1.0f, 1.0f, 1.0f, 1.0f, sprite);
     return out;
   }
 

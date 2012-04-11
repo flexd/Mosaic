@@ -20,10 +20,10 @@ import static org.lwjgl.opengl.GL11.*;
 public class Unit extends TexturedEntity {
 
   private LinkedList<Order> orders = new LinkedList();
-  private double movementRate = 0.05;
+  private float movementRate = 0.05f;
   private TilePosition tilePosition = new TilePosition();
   
-  public Unit(double x, double y, String spriteName) {
+  public Unit(float x, float y, String spriteName) {
     super(x, y, spriteName);
     this.sprite.animated = true;
     int animationID = this.sprite.addAnimation(); // Running left!
@@ -44,7 +44,7 @@ public class Unit extends TexturedEntity {
     this.sprite.addAnimationFrame(animationID, 2, 2);
   }
 
-  public void addOrder(double x, double y) {
+  public void addOrder(float x, float y) {
     orders.add(new Order(x, y));
   }
 
@@ -54,37 +54,24 @@ public class Unit extends TexturedEntity {
     tilePosition = identifyTile(pos.x, pos.y);
     executeOrders();
   }
-
   @Override
-  public void draw() {
+   public void draw() {
     super.draw();
     
     if (selected) {
-      Graphics.drawString((int)pos.x+34, (int)pos.y, "Tile: " + tilePosition.x + ", " + tilePosition.y, Graphics.FontSize.Small, Color.yellow);
+      Window.graphics.drawString((int)pos.x+34, (int)pos.y, "Tile: " + tilePosition.x + ", " + tilePosition.y, Graphics.FontSize.Small, Color.yellow);
       
       if (orders.peek() != null) Graphics.drawString((int)pos.x+34, (int)pos.y+12, "Target: " + orders.peek().tileTarget.x + ", " + orders.peek().tileTarget.y,Graphics.FontSize.Small, Color.yellow);
-      //Graphics.drawLineBox(hitbox.x, hitbox.y, hitbox.width , hitbox.height, true);
+      Window.graphics.drawLineBox(hitbox.x, hitbox.y, hitbox.width , hitbox.height, true);
    
     }
     if (orders.size() > 0) {
-      glPushAttrib(GL_ENABLE_BIT);
-      glPushAttrib(GL_CURRENT_BIT);
-      glDisable(GL_TEXTURE_2D);
-      glDisable(GL_LIGHTING);
-      //Graphics.drawLineBox(10, 10, 10, 10, false);
+
+
       for (Order order : orders) {
-        
-          glColor3d(1.0, 0.0, 0.0);
-          glBegin(GL_QUADS);
-            glVertex2d(order.target.x, order.target.y);
-            glVertex2d(order.target.x + 4, order.target.y);
-            glVertex2d(order.target.x + 4, order.target.y + 4);
-            glVertex2d(order.target.x, order.target.y + 4);
-          glEnd();
-        
+          // red dot at 10px
+          Window.graphics.drawDot(order.target.x, order.target.y, 1.0f, 0.0f, 0.0f, 1.0f, 5f);        
       }
-      glPopAttrib();
-      glPopAttrib();
     }
   }
   
@@ -128,15 +115,15 @@ public class Unit extends TexturedEntity {
     public Position target;
     public TilePosition tileTarget;
 
-    public Order(double x, double y) {
+    public Order(float x, float y) {
       target = new Position(x, y);
       tileTarget = identifyTile(x, y);
     }
 }
-  public TilePosition identifyTile(double x, double y) {
-    TilePosition tilePosition = new TilePosition();
-    tilePosition.x = (int) (x + Window.graphics.camera.offsetX) / 32;
-    tilePosition.y = (int) (y + Window.graphics.camera.offsetY) / 32;
-    return tilePosition;
+  public TilePosition identifyTile(float x, float y) {
+    TilePosition tp = new TilePosition();
+    tp.x = (int) (x + Window.graphics.camera.offsetX) / 32;
+    tp.y = (int) (y + Window.graphics.camera.offsetY) / 32;
+    return tp;
   }
 }

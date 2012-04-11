@@ -4,6 +4,7 @@
  */
 package cognitive.graphics;
 
+import cognitive.Window;
 import org.newdawn.slick.opengl.Texture;
 import org.cognitive.shadermanager.Shader;
 import entities.Quad;
@@ -11,6 +12,7 @@ import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
 
+import org.newdawn.slick.Color;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -27,6 +29,20 @@ public class Renderer {
   private Shader texShader;
   
   public Renderer() {
+    
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glViewport(0, 0, Window.DISPLAY_WIDTH, Window.DISPLAY_HEIGHT);
+    glOrtho(0, Window.DISPLAY_WIDTH, Window.DISPLAY_HEIGHT, 0, 1, -1);
+    glMatrixMode(GL_MODELVIEW);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(true);
+    glDepthFunc(GL_LEQUAL);
+    glDepthRange(0.0f, 1.0f);
+    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     vboHandle = glGenBuffers();
     texShader = new Shader("texture");
   }
@@ -37,24 +53,24 @@ public class Renderer {
     return renderQueue;
   }
   public void flushQueue() {
-   // System.out.println("queue size: " + renderQueue.size() );
+    
     if (renderQueue.isEmpty()) {
-      System.out.println("Nothing to render");
       return;
     }
     texShader.use();
-    System.out.println("Rendering: " + getQueue().size() + " vertexes");
+    
     FloatBuffer vertexData = BufferUtils.createFloatBuffer(getQueue().size() * 9);
     for (Vertex2f v : getQueue()) {
-      vertexData.put(new float[]{v.x, v.y});
+      vertexData.put(new float[]{v.x, v.y, v.r, v.g, v.b, v.a, v.u, v.v, v.tex});
     }
     vertexData.flip();
     
     if (tex != null) { 
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, tex.getTextureID());
-    } 
-    glUniform1i(texShader.uniformLocation("mytex"), 0);
+      glUniform1i(texShader.uniformLocation("mytex"), 0);
+    }
+
     glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
     
     glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
@@ -65,104 +81,52 @@ public class Renderer {
     glPushAttrib(GL_CURRENT_BIT);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
+    final int FLOAT_SIZE = 4;
+    final int stride = (  2 /* position size */ 
+                        + 4 /* color Size */ 
+                        + 2 /* textureCoord size */
+                        + 1 /* useTex size*/) * FLOAT_SIZE;
     
-    glVertexAttribPointer(texShader.attribLocation("aVertexPosition"), 2, GL_FLOAT, false, 0, 0);
     glEnableVertexAttribArray(texShader.attribLocation("aVertexPosition"));
+
+    glVertexAttribPointer(texShader.attribLocation("aVertexPosition"), 2, GL_FLOAT, false, stride, 0);
     
-    glVertexAttribPointer(texShader.attribLocation("aTextureCoord"), 2, GL_FLOAT, false, 0, 2);
-    glEnableVertexAttribArray(texShader.attribLocation("aTextureCoord"));
-    
-    glVertexAttribPointer(texShader.attribLocation("aColor"), 4, GL_FLOAT, false, 0, 4);
     glEnableVertexAttribArray(texShader.attribLocation("aColor"));
+
+    glVertexAttribPointer(texShader.attribLocation("aColor"), 4, GL_FLOAT, false, stride, 2*FLOAT_SIZE);
     
-    glVertexAttribPointer(texShader.attribLocation("useTex"), 1, GL_FLOAT, false, 0, 8);
+    glEnableVertexAttribArray(texShader.attribLocation("aTextureCoord"));
+
+    glVertexAttribPointer(texShader.attribLocation("aTextureCoord"), 2, GL_FLOAT, false, stride, 6*FLOAT_SIZE);
+
     glEnableVertexAttribArray(texShader.attribLocation("useTex"));
-    //glVertexPointer(2, GL_FLOAT, 0, 0L);
+
+    glVertexAttribPointer(texShader.attribLocation("useTex"), 1, GL_FLOAT, false, stride, 8*FLOAT_SIZE);
+
 
     
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
     glDrawArrays(GL_QUADS, 0, renderQueue.size());
    
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glPopAttrib();
     glPopAttrib();
-
+    
     texShader.stop();
     renderQueue.clear();
     lastError = glGetError();
     if (lastError != GL_NO_ERROR) System.out.println("GL error: " + lastError);
   }
-//  public void flushQueue() {
-//   // System.out.println("queue size: " + renderQueue.size() );
-//    if (renderQueue.isEmpty()) {
-//      System.out.println("Nothing to render");
-//      return;
-//    }
-////    texShader.use();
-//    System.out.println("Rendering: " + getQueue().size() + " vertexes");
-//    FloatBuffer colorData  = BufferUtils.createFloatBuffer(getQueue().size() * 4);
-//    FloatBuffer vertexData = BufferUtils.createFloatBuffer(getQueue().size() * 2);
-//    for (Vertex2f v : getQueue()) {
-//      vertexData.put(new float[]{v.x, v.y});
-//      colorData.put(new float[]{v.r, v.g, v.b, v.a});
-//    }
-//    vertexData.flip();
-//    colorData.flip();
-//    
-//    glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle);
-//    
-//    glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
-//    
-//    glBindBuffer(GL_ARRAY_BUFFER, 0);
-//
-//    glBindBuffer(GL_ARRAY_BUFFER, vboColorHandle);
-//
-//    glBufferData(GL_ARRAY_BUFFER, colorData, GL_STATIC_DRAW);
-//    glBindBuffer(GL_ARRAY_BUFFER, 0);
-//    
-//    glPushAttrib(GL_ENABLE_BIT);
-//    glPushAttrib(GL_CURRENT_BIT);
-//    glDisable(GL_TEXTURE_2D);
-//    glDisable(GL_LIGHTING);
-//    
-//    
-//    glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle);
-//    
-//    
-//    glVertexPointer(2, GL_FLOAT, 0, 0L);
-//
-//    
-//    glBindBuffer(GL_ARRAY_BUFFER, vboColorHandle);
-//    glColorPointer(4, GL_FLOAT, 0, 0L);
-//    
-//    glEnableClientState(GL_VERTEX_ARRAY);
-//    glEnableClientState(GL_COLOR_ARRAY);
-//    glDrawArrays(GL_QUADS, 0, renderQueue.size());
-//   
-//    glDisableClientState(GL_VERTEX_ARRAY);
-//    glDisableClientState(GL_COLOR_ARRAY);
-//    glPopAttrib();
-//    glPopAttrib();
-//
-//
-//    renderQueue.clear();
-//    lastError = glGetError();
-//    if (lastError != GL_NO_ERROR) System.out.println("GL error: " + lastError);
-//  }
-  void queue(Vertex2f[] vs) {
+
+  public void queue(Vertex2f[] vs) {
 
     for (Vertex2f v : vs) {
       queue(v);
     }
   }
-  void queue(Quad quad) {
+  public void queue(Quad quad) {
     Texture ntex = quad.getTexture();
     if (ntex != null) {
       if (ntex != tex) {
-        System.out.println("Different texture, switching!");
         flushQueue();
         tex = ntex;
       }

@@ -7,7 +7,9 @@ void main()
 {
     if ( vUseTex == 1.0 )
     {
-    	gl_FragColor = texture2D (mytex, vec2 (vTextureCoord.s, vTextureCoord.t)).rgba * vColor;
+        //gl_FragColor = vColor; // TESTING, this makes it green, and it works
+        gl_FragColor = texture2D (mytex, vec2 (vTextureCoord.s, vTextureCoord.t)).rgba * vColor;
+         // <- This just makes the quad not be drawn/be visible.
     }
     else
     {
