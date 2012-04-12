@@ -27,5 +27,4 @@ public class Vertex3f {
     this.v = v;
     this.tex = tex;
   }
-  
 }

@@ -16,15 +16,15 @@ import org.newdawn.slick.opengl.Texture;
  * @author kristoffer
  */
 public class Quad3D {
-  private Vertex3f[] vertices = new Vertex3f[4];
+  private Vertex3f[] vertices = new Vertex3f[24];
   private Texture tex = null;
 
-  public Quad3D(float x, float y, float z, float width, float height, float red, float green, float blue, float alpha) {
+  public Quad3D(float x, float y, float z, float width, float height, float depth, float red, float green, float blue, float alpha) {
     
-    setupQuad(x, y, z, width, height, red, green, blue, alpha, 0, 0, 0);
+    setupQuad(x, y, z, width, height, depth, red, green, blue, alpha);
     
   }
-  public Quad3D(float x, float y, float z, float width, float height, float red, float green, float blue, float alpha, Sprite sprite) {
+  public Quad3D(float x, float y, float z, float width, float height, float depth, float red, float green, float blue, float alpha, Sprite sprite) {
     
     
     tex = sprite.getTexture();
@@ -64,71 +64,97 @@ public class Quad3D {
       //TODO: setup shit!
       
     }
-    vertices[0] = new Vertex3f(x, y, z, red, green, blue, alpha, u0, v0, 1);
-	vertices[1] = new Vertex3f(x + width, y, z, red, green, blue, alpha, u1, v0, 1);
-	vertices[2] = new Vertex3f(x + width, y + height, z, red, green, blue, alpha, u1, v1, 1);
-	vertices[3] = new Vertex3f(x, y + height, z, red, green, blue, alpha, u0, v1, 1);
+ // surface 1
+ 	  vertices[0] = new Vertex3f(x, y, z, red, green, blue, alpha, u0, v0, 1);
+ 	  vertices[1] = new Vertex3f(x + width, y, z, red, green, blue, alpha, u1, v0, 1);
+ 	  vertices[2] = new Vertex3f(x + width, y + height, z, red, green, blue, alpha, u1, v1, 1);
+ 	  vertices[3] = new Vertex3f(x, y + height, z, red, green, blue, alpha, u0, v1, 1);
+ 	  
+ 	  // surface 2
+ 	  vertices[4] = new Vertex3f(x + width, y, z, red, green, blue, alpha, u0, v0, 1);
+ 	  vertices[5] = new Vertex3f(x + width, y, z - depth, red, green, blue, alpha, u1, v0, 1);
+ 	  vertices[6] = new Vertex3f(x + width, y + height, z - depth, red, green, blue, alpha, u1, v1, 1);
+ 	  vertices[7] = new Vertex3f(x + width, y + height, z, red, green, blue, alpha, u0, v1, 1);
+ 	  
+ 	  // surface 3
+ 	  vertices[8] = new Vertex3f(x + width, y, z - depth, red, green, blue, alpha, u0, v0, 1);
+ 	  vertices[9] = new Vertex3f(x, y, z - depth, red, green, blue, alpha, u1, v0, 1);
+ 	  vertices[10] = new Vertex3f(x, y + height, z - depth, red, green, blue, alpha, u1, v1, 1);
+ 	  vertices[11] = new Vertex3f(x + width, y + height, z - depth, red, green, blue, alpha, u0, v1, 1);
+ 	  
+ 	  // surface 4
+ 	  vertices[12] = new Vertex3f(x, y, z - depth, red, green, blue, alpha, u0, v0, 1);
+ 	  vertices[13] = new Vertex3f(x, y, z, red, green, blue, alpha, u1, v0, 1);
+ 	  vertices[14] = new Vertex3f(x, y + height, z, red, green, blue, alpha, u1, v1, 1);
+ 	  vertices[15] = new Vertex3f(x, y + height, z, red, green, blue, alpha, u0, v1, 1);
+ 	  
+ 	  // surface 5
+ 	  vertices[16] = new Vertex3f(x, y + height, z, red, green, blue, alpha, u0, v0, 1);
+ 	  vertices[17] = new Vertex3f(x + width, y + height, z, red, green, blue, alpha, u1, v0, 1);
+ 	  vertices[18] = new Vertex3f(x + width, y + height, z - depth, red, green, blue, alpha, u1, v1, 1);
+ 	  vertices[19] = new Vertex3f(x, y + height, z - depth, red, green, blue, alpha, u0, v1, 1);
+ 	  
+ 	  // surface 6
+ 	  vertices[20] = new Vertex3f(x, y, z, red, green, blue, alpha, u0, v0, 1);
+ 	  vertices[21] = new Vertex3f(x, y, z - depth, red, green, blue, alpha, u1, v0, 1);
+ 	  vertices[22] = new Vertex3f(x + width, y, z - depth, red, green, blue, alpha, u1, v1, 1);
+ 	  vertices[23] = new Vertex3f(x + width, y, z, red, green, blue, alpha, u0, v1, 1);
     
  
   }
-  private void setupQuad(float x, float y, float z, float width, float height, float red, float green, float blue, float alpha, float u, float v, float t) {
+  private void setupQuad(float x, float y, float z, float width, float height, float depth, float red, float green, float blue, float alpha) {
 	  // surface 1
 	  vertices[0] = new Vertex3f(x, y, z, red, green, blue, alpha, 0, 0, 0);
 	  vertices[1] = new Vertex3f(x + width, y, z, red, green, blue, alpha, 0, 0, 0);
 	  vertices[2] = new Vertex3f(x + width, y + height, z, red, green, blue, alpha, 0, 0, 0);
 	  vertices[3] = new Vertex3f(x, y + height, z, red, green, blue, alpha, 0, 0, 0);
 	  
-//	  // surface 2
-//	  vertices[4] = new Vertex3f(x + width, y, z, red, green, blue, alpha, 0, 0, 0);
-//	  vertices[5] = new Vertex3f(x + width, y, z, red, green, blue, alpha, 0, 0, 0);
+	  red = 0;
+	  blue = 1;
+	  green = 0;
+	  // surface 2
+	  vertices[4] = new Vertex3f(x + width, y, z, red, green, blue, alpha, 0, 0, 0);
+	  vertices[5] = new Vertex3f(x + width, y, z - depth, red, green, blue, alpha, 0, 0, 0);
+	  vertices[6] = new Vertex3f(x + width, y + height, z - depth, red, green, blue, alpha, 0, 0, 0);
+	  vertices[7] = new Vertex3f(x + width, y + height, z, red, green, blue, alpha, 0, 0, 0);
+	  
+	  red = 0;
+	  blue = 0;
+	  green = 1;
+	  // surface 3
+	  vertices[8] = new Vertex3f(x + width, y, z - depth, red, green, blue, alpha, 0, 0, 0);
+	  vertices[9] = new Vertex3f(x, y, z - depth, red, green, blue, alpha, 0, 0, 0);
+	  vertices[10] = new Vertex3f(x, y + height, z - depth, red, green, blue, alpha, 0, 0, 0);
+	  vertices[11] = new Vertex3f(x + width, y + height, z - depth, red, green, blue, alpha, 0, 0, 0);
+	  
+	  red = 0;
+	  blue = 1;
+	  green = 0.5f;
+	  // surface 4
+	  vertices[12] = new Vertex3f(x, y, z - depth, red, green, blue, alpha, 0, 0, 0);
+	  vertices[13] = new Vertex3f(x, y, z, red, green, blue, alpha, 0, 0, 0);
+	  vertices[14] = new Vertex3f(x, y + height, z, red, green, blue, alpha, 0, 0, 0);
+	  vertices[15] = new Vertex3f(x, y + height, z, red, green, blue, alpha, 0, 0, 0);
+	  
+	  red = 0;
+	  blue = 0.5f;
+	  green = 0.2f;
+	  // surface 5
+	  vertices[16] = new Vertex3f(x, y + height, z, red, green, blue, alpha, 0, 0, 0);
+	  vertices[17] = new Vertex3f(x + width, y + height, z, red, green, blue, alpha, 0, 0, 0);
+	  vertices[18] = new Vertex3f(x + width, y + height, z - depth, red, green, blue, alpha, 0, 0, 0);
+	  vertices[19] = new Vertex3f(x, y + height, z - depth, red, green, blue, alpha, 0, 0, 0);
+	  
+	  red = 0.2f;
+	  blue = 0.3f;
+	  green = 1;
+	  // surface 6
+	  vertices[20] = new Vertex3f(x, y, z, red, green, blue, alpha, 0, 0, 0);
+	  vertices[21] = new Vertex3f(x, y, z - depth, red, green, blue, alpha, 0, 0, 0);
+	  vertices[22] = new Vertex3f(x + width, y, z - depth, red, green, blue, alpha, 0, 0, 0);
+	  vertices[23] = new Vertex3f(x + width, y, z, red, green, blue, alpha, 0, 0, 0);
   }
-//  vertices[0] = new Vertex2f(x, y, red, green, blue, alpha, u, v, t);
-//  vertices[1] = new Vertex2f(x + width, y, red, green, blue, alpha, u, v, t);
-//  vertices[2] = new Vertex2f(x + width, y + height, red, green, blue, alpha, u, v, t);
-//  vertices[3] = new Vertex2f(x, y + height, red, green, blue, alpha, u, v, t);
-//  GL11.glVertex3i(0, 0, 0); // Upper left
-//  GL11.glVertex3i(WORLD_WIDTH, 0, 0); // Upper right
-//  GL11.glVertex3i(WORLD_WIDTH, WORLD_HEIGHT, 0); // bottom right
-//  GL11.glVertex3i(0, WORLD_HEIGHT, 0); // bottom left
-//  GL11.glColor3f(1.0f, 0.0f, 0.0f);
-//
-//  //surface 2
-//  GL11.glVertex3i(WORLD_WIDTH, 0, 0); // Upper left
-//  GL11.glVertex3i(WORLD_WIDTH, 0, -WORLD_DEPTH); // Upper right
-//  GL11.glVertex3i(WORLD_WIDTH, WORLD_HEIGHT, -WORLD_DEPTH); // bottom right
-//  GL11.glVertex3i(WORLD_WIDTH, WORLD_HEIGHT, 0); // bottom left
-//  
-//  // surface 3
-//  GL11.glColor3f(0.0f, 1.0f, 1.0f);
-//
-//  GL11.glVertex3i(WORLD_WIDTH, 0, -WORLD_HEIGHT); // Upper right
-//  GL11.glVertex3i(0, 0, -WORLD_DEPTH); // Upper left
-//  GL11.glVertex3i(0, WORLD_HEIGHT, -WORLD_DEPTH); // bottom right
-//  GL11.glVertex3i(WORLD_WIDTH, WORLD_HEIGHT, -WORLD_DEPTH); // bottom left
-//  
-//  // surface 4
-//  GL11.glColor3f(0.0f, 0.0f, 1.0f);
-//
-//  GL11.glVertex3i(0, 0, -WORLD_HEIGHT); // Upper right
-//  GL11.glVertex3i(0, 0, 0); // Upper left
-//  GL11.glVertex3i(0, WORLD_HEIGHT, 0); // bottom right
-//  GL11.glVertex3i(0, WORLD_HEIGHT, -WORLD_DEPTH); // bottom left
-//  
-//  // surface 5
-//  GL11.glColor3f(1.0f, 0.0f, 1.0f);
-//
-//  GL11.glVertex3i(0, WORLD_HEIGHT, 0); // Upper right
-//  GL11.glVertex3i(WORLD_WIDTH, WORLD_HEIGHT, 0); // Upper left
-//  GL11.glVertex3i(WORLD_WIDTH, WORLD_HEIGHT, -WORLD_DEPTH); // bottom left
-//  GL11.glVertex3i(0, WORLD_HEIGHT, -WORLD_DEPTH); // bottom right
-//   
-//  // surface 6
-//  GL11.glColor3f(0.5f, 0.0f, 1.0f);
-//
-//  GL11.glVertex3i(0, 0, 0); // Upper right
-//  GL11.glVertex3i(0, 0, -WORLD_DEPTH); // Upper left
-//  GL11.glVertex3i(WORLD_WIDTH, 0, -WORLD_DEPTH); // bottom left
-//  GL11.glVertex3i(WORLD_WIDTH, 0, 0); // bottom right
+
   public Texture getTexture() {
     return tex;
   }

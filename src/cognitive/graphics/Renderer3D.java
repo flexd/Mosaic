@@ -49,6 +49,7 @@ public class Renderer3D {
     
     FloatBuffer vertexData = BufferUtils.createFloatBuffer(getQueue().size() * 10);
     for (Vertex3f v : getQueue()) {
+      if (v == null) { System.err.println("vertex is null"); }
       vertexData.put(new float[]{v.x, v.y, v.z, v.r, v.g, v.b, v.a, v.u, v.v, v.tex});
     }
     vertexData.flip();
@@ -88,7 +89,7 @@ public class Renderer3D {
 
 
     
-    glDrawArrays(GL_QUADS, 0, renderQueue.size());
+    glDrawArrays(GL_TRIANGLES, 0, renderQueue.size());
    
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 

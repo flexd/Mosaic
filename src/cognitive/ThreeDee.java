@@ -96,7 +96,7 @@ public class ThreeDee {
     Mouse.create();
 
     //OpenGL
-    camera = new Camera3D (new Vector3f(10,10,10));
+    camera = new Camera3D (new Vector3f(0,0,-10));
     renderer = new Renderer3D();
     lastFrame = getTime();
     //resizeGL();
@@ -125,12 +125,13 @@ public class ThreeDee {
         // Clear for rendering
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         render();
-
+        renderer.flushQueue();
         camera.update(delta); // ALWAYS LAST
       }
       else {
         if(Display.isDirty()) {
           render();
+          renderer.flushQueue();
           camera.update(delta); // ALWAYS LAST
         }
         try {
@@ -149,9 +150,9 @@ public class ThreeDee {
 
     //System.out.println("X: " + camera.cameraPosition.x + " Y: " + camera.cameraPosition.y + " Z: " + camera.cameraPosition.z);
     
-    renderer.queue(new Quad3D(0, 0, 0, 10, 10, 1, 1, 1, 1, manSprite));
-    //renderer.queue(new Quad3D(0, 0, 0, 10, 10, 1, 0, 0, 1));
-    renderer.flushQueue();
+    //renderer.queue(new Quad3D(0, 0, 0, 10, 10, 10, 1, 1, 1, 1, manSprite));
+    renderer.queue(new Quad3D(0, 0, 0, 10, 10, 10, 1, 0, 0, 1));
+    
     lastError = glGetError();
     //System.out.println("lastError = " + lastError);
   
