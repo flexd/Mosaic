@@ -27,7 +27,7 @@ import static org.lwjgl.opengl.GL15.*;
  */
 public class Graphics {
 
-  public static Camera camera = new Camera(0,0);
+  public static Camera2D camera = new Camera2D(0,0);
   Shader lightingShader = new Shader("lighting");
   //<editor-fold defaultstate="collapsed" desc="font declarations and inits">
   private static org.newdawn.slick.Font bigFont = new TrueTypeFont(new Font("Georgia", 1, 20), false);
@@ -54,9 +54,9 @@ public class Graphics {
     update();
 
    // Like a cake, this has layers. We want ground at the bottom so it goes first.
-//   for (AbstractEntity e : Window.ground) {
-//      e.draw();
-//    }
+   for (AbstractEntity e : Window.ground) {
+      e.draw();
+    }
     for (AbstractEntity e : Window.entities) {
       e.update(delta);
       e.draw();

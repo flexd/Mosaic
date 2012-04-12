@@ -10,7 +10,7 @@ import static org.lwjgl.opengl.GL11.*;
  *
  * @author kristoffer
  */
-public class Camera {
+public class Camera2D {
   private int targetX = 0, targetY = 0;
   private int originalX = 0, originalY = 0;
   public int offsetX = 0, offsetY = 0;
@@ -22,7 +22,7 @@ public class Camera {
   }
 
   
-  public Camera(int targetX, int targetY) {
+  public Camera2D(int targetX, int targetY) {
     originalX = targetX;
     originalY = targetY;
   }
@@ -56,7 +56,7 @@ public class Camera {
       setCameraX(Window.mouseX);
       setCameraY(Window.mouseY);
     }
-    //System.out.println("Camera: " + originalX + ", " + originalY + ", " + "Camera offset: " + offsetX + ", " + offsetY + ", Target: " + targetX + ", " + targetY);
+    //System.out.println("Camera2D: " + originalX + ", " + originalY + ", " + "Camera2D offset: " + offsetX + ", " + offsetY + ", Target: " + targetX + ", " + targetY);
   
     if (originalX + offsetX < targetX) {
       glTranslated(cameraMovementRate, 0, 0); // Move the camera right

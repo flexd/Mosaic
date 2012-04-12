@@ -2,11 +2,9 @@ package cognitive;
 
 import cognitive.graphics.Graphics;
 import entities.AbstractEntity;
-import entities.Player;
 import entities.TexturedEntity;
 import entities.Unit;
 import java.awt.Rectangle;
-import static org.lwjgl.opengl.GL11.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,16 +12,11 @@ import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.cognitive.screens.Intro;
-import org.cognitive.screens.MainMenu;
-import org.cognitive.shadermanager.Shader;
 import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.newdawn.slick.Color;
 
 public class Window {
 
@@ -188,7 +181,7 @@ public class Window {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="main method">
-  public static void main(String[] args) {
+  public static void beep(String[] args) {
     Window main = null;
     try {
       main = new Window();
