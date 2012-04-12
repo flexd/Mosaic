@@ -8,7 +8,6 @@ import java.awt.Rectangle;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,8 +26,8 @@ public class Window {
   public static Graphics graphics;
   public GamePlay gameplay;
   public static TextureManager tm = new TextureManager();
-  public static List<AbstractEntity> ground = new ArrayList();
-  public static List<AbstractEntity> entities = new ArrayList();
+  public static ArrayList<AbstractEntity> ground = new ArrayList<AbstractEntity>();
+  public static ArrayList<AbstractEntity> entities = new ArrayList<AbstractEntity>();
   
   private int delta = 0;
   private long lastFrame;
@@ -60,8 +59,7 @@ public class Window {
     unitSelection();
   }
 
- 
-  //<editor-fold defaultstate="collapsed" desc="mouse unit selection">
+
   private void unitSelection() {
     boolean leftButtonDown = Mouse.isButtonDown(0); // is left mouse button down
     boolean rightButtonDown = Mouse.isButtonDown(1); // is right mouse button down.
@@ -120,7 +118,7 @@ public class Window {
       }
     }
   }
-  //</editor-fold>
+ 
   
   private void generateGroundTiles() {
     for (int i = 0; i < DISPLAY_WIDTH; i+=32) {
@@ -170,7 +168,7 @@ public class Window {
     }
   }
   
-  //<editor-fold defaultstate="collapsed" desc="logging">
+  // Logging
   static {
     try {
       LOGGER.addHandler(new FileHandler("errors.log", true));
@@ -178,10 +176,9 @@ public class Window {
       LOGGER.log(Level.WARNING, ex.toString(), ex);
     }
   }
-  //</editor-fold>
 
-  //<editor-fold defaultstate="collapsed" desc="main method">
-  public static void beep(String[] args) {
+
+  public static void main(String[] args) {
     Window main = null;
     try {
       main = new Window();
@@ -195,11 +192,7 @@ public class Window {
       }
     }
   }
-  //</editor-fold>
-  
-  //<editor-fold defaultstate="collapsed" desc="fps and delta">
-  
-  //</editor-fold>
+ 
   public void create() throws LWJGLException {
     //Display
     Display.setDisplayMode(new DisplayMode(DISPLAY_WIDTH, DISPLAY_HEIGHT));
@@ -225,14 +218,14 @@ public class Window {
     //resizeGL();
   }
 
-  //<editor-fold defaultstate="collapsed" desc="Destroy method">
+ 
   public void destroy() {
     //Methods already check if created before destroying.
     Mouse.destroy();
     Keyboard.destroy();
     Display.destroy();
   }
-  //</editor-fold>
+ 
 
   public void run() {
     while (!Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) { //  && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)

@@ -5,18 +5,14 @@
 package cognitive.graphics;
 
 import cognitive.Utilities;
-import org.lwjgl.Sys;
-import entities.Quad;
 import entities.AbstractEntity;
+import entities.Quad2D;
 import cognitive.Window;
-import org.cognitive.shadermanager.Shader;
 import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 import java.awt.Font;
-import java.nio.ByteBuffer;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -28,21 +24,20 @@ import static org.lwjgl.opengl.GL15.*;
 public class Graphics {
 
   public static Camera2D camera = new Camera2D(0,0);
-  Shader lightingShader = new Shader("lighting");
-  //<editor-fold defaultstate="collapsed" desc="font declarations and inits">
+  
   private static org.newdawn.slick.Font bigFont = new TrueTypeFont(new Font("Georgia", 1, 20), false);
   private static org.newdawn.slick.Font mediumFont = new TrueTypeFont(new Font("Georgia", 1, 16), false);
   private static org.newdawn.slick.Font smallFont = new TrueTypeFont(new Font("Georgia", 1, 10), false);
-  //</editor-fold>
+  
   private int fps;
   private long lastFPS;
 
   private int fpsCounter;
  
   
-  public Renderer renderer;
+  public Renderer2D renderer;
   public Graphics() {
-    renderer = new Renderer();
+    renderer = new Renderer2D();
     
     lastFPS = Utilities.getTime();
   }
@@ -122,7 +117,7 @@ public class Graphics {
   //</editor-fold>
   //<editor-fold defaultstate="collapsed" desc="various drawing methods">
   public void drawDot(float x, float y, float r, float g, float b, float a, float size) {
-    Quad quad = new Quad(x, y, size, size, r, g, b, a);
+	Quad2D quad = new Quad2D(x, y, size, size, r, g, b, a);
     renderer.queue(quad);
   }
   public void drawFPS(int fps) {

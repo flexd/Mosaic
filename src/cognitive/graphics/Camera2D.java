@@ -4,7 +4,6 @@
  */
 package cognitive.graphics;
 import cognitive.Window;
-import org.lwjgl.input.Mouse;
 import static org.lwjgl.opengl.GL11.*;
 /**
  *

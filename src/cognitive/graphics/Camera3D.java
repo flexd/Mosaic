@@ -87,14 +87,12 @@ public class Camera3D {
     double radianAngleY = Math.toRadians(angleY);
     
     if (moveForward) {
-      System.out.println("Moving forward! Delta is: " + delta);
       float movementRate = (movementSpeed * 0.002f) * delta; // Going forwards
       cameraPosition.x -= movementRate * (float)Math.sin(radianAngleY) * (float)Math.cos(radianAngleX);
       
       cameraPosition.y += movementRate * (float)Math.sin(radianAngleX);
       
       cameraPosition.z += movementRate * (float)Math.cos(radianAngleY) * (float)Math.cos(radianAngleX);
-      System.out.println("Camera: " + cameraPosition.x + ", " + cameraPosition.y + ", " + cameraPosition.z);
     }
     if (moveBackward) {
       float movementRate = (movementSpeed * 0.002f) * delta; // Going backwards!

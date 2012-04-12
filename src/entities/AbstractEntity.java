@@ -2,8 +2,7 @@ package entities;
 
 import java.awt.Rectangle;
 import cognitive.Position;
-import cognitive.Window;
-import org.cognitive.texturemanager.Sprite;
+
 
 public abstract class AbstractEntity implements IEntity, IMoveableEntity {
 
@@ -13,7 +12,7 @@ public abstract class AbstractEntity implements IEntity, IMoveableEntity {
   protected float width, height;
   protected Rectangle hitbox = new Rectangle();
   protected boolean validMove = false;
-  protected Quad quad;
+  protected Quad2D quad;
   public boolean selected = false;
 
   public boolean isSelected() {

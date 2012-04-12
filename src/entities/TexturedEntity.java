@@ -2,7 +2,7 @@
  */
 package entities;
 
-import cognitive.graphics.Vertex2f;
+
 import org.cognitive.texturemanager.Sprite.Animation;
 import org.cognitive.texturemanager.Sprite;
 import cognitive.Window;
@@ -27,10 +27,10 @@ public class TexturedEntity extends AbstractEntity {
     Window.graphics.renderer.queue(quad);
   }
   @Override
-  public Quad getVertices() {
+  public Quad2D getVertices() {
     int tileSize = sprite.getTileSize();
    
-    Quad out = new Quad((float)pos.x, (float)pos.y, tileSize, tileSize, 1.0f, 1.0f, 1.0f, 1.0f, sprite);
+    Quad2D out = new Quad2D((float)pos.x, (float)pos.y, tileSize, tileSize, 1.0f, 1.0f, 1.0f, 1.0f, sprite);
     return out;
   }
 

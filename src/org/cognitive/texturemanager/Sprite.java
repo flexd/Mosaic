@@ -3,7 +3,6 @@
 package org.cognitive.texturemanager;
 
 import java.util.ArrayList;
-import java.util.List;
 import org.newdawn.slick.opengl.Texture;
 
 /**
@@ -28,7 +27,7 @@ public class Sprite {
   public static class Animation {
 
     public int current = 0;
-    public List <AnimationFrame> frames = new ArrayList();
+    public ArrayList <AnimationFrame> frames = new ArrayList<AnimationFrame>();
     public Animation() {
     }
    
@@ -47,7 +46,7 @@ public class Sprite {
   public boolean animated = false;
   public int frameStart;
   public int frameOffset;
-  public List<Animation> animations = new ArrayList();
+  public ArrayList<Animation> animations = new ArrayList<Animation>();
   
   public Sprite(SpriteSheet sheet, String name, int sX, int sY) {
     this.sheet = sheet;

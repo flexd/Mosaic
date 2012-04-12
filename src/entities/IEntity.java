@@ -1,9 +1,8 @@
 package entities;
 
-import cognitive.graphics.Vertex2f;
 
 public interface IEntity {
-  public Quad getVertices();
+  public Quad2D getVertices();
   public void draw();
   public void update(int delta);
   public void setLocation(float x, float y);

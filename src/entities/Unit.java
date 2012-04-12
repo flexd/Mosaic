@@ -17,7 +17,7 @@ import cognitive.Position;
  */
 public class Unit extends TexturedEntity {
 
-  private LinkedList<Order> orders = new LinkedList();
+  private LinkedList<Order> orders = new LinkedList<Order>();
   private float movementRate = 0.05f;
   private TilePosition tilePosition = new TilePosition();
   

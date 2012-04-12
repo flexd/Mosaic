@@ -1,6 +1,9 @@
 package cognitive;
 
 import cognitive.graphics.Camera3D;
+import cognitive.graphics.Renderer3D;
+import org.cognitive.texturemanager.*;
+
 import static org.lwjgl.opengl.GL11.*;
 
 import java.io.IOException;
@@ -15,8 +18,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
+
+import entities.Quad3D;
 
 
 public class ThreeDee {
@@ -32,8 +35,10 @@ public class ThreeDee {
   private long lastFrame;
   private float delta = 0;
   private Camera3D camera;
+  private Renderer3D renderer;
+  public static TextureManager tm = new TextureManager();
+  private Sprite manSprite;
   
-
   
   private long getTime() {
     return (Sys.getTime() * 1000) / Sys.getTimerResolution();
@@ -80,7 +85,7 @@ public class ThreeDee {
     //Display
     Display.setDisplayMode(new DisplayMode(DISPLAY_WIDTH,DISPLAY_HEIGHT));
     Display.setFullscreen(true);
-    Display.setTitle("FUCK YOU NETBEANS");
+    Display.setTitle("3D!");
     Display.create();
 
     //Keyboard
@@ -92,8 +97,18 @@ public class ThreeDee {
 
     //OpenGL
     camera = new Camera3D (new Vector3f(10,10,10));
+    renderer = new Renderer3D();
     lastFrame = getTime();
     //resizeGL();
+    
+    tm.load("characters", "rpg", 32); // spritesheet name, filename, slotSize
+    tm.load("world", "default", 32); // spritesheet name, filename, slotSize
+    tm.load("hero", "generichero-blackblue", 32); // spritesheet name, filename, slotSize
+    tm.define("characters", "player",0,0); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
+    tm.define("hero", "hero", 0, 0 ); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
+    tm.define("world", "tile0", 2,3);
+    
+    manSprite = tm.getSpriteByName("tile0");
   }
 
   public void destroy() {
@@ -129,74 +144,14 @@ public class ThreeDee {
     }
   }
 
-  private Texture loadTexture(String key) {
-    try {
-      
-      return TextureLoader.getTexture("PNG", getClass().getResourceAsStream("/res/" + key + ".png")); // new FileInputStream(new File("res/"+ key + ".png")));
-    } catch (IOException ex) {
-      Logger.getLogger(ThreeDee.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return null;
-  }
-
   private void render() {
     delta = getDelta();
 
     //System.out.println("X: " + camera.cameraPosition.x + " Y: " + camera.cameraPosition.y + " Z: " + camera.cameraPosition.z);
     
-    GL11.glColor3f(1.0f, 1.0f, 1.0f);
-   
-
-    glBegin(GL_QUADS);
-      GL11.glColor3f(1.0f, 1.0f, 1.0f);
-
-      GL11.glVertex3i(0, 0, 0); // Upper left
-      GL11.glVertex3i(WORLD_WIDTH, 0, 0); // Upper right
-      GL11.glVertex3i(WORLD_WIDTH, WORLD_HEIGHT, 0); // bottom right
-      GL11.glVertex3i(0, WORLD_HEIGHT, 0); // bottom left
-      GL11.glColor3f(1.0f, 0.0f, 0.0f);
-
-      //surface 2
-      GL11.glVertex3i(WORLD_WIDTH, 0, 0); // Upper left
-      GL11.glVertex3i(WORLD_WIDTH, 0, -WORLD_DEPTH); // Upper right
-      GL11.glVertex3i(WORLD_WIDTH, WORLD_HEIGHT, -WORLD_DEPTH); // bottom right
-      GL11.glVertex3i(WORLD_WIDTH, WORLD_HEIGHT, 0); // bottom left
-      
-      // surface 3
-      GL11.glColor3f(0.0f, 1.0f, 1.0f);
-
-      GL11.glVertex3i(WORLD_WIDTH, 0, -WORLD_HEIGHT); // Upper right
-      GL11.glVertex3i(0, 0, -WORLD_DEPTH); // Upper left
-      GL11.glVertex3i(0, WORLD_HEIGHT, -WORLD_DEPTH); // bottom right
-      GL11.glVertex3i(WORLD_WIDTH, WORLD_HEIGHT, -WORLD_DEPTH); // bottom left
-      
-      // surface 4
-      GL11.glColor3f(0.0f, 0.0f, 1.0f);
-
-      GL11.glVertex3i(0, 0, -WORLD_HEIGHT); // Upper right
-      GL11.glVertex3i(0, 0, 0); // Upper left
-      GL11.glVertex3i(0, WORLD_HEIGHT, 0); // bottom right
-      GL11.glVertex3i(0, WORLD_HEIGHT, -WORLD_DEPTH); // bottom left
-      
-      // surface 5
-      GL11.glColor3f(1.0f, 0.0f, 1.0f);
-
-      GL11.glVertex3i(0, WORLD_HEIGHT, 0); // Upper right
-      GL11.glVertex3i(WORLD_WIDTH, WORLD_HEIGHT, 0); // Upper left
-      GL11.glVertex3i(WORLD_WIDTH, WORLD_HEIGHT, -WORLD_DEPTH); // bottom left
-      GL11.glVertex3i(0, WORLD_HEIGHT, -WORLD_DEPTH); // bottom right
-       
-      // surface 6
-      GL11.glColor3f(0.5f, 0.0f, 1.0f);
-
-      GL11.glVertex3i(0, 0, 0); // Upper right
-      GL11.glVertex3i(0, 0, -WORLD_DEPTH); // Upper left
-      GL11.glVertex3i(WORLD_WIDTH, 0, -WORLD_DEPTH); // bottom left
-      GL11.glVertex3i(WORLD_WIDTH, 0, 0); // bottom right
-        
-      
-      
-      glEnd();
+    renderer.queue(new Quad3D(0, 0, 0, 10, 10, 1, 1, 1, 1, manSprite));
+    //renderer.queue(new Quad3D(0, 0, 0, 10, 10, 1, 0, 0, 1));
+    renderer.flushQueue();
     lastError = glGetError();
     //System.out.println("lastError = " + lastError);
   

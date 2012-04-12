@@ -12,17 +12,16 @@ import org.newdawn.slick.opengl.Texture;
  *
  * @author kristoffer
  */
-public class Quad {
-  private boolean textured = false;
+public class Quad2D {
   private Vertex2f[] vertices = new Vertex2f[4];
   private Texture tex = null;
 
-  public Quad(float x, float y, float width, float height, float red, float green, float blue, float alpha) {
+  public Quad2D(float x, float y, float width, float height, float red, float green, float blue, float alpha) {
     
     setupQuad(x, y, width, height, red, green, blue, alpha, 0, 0, 0);
     
   }
-  public Quad(float x, float y, float width, float height, float red, float green, float blue, float alpha, Sprite sprite) {
+  public Quad2D(float x, float y, float width, float height, float red, float green, float blue, float alpha, Sprite sprite) {
     
     
     tex = sprite.getTexture();
