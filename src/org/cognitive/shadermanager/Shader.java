@@ -65,11 +65,10 @@ public class Shader {
     
     glLinkProgram(shaderProgram);
     glValidateProgram(shaderProgram);
-    
-    glBindAttribLocation(shaderProgram, 0, "aVertexPosition");
-    glBindAttribLocation(shaderProgram, 1, "aColor");
-    glBindAttribLocation(shaderProgram, 2, "aTextureCoord");
-    glBindAttribLocation(shaderProgram, 3, "useTex");
+ 
+  }
+  public int getProgram() {
+    return shaderProgram;
   }
   public void use() {
     glUseProgram(shaderProgram);

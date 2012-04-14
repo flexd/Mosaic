@@ -5,11 +5,17 @@
 package cognitive.graphics;
 
 import cognitive.Window;
+import cognitive.primitives.Renderable;
+
 import org.newdawn.slick.opengl.Texture;
 import org.cognitive.shadermanager.Shader;
 import entities.Quad3D;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.util.vector.Vector4f;
+
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
 
@@ -24,7 +30,7 @@ import static org.lwjgl.opengl.GL20.*;
  * @author kristoffer
  */
 public class Renderer3D {
-  public LinkedList<Vertex3f> renderQueue = new LinkedList<Vertex3f>();
+  public LinkedList<Renderable> renderQueue = new LinkedList<Renderable>();
   private int vboHandle;
   private Texture tex;
   private int lastError = 0;
@@ -34,10 +40,10 @@ public class Renderer3D {
     vboHandle = glGenBuffers();
     texShader = new Shader("texture3D");
   }
-  public void queue(Vertex3f vertex) {
+  public void queue(Renderable vertex) {
     renderQueue.add(vertex);
   }
-  public LinkedList<Vertex3f> getQueue() {
+  public LinkedList<Renderable> getQueue() {
     return renderQueue;
   }
   public void flushQueue() {
@@ -47,18 +53,22 @@ public class Renderer3D {
     }
     texShader.use();
     
-    FloatBuffer vertexData = BufferUtils.createFloatBuffer(getQueue().size() * 10);
-    for (Vertex3f v : getQueue()) {
-      if (v == null) { System.err.println("vertex is null"); }
-      vertexData.put(new float[]{v.x, v.y, v.z, v.r, v.g, v.b, v.a, v.u, v.v, v.tex});
+    FloatBuffer vertexData = BufferUtils.createFloatBuffer(getQueue().size() * (3*4*100));
+    FloatBuffer vexPosition = null;
+    Vector4f color = null;
+    for (Renderable v : getQueue()) {
+      if (v == null) { System.err.println("Renderable is null"); }
+      vertexData.put(v.getVertices());
+      vexPosition = v.getPosition();
+      color = v.getColor();
     }
     vertexData.flip();
     
-    if (tex != null) { 
-      glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, tex.getTextureID());
-      glUniform1i(texShader.uniformLocation("mytex"), 0);
-    }
+//    if (tex != null) { 
+//      glActiveTexture(GL_TEXTURE0);
+//      glBindTexture(GL_TEXTURE_2D, tex.getTextureID());
+//      glUniform1i(texShader.uniformLocation("mytex"), 0);
+//    }
 
     glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
     
@@ -66,28 +76,16 @@ public class Renderer3D {
     
     
     final int FLOAT_SIZE = 4;
-    final int stride = (  3 /* position size */ 
-                        + 4 /* color Size */ 
-                        + 2 /* textureCoord size */
-                        + 1 /* useTex size*/) * FLOAT_SIZE;
+    final int stride = (  3 /* vertex Size */ ) * FLOAT_SIZE;
     
-    glEnableVertexAttribArray(texShader.attribLocation("aVertexPosition"));
-
-    glVertexAttribPointer(texShader.attribLocation("aVertexPosition"), 3, GL_FLOAT, false, stride, 0);
+    glBindAttribLocation(texShader.getProgram(), 0, "vertex");
+    glUniformMatrix4(texShader.uniformLocation("position"), false, vexPosition); 
     
-    glEnableVertexAttribArray(texShader.attribLocation("aColor"));
-
-    glVertexAttribPointer(texShader.attribLocation("aColor"), 4, GL_FLOAT, false, stride, 3*FLOAT_SIZE);
+    glUniform4f(texShader.uniformLocation("color"), color.x, color.y, color.z, color.w);
     
-    glEnableVertexAttribArray(texShader.attribLocation("aTextureCoord"));
+    glEnableVertexAttribArray(texShader.attribLocation("vertex"));
 
-    glVertexAttribPointer(texShader.attribLocation("aTextureCoord"), 2, GL_FLOAT, false, stride, 7*FLOAT_SIZE);
-
-    glEnableVertexAttribArray(texShader.attribLocation("useTex"));
-
-    glVertexAttribPointer(texShader.attribLocation("useTex"), 1, GL_FLOAT, false, stride, 9*FLOAT_SIZE);
-
-
+    glVertexAttribPointer(texShader.attribLocation("vertex"), 2, GL_FLOAT, false, stride, 0);
     
     glDrawArrays(GL_TRIANGLES, 0, renderQueue.size());
    
@@ -100,22 +98,22 @@ public class Renderer3D {
     if (lastError != GL_NO_ERROR) System.out.println("GL error: " + lastError);
   }
 
-  public void queue(Vertex3f[] vs) {
+  public void queue(Renderable[] vs) {
 
-    for (Vertex3f v : vs) {
+    for (Renderable v : vs) {
       queue(v);
     }
   }
-  public void queue(Quad3D quad) {
-    Texture ntex = quad.getTexture();
-    if (ntex != null) {
-      if (ntex != tex) {
-        flushQueue();
-        tex = ntex;
-      }
-    }
-    for (Vertex3f v : quad.getVertices()) {
-      queue(v);
-    }
-  }
+//  public void queue(Quad3D quad) {
+//    Texture ntex = quad.getTexture();
+//    if (ntex != null) {
+//      if (ntex != tex) {
+//        flushQueue();
+//        tex = ntex;
+//      }
+//    }
+//    for (Renderable v : quad.getVertices()) {
+//      queue(v);
+//    }
+//  }
 }

@@ -1,16 +1,13 @@
-
-attribute vec3 aVertexPosition;
+attribute vec3 vertex;
+uniform vec4 position;
+uniform vec4 color;
 varying vec4 vColor;
-attribute vec4 aColor;
-attribute vec2 aTextureCoord;
-varying vec2 vTextureCoord;
-varying float vUseTex;
-attribute float useTex;
+
+
+
 
 void main()
 {
-   vTextureCoord = aTextureCoord;
-   vColor = aColor;
-   vUseTex = useTex;
-   gl_Position = gl_ProjectionMatrix * gl_ModelViewMatrix * vec4(aVertexPosition, 1.0); 
+   vColor = color;
+   gl_Position = gl_ProjectionMatrix * gl_ModelViewMatrix * vertex * position; 
 }

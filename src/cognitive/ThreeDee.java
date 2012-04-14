@@ -19,6 +19,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
+import entities.Cube;
 import entities.Quad3D;
 
 
@@ -151,7 +152,7 @@ public class ThreeDee {
     //System.out.println("X: " + camera.cameraPosition.x + " Y: " + camera.cameraPosition.y + " Z: " + camera.cameraPosition.z);
     
     //renderer.queue(new Quad3D(0, 0, 0, 10, 10, 10, 1, 1, 1, 1, manSprite));
-    renderer.queue(new Quad3D(0, 0, 0, 10, 10, 10, 1, 0, 0, 1));
+    renderer.queue(new Cube(new Vector3f(0,0,0), 1, 0, 0, 1, 10));
     
     lastError = glGetError();
     //System.out.println("lastError = " + lastError);
