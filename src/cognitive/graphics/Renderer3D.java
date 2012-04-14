@@ -35,6 +35,7 @@ public class Renderer3D {
   private Texture tex;
   private int lastError = 0;
   private Shader texShader;
+  private static final int FLOAT_SIZE = 4;
   
   public Renderer3D() {
     vboHandle = glGenBuffers();
@@ -51,46 +52,44 @@ public class Renderer3D {
     if (renderQueue.isEmpty()) {
       return;
     }
+    glBindAttribLocation(texShader.getProgram(), 0, "in_position");
+    glBindAttribLocation(texShader.getProgram(), 1, "in_color");
+    System.err.println("lastGL error: " + glGetError());
     texShader.use();
     
-    FloatBuffer vertexData = BufferUtils.createFloatBuffer(getQueue().size() * (3*4*100));
-    FloatBuffer vexPosition = null;
-    Vector4f color = null;
-    for (Renderable v : getQueue()) {
-      if (v == null) { System.err.println("Renderable is null"); }
-      vertexData.put(v.getVertices());
-      vexPosition = v.getPosition();
-      color = v.getColor();
+    for(Renderable r : getQueue()) {
+      glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
+      FloatBuffer vertexData = BufferUtils.createFloatBuffer(r.getVertices().length*FLOAT_SIZE); // 36*4  floats (3 vertices* vertices
+      FloatBuffer positionData = BufferUtils.createFloatBuffer(16*FLOAT_SIZE);
+      FloatBuffer colorData = BufferUtils.createFloatBuffer(4*FLOAT_SIZE);
+      
+      vertexData.put(r.getVertices());
+      vertexData.flip();
+      positionData.put(r.getPosition());
+      positionData.flip();
+      colorData.put(r.getColor());
+      colorData.flip();
+      
+      glUniformMatrix4(texShader.uniformLocation("in_position"), false, positionData); 
+      glUniform4(texShader.uniformLocation("in_color"), colorData); 
+      
+
+      glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
+
+      
+      final int stride = (3 /* vertex Size */) * FLOAT_SIZE;
+
+      
+
+      int in_vertexLocation = texShader.attribLocation("in_vertex");
+      glEnableVertexAttribArray(in_vertexLocation);
+
+      glVertexAttribPointer(in_vertexLocation, 3, GL_FLOAT, false, stride, 0);
+      
+
+      glDrawArrays(GL_TRIANGLES, 0, renderQueue.size());
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
-    vertexData.flip();
-    
-//    if (tex != null) { 
-//      glActiveTexture(GL_TEXTURE0);
-//      glBindTexture(GL_TEXTURE_2D, tex.getTextureID());
-//      glUniform1i(texShader.uniformLocation("mytex"), 0);
-//    }
-
-    glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
-    
-    glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
-    
-    
-    final int FLOAT_SIZE = 4;
-    final int stride = (  3 /* vertex Size */ ) * FLOAT_SIZE;
-    
-    glBindAttribLocation(texShader.getProgram(), 0, "vertex");
-    glUniformMatrix4(texShader.uniformLocation("position"), false, vexPosition); 
-    
-    glUniform4f(texShader.uniformLocation("color"), color.x, color.y, color.z, color.w);
-    
-    glEnableVertexAttribArray(texShader.attribLocation("vertex"));
-
-    glVertexAttribPointer(texShader.attribLocation("vertex"), 2, GL_FLOAT, false, stride, 0);
-    
-    glDrawArrays(GL_TRIANGLES, 0, renderQueue.size());
-   
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
     
     texShader.stop();
     renderQueue.clear();
@@ -98,6 +97,10 @@ public class Renderer3D {
     if (lastError != GL_NO_ERROR) System.out.println("GL error: " + lastError);
   }
 
+  //
+//
+//glUniform4f(texShader.uniformLocation("color"), color.x, color.y, color.z, color.w);
+//
   public void queue(Renderable[] vs) {
 
     for (Renderable v : vs) {

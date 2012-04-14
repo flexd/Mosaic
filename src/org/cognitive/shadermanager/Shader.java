@@ -7,6 +7,9 @@ package org.cognitive.shadermanager;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+
+import org.lwjgl.opengl.Display;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 /**
@@ -55,10 +58,20 @@ public class Shader {
     glCompileShader(fragmentShader);
 
     if (glGetShader(vertexShader, GL_COMPILE_STATUS) == GL_FALSE) {
+      int length = glGetShader(vertexShader,GL_INFO_LOG_LENGTH);
+      String log = glGetShaderInfoLog(vertexShader, length);
       System.err.println("VertexShader: " + filename + " was not compiled correctly!");
+      System.err.println(log);
+      Display.destroy();
+      System.exit(0);
     }
     if (glGetShader(fragmentShader, GL_COMPILE_STATUS) == GL_FALSE) {
+      int length = glGetShader(fragmentShader,GL_INFO_LOG_LENGTH);
+      String log = glGetShaderInfoLog(fragmentShader, length);
       System.err.println("FragmentShader: " + filename + " was not compiled correctly!");
+      System.err.println(log);
+      Display.destroy();
+      System.exit(0);
     }
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);

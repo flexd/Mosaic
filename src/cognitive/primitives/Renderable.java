@@ -31,8 +31,8 @@ public class Renderable {
       return new float[0]; // Empty!
     }
   }
-  public Vector4f getColor() {
-    return color;
+  public float[] getColor() {
+    return new float[]{color.x, color.y, color.z, color.w};
   }
   public void setColor(Vector4f color) {
     this.color = color;
