@@ -2,7 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="/Users/kristoffer/Dropbox/code/Java/LWJGL/lwjgl-2.8.3/jar/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="/Users/kristoffer/Dropbox/code/Java/LWJGL/lwjgl-2.8.3/jar/lwjgl_util.jar" sourcepath="/Users/kristoffer/Dropbox/code/Java/LWJGL/lwjgl-source-2.8.3/src">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/kristoffer/Dropbox/code/Java/LWJGL/lwjgl-docs-2.8.3.zip!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="/Users/kristoffer/Dropbox/code/Java/LWJGL/lwjgl-2.8.3/jar/lwjgl-debug.jar"/>
 	<classpathentry kind="lib" path="/Users/kristoffer/Dropbox/code/Java/LWJGL/lwjgl-2.8.3/jar/lwjgl.jar">
 		<attributes>
@@ -11,5 +15,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/Users/kristoffer/Dropbox/code/Java/LWJGL/slick-util/slick-util.jar"/>
+	<classpathentry kind="lib" path="/Users/kristoffer/Dropbox/code/Java/LWJGL/slick.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

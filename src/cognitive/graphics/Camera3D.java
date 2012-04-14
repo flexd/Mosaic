@@ -6,10 +6,11 @@ package cognitive.graphics;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
+
 import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.gluPerspective;
+
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
@@ -33,14 +34,16 @@ public class Camera3D {
   private static int mouseSpeed = 2;
   private static float movementSpeed = 4f;
   private float delta = 0;
+  private Matrix4f projectionMatrix;
+  private Matrix4f cameraMatrix;
 
   public Camera3D(Vector3f initialPosition) {
     cameraPosition = initialPosition;
   }
-  
-  
-  public void controls() {
-    boolean moveForward = Keyboard.isKeyDown(Keyboard.KEY_W);
+  public void update(float delta) {
+	this.delta = delta;
+	
+	boolean moveForward = Keyboard.isKeyDown(Keyboard.KEY_W);
     boolean moveBackward = Keyboard.isKeyDown(Keyboard.KEY_S);
     boolean flyUp = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
     boolean flyDown = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL);
@@ -104,18 +107,36 @@ public class Camera3D {
     if (moveSlower) {
       movementSpeed = 2;
     }
-  }
-  public void update(float delta) {
-	this.delta = delta;
 //    System.out.println("Camera: X: " + cameraPosition.x + " Y: " + cameraPosition.y + " Z: " + cameraPosition.z);
 //    System.out.println("Rotation: X: " + cameraRotation.x + " Y: " + cameraRotation.y + " Z: " + cameraRotation.z);
-    glLoadIdentity();
+    //glLoadIdentity();
+    //
     
-    GL11.glRotatef(cameraRotation.x, 1.0f, 0.0f, 0.0f); // Rotate around X-axis
-    GL11.glRotatef(cameraRotation.y, 0.0f, 1.0f, 0.0f); // Rotate around Y-axis.
-    GL11.glRotatef(cameraRotation.z, 0.0f, 0.0f, 1.0f); // Rotate around Z-axis
+    cameraMatrix = new Matrix4f(projectionMatrix); // Reset!
     
-    GL11.glTranslatef(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+//    cameraRotation.x = (float)Math.toRadians(cameraRotation.x);
+//    cameraRotation.y = (float)Math.toRadians(cameraRotation.y);
+//    cameraRotation.z = (float)Math.toRadians(cameraRotation.z);
+ //   cameraRotation.y *= Math.PI*180.0;
+//    cameraRotation.z *= Math.PI*180.0;
+    cameraMatrix.rotate(cameraRotation.x, new Vector3f(1.0f, 0.0f, 0.0f));
+    cameraMatrix.rotate(cameraRotation.y, new Vector3f(0.0f, 1.0f, 0.0f));
+    cameraMatrix.rotate(cameraRotation.z, new Vector3f(0.0f, 0.0f, 1.0f));
+//    GL11.glRotatef(cameraRotation.x, 1.0f, 0.0f, 0.0f); // Rotate around X-axis
+//    GL11.glRotatef(cameraRotation.y, 0.0f, 1.0f, 0.0f); // Rotate around Y-axis.
+//    GL11.glRotatef(cameraRotation.z, 0.0f, 0.0f, 1.0f); // Rotate around Z-axis
+    
+    cameraMatrix.translate(new Vector3f(cameraPosition.x, cameraPosition.y, cameraPosition.z));
+    
+    //GL11.glTranslatef(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+  }
+
+  public Matrix4f getCameraMatrix() {
+    return cameraMatrix;
+  }
+  public void initMatrix(Matrix4f projectionMatrix) {
+    this.projectionMatrix = projectionMatrix;
+    
   }
   
 }

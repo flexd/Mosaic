@@ -39,14 +39,17 @@ public class Renderer3D {
   private Texture tex;
   private int lastError = 0;
   private Shader texShader;
+  private Matrix4f projectionMatrix;
   private static final int FLOAT_SIZE = 4;
   private static int frameCount = 0;
-  private static Matrix4f projectionMatrix;
+
+  public void initMatrix(Matrix4f projectionMatrix) {
+    this.projectionMatrix = projectionMatrix;
+  }
   
   public Renderer3D() {
     vboHandle = glGenBuffers();
     texShader = new Shader("texture3D");
-    projectionMatrix = LoadPerspective(70f, Display.getWidth() / (float)Display.getHeight(), 0.002f, 1000f);
   }
   public void queue(Renderable vertex) {
     renderQueue.add(vertex);
@@ -54,53 +57,24 @@ public class Renderer3D {
   public LinkedList<Renderable> getQueue() {
     return renderQueue;
   }
-  public FloatBuffer getProjectionMatrix() {
-    FloatBuffer out = BufferUtils.createFloatBuffer(16*4);
-    projectionMatrix.store(out);
-    return (FloatBuffer) out.flip();
-  }
-  public Matrix4f LoadPerspective(float fov, float aspect, float zNear, float zFar)
-  {
-      float f = (float) (1.0f / Math.tan(Math.toRadians(fov)/2.0f));
-      Matrix4f out = new Matrix4f();
-      
-      out.m00 = f / aspect;
-      out.m01 = 0;
-      out.m02 = 0;
-      out.m03 = 0;
-      
-      out.m10 = 0;
-      out.m11 = f;
-      out.m12 = 0;
-      out.m13 = 0;
-      
-      out.m20 = 0;
-      out.m21 = 0;
-      out.m22 = zFar/(zNear-zFar);
-      out.m23 = -1.0f;
-      
-      out.m30 = 0;
-      out.m31 = 0;
-      out.m32 = zNear*zFar/(zNear-zFar);
-      out.m33 = 0;
-      return out;
-  }
-  public void flushQueue() {
+  
+  public void flushQueue(Matrix4f cameraProjMatrix) {
     
     if (renderQueue.isEmpty()) {
       return;
     }
+    
     glBindAttribLocation(texShader.getProgram(), 0, "in_vertex");
 
     //System.err.println("lastGL error: " + glGetError());
     //System.out.println("This is frame: " + frameCount);
-    glDisable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     texShader.use();
-    
+    float[] vertices;
     for(Renderable r : getQueue()) {
       glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
       int indiceCount = 0;
-      float[] vertices = r.getVertices();
+       vertices = r.getVertices();
 //      System.out.println("Vertices begin:");
       FloatBuffer vertexData = BufferUtils.createFloatBuffer(vertices.length*FLOAT_SIZE); // 36*4  floats (3 vertices* vertices
       for(int i = 0; i < vertices.length/3;i++) {
@@ -115,18 +89,20 @@ public class Renderer3D {
       
       
       vertexData.flip();
-      FloatBuffer pos = (FloatBuffer) r.getPosition().flip();
+      //FloatBuffer pos = (FloatBuffer) r.getPosition().flip();
 //      positionData.put(r.getPosition());
 //      positionData.flip();
 //      colorData.put(r.getColor());
 //      colorData.flip();
       Vector4f color = r.getColor();
+      Matrix4f modelProjectionMatrix = new Matrix4f();
+      Matrix4f.mul(cameraProjMatrix, r.getModelView(), modelProjectionMatrix);
+      FloatBuffer modelProjectionMatrixBuffer = BufferUtils.createFloatBuffer(16*FLOAT_SIZE);
+      modelProjectionMatrix.store(modelProjectionMatrixBuffer);
+      modelProjectionMatrixBuffer.flip();
       
-//      System.out.println("There should be a triangle at: " + pos + ", with the color: " + color);
-      glUniformMatrix4(texShader.uniformLocation("in_position"), false, pos); 
-//      glUniformMatrix4(texShader.uniformLocation("in_position"), false, r.getPosition()); 
       glUniform4f(texShader.uniformLocation("in_color"), color.x, color.y, color.z, color.w); 
-      glUniformMatrix4(texShader.uniformLocation("projectionMatrix"), false, getProjectionMatrix()); 
+      glUniformMatrix4(texShader.uniformLocation("modelProjectionMatrix"), false, modelProjectionMatrixBuffer); 
       
 
       glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);

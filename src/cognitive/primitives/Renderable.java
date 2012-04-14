@@ -12,10 +12,11 @@ public class Renderable {
   private Matrix4f position;
   private Vector4f color;
   
-  public FloatBuffer getPosition() {
-    FloatBuffer out = BufferUtils.createFloatBuffer(16*4); // 4x4 matrix with floats
-    position.store(out);
-    return out;
+  public Matrix4f getModelView() {
+//    FloatBuffer out = BufferUtils.createFloatBuffer(16*4); // 4x4 matrix with floats
+//    position.store(out);
+//    return out;
+    return position;
   }
   
   public Vector3f getVectorPos() {

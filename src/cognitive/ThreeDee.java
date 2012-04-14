@@ -7,11 +7,15 @@ import org.cognitive.texturemanager.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
 
+import java.awt.Font;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -19,13 +23,19 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.UnicodeFont;
 
 import entities.Cube;
 import entities.Quad3D;
 
 
 public class ThreeDee {
+  private static final float zFar = 1000f;
+  private static final float zNear = 0.002f;
+  private static final float fov = 70f;
   public static final int DISPLAY_HEIGHT = 600;
   public static final int DISPLAY_WIDTH = 800;
   
@@ -44,14 +54,29 @@ public class ThreeDee {
   private ArrayList<Cube> cubes = new ArrayList<Cube>();
   private int lastPos = 0;
   
-  private long getTime() {
-    return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+  private int fps = 0;
+  private long lastFPS = 0;
+
+  private int fpsCounter = 0;
+  private static org.newdawn.slick.Font bigFont = new UnicodeFont(new Font("Georgia", 1, 20));
+  private static org.newdawn.slick.Font mediumFont = new UnicodeFont(new Font("Georgia", 1, 16));
+  private static org.newdawn.slick.Font smallFont = new UnicodeFont(new Font("Georgia", 1, 10));
+  
+  private static Matrix4f projectionMatrix;
+  
+  public void updateFPS() {
+    if (Utilities.getTime() - lastFPS > 1000) {
+      fps = fpsCounter;
+      fpsCounter = 0;
+      lastFPS += 1000;
+    }
+    fpsCounter++;
   }
   
   private float getDelta() {
-    long currentTime = getTime();
+    long currentTime = Utilities.getTime();
     float delta = (float) (currentTime - lastFrame);
-    lastFrame = getTime();
+    lastFrame = Utilities.getTime();
     return delta;
   }
   
@@ -113,14 +138,20 @@ public class ThreeDee {
      * og +Z er mot kamera.
      */
     //gluPerspective(70f, Display.getWidth() / (float)Display.getHeight(), 0.001f, 1000f);
+    projectionMatrix = LoadPerspective(fov, Display.getWidth() / (float)Display.getHeight(), zNear, zFar);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     
+    
     camera = new Camera3D (new Vector3f(0,0,-10));
+    camera.initMatrix(projectionMatrix);
     renderer = new Renderer3D();
-    lastFrame = getTime();
+    renderer.initMatrix(projectionMatrix);
+    
+    lastFrame = Utilities.getTime();
+    lastFPS = Utilities.getTime();
     //resizeGL();
     
     tm.load("characters", "rpg", 32); // spritesheet name, filename, slotSize
@@ -139,21 +170,77 @@ public class ThreeDee {
     Keyboard.destroy();
     Display.destroy();
   }
-  
+  public static enum FontSize {
+
+    Small, Medium, Large;
+  }
+
+ public void drawString(int x, int y, String string, FontSize size, Color color) {
+
+    switch (size) {
+      case Small:
+        smallFont.drawString(x, y, string, color);
+        break;
+      case Medium:
+        mediumFont.drawString(x, y, string, color);
+        break;
+      case Large:
+        bigFont.drawString(x, y, string, color);
+        break;
+      default:
+        mediumFont.drawString(x, y, string, Color.yellow);
+        break;
+    }   
+  }
+ public FloatBuffer getProjectionMatrix() {
+   FloatBuffer out = BufferUtils.createFloatBuffer(16*4);
+   projectionMatrix.store(out);
+   return (FloatBuffer) out.flip();
+ }
+ public Matrix4f LoadPerspective(float fov, float aspect, float zNear, float zFar)
+ {
+     float f = (float) (1.0f / Math.tan(Math.toRadians(fov)/2.0f));
+     Matrix4f out = new Matrix4f();
+     
+     out.m00 = f / aspect;
+     out.m01 = 0;
+     out.m02 = 0;
+     out.m03 = 0;
+     
+     out.m10 = 0;
+     out.m11 = f;
+     out.m12 = 0;
+     out.m13 = 0;
+     
+     out.m20 = 0;
+     out.m21 = 0;
+     out.m22 = zFar/(zNear-zFar);
+     out.m23 = -1.0f;
+     
+     out.m30 = 0;
+     out.m31 = 0;
+     out.m32 = zNear*zFar/(zNear-zFar);
+     out.m33 = 0;
+     return out;
+ }
   public void run() {
     while(!Display.isCloseRequested()) { //  && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)
+      
       if(Display.isVisible()) {
-        camera.controls();
+        updateFPS();
+        
+      
         // Clear for rendering
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         render();
-        renderer.flushQueue();
+        renderer.flushQueue(camera.getCameraMatrix());
         camera.update(delta); // ALWAYS LAST
+        System.out.println("FPS: " + fps);
       }
       else {
         if(Display.isDirty()) {
           render();
-          renderer.flushQueue();
+          renderer.flushQueue(camera.getCameraMatrix());
           camera.update(delta); // ALWAYS LAST
         }
         try {
@@ -162,6 +249,7 @@ public class ThreeDee {
         catch(InterruptedException ex) {
         }
       }
+      projectionMatrix = LoadPerspective(fov, Display.getWidth() / (float)Display.getHeight(), zNear, zFar);
       Display.update();
       Display.sync(60);
     }
@@ -172,9 +260,9 @@ public class ThreeDee {
     glClearColor(1,1,1,0);
     
     if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
-      cubes.add(new Cube(new Vector3f(lastPos+10,0,10), 1, 0, 1, 1, 2));
       for(int i = 0; i < lastPos/10;i++) {
-        cubes.add(new Cube(new Vector3f(lastPos+10,0,lastPos+10*i), 1, 0, 1, 1, 2));
+        cubes.add(new Cube(new Vector3f(lastPos,0,lastPos+10*i), 1, 0, 1, 1, 2));
+        cubes.add(new Cube(new Vector3f(lastPos+10*i,0,lastPos), 1, 0, 1, 1, 2));
       }
       //cubes.add(new Cube(new Vector3f(0,0,lastPos+10), lastPos*0.02f, 0, 1, 1, 2));
       lastPos += 10;
@@ -182,6 +270,7 @@ public class ThreeDee {
     for(Cube c : cubes) {
       renderer.queue(c);
     }
+    System.out.println("Cube count: " + cubes.size());
     //renderer.queue(new Quad3D(0, 0, 0, 10, 10, 10, 1, 1, 1, 1, manSprite));
 //    renderer.queue(new Cube(new Vector3f(10,0,10), 1, 0, 1, 1, 2));
 //    renderer.queue(new Cube(new Vector3f(20,00,10), 1, 0, 1, 1, 2));
