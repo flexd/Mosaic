@@ -5,8 +5,10 @@ import cognitive.graphics.Renderer3D;
 import org.cognitive.texturemanager.*;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.util.glu.GLU.gluPerspective;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +41,8 @@ public class ThreeDee {
   private Renderer3D renderer;
   public static TextureManager tm = new TextureManager();
   private Sprite manSprite;
-  
+  private ArrayList<Cube> cubes = new ArrayList<Cube>();
+  private int lastPos = 0;
   
   private long getTime() {
     return (Sys.getTime() * 1000) / Sys.getTimerResolution();
@@ -97,7 +100,25 @@ public class ThreeDee {
     Mouse.create();
 
     //OpenGL
-    camera = new Camera3D (new Vector3f(0,0,10));
+    
+    glEnable(GL_DEPTH_TEST);
+
+    //glMatrixMode(GL_PROJECTION);
+    //glLoadIdentity();
+    //glOrtho(0, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, 0, 100);
+    /*
+     * 30 FOV, 0.001f zNear, 100f zFar
+     * +X mot høyre
+     * -Y er opp.
+     * og +Z er mot kamera.
+     */
+    //gluPerspective(70f, Display.getWidth() / (float)Display.getHeight(), 0.001f, 1000f);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    
+    camera = new Camera3D (new Vector3f(0,0,-10));
     renderer = new Renderer3D();
     lastFrame = getTime();
     //resizeGL();
@@ -149,9 +170,22 @@ public class ThreeDee {
   private void render() {
     delta = getDelta();
     glClearColor(1,1,1,0);
-
+    
+    if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
+      cubes.add(new Cube(new Vector3f(lastPos+10,0,10), 1, 0, 1, 1, 2));
+      for(int i = 0; i < lastPos/10;i++) {
+        cubes.add(new Cube(new Vector3f(lastPos+10,0,lastPos+10*i), 1, 0, 1, 1, 2));
+      }
+      //cubes.add(new Cube(new Vector3f(0,0,lastPos+10), lastPos*0.02f, 0, 1, 1, 2));
+      lastPos += 10;
+    }
+    for(Cube c : cubes) {
+      renderer.queue(c);
+    }
     //renderer.queue(new Quad3D(0, 0, 0, 10, 10, 10, 1, 1, 1, 1, manSprite));
-    renderer.queue(new Cube(new Vector3f(0,0,-0), 1, 0, 0, 1, 1));
+//    renderer.queue(new Cube(new Vector3f(10,0,10), 1, 0, 1, 1, 2));
+//    renderer.queue(new Cube(new Vector3f(20,00,10), 1, 0, 1, 1, 2));
+//    renderer.queue(new Cube(new Vector3f(30,00,10), 1, 0, 1, 1, 2));
     
     lastError = glGetError();
     //System.out.println("lastError = " + lastError);

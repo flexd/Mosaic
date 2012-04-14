@@ -28,6 +28,7 @@ public class Camera3D {
    * Defines the minimum angle at which the player can look down.
    */
   public static final int maxLookDown = -85;
+  private static final float initialMovementSpeed = 4f;
   
   private static int mouseSpeed = 2;
   private static float movementSpeed = 4f;
@@ -35,22 +36,6 @@ public class Camera3D {
 
   public Camera3D(Vector3f initialPosition) {
     cameraPosition = initialPosition;
-    glEnable(GL_DEPTH_TEST);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    //glOrtho(0, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, 0, 100);
-    /*
-     * 30 FOV, 0.001f zNear, 100f zFar
-     * +X mot høyre
-     * -Y er opp.
-     * og +Z er mot kamera.
-     */
-    gluPerspective(70f, Display.getWidth() / (float)Display.getHeight(), 0.001f, 1000f);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
   }
   
   
@@ -111,10 +96,13 @@ public class Camera3D {
       cameraPosition.y += movementRate;
     }
     if (moveFaster) {
-      movementSpeed *= 2;
+      movementSpeed = 30;
+    }
+    else {
+      movementSpeed = initialMovementSpeed;
     }
     if (moveSlower) {
-      movementSpeed /= 4;
+      movementSpeed = 2;
     }
   }
   public void update(float delta) {
