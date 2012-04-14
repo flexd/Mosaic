@@ -7,6 +7,10 @@ package org.cognitive.shadermanager;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL20;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 /**
@@ -55,15 +59,34 @@ public class Shader {
     glCompileShader(fragmentShader);
 
     if (glGetShader(vertexShader, GL_COMPILE_STATUS) == GL_FALSE) {
+      int length = glGetShader(vertexShader,GL_INFO_LOG_LENGTH);
+      String log = glGetShaderInfoLog(vertexShader, length);
       System.err.println("VertexShader: " + filename + " was not compiled correctly!");
+      System.err.println(log);
+      Display.destroy();
+      System.exit(0);
     }
     if (glGetShader(fragmentShader, GL_COMPILE_STATUS) == GL_FALSE) {
+      int length = glGetShader(fragmentShader,GL_INFO_LOG_LENGTH);
+      String log = glGetShaderInfoLog(fragmentShader, length);
       System.err.println("FragmentShader: " + filename + " was not compiled correctly!");
+      System.err.println(log);
+      Display.destroy();
+      System.exit(0);
     }
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
     
     glLinkProgram(shaderProgram);
+    
+    if (glGetProgram(shaderProgram, GL_LINK_STATUS) == GL_FALSE) {
+      int length = glGetProgram(shaderProgram, GL_INFO_LOG_LENGTH);
+      String log = glGetProgramInfoLog(shaderProgram, length);
+      System.err.println("Problem linking shader!");
+      System.err.println(log);
+      Display.destroy();
+      System.exit(0);
+    }
     glValidateProgram(shaderProgram);
  
   }
@@ -77,10 +100,22 @@ public class Shader {
     glUseProgram(0);
   }
   public int uniformLocation(String name) {
-    return glGetUniformLocation(shaderProgram, name);
+    int location = glGetUniformLocation(shaderProgram, name);
+    if (location == -1) {
+      System.err.println("No such uniform: " + name);
+      Display.destroy();
+      System.exit(0);
+    }
+    return location;
   }
   public int attribLocation(String name) {
-    return glGetAttribLocation(shaderProgram, name);
+    int location = glGetAttribLocation(shaderProgram, name);
+    if (location == -1) {
+      System.err.println("No such attribute: " + name);
+      Display.destroy();
+      System.exit(0);
+    }
+    return location;
   }
   
 }

@@ -97,7 +97,7 @@ public class ThreeDee {
     Mouse.create();
 
     //OpenGL
-    camera = new Camera3D (new Vector3f(0,0,-10));
+    camera = new Camera3D (new Vector3f(0,0,10));
     renderer = new Renderer3D();
     lastFrame = getTime();
     //resizeGL();
@@ -148,11 +148,10 @@ public class ThreeDee {
 
   private void render() {
     delta = getDelta();
+    glClearColor(1,1,1,0);
 
-    //System.out.println("X: " + camera.cameraPosition.x + " Y: " + camera.cameraPosition.y + " Z: " + camera.cameraPosition.z);
-    
     //renderer.queue(new Quad3D(0, 0, 0, 10, 10, 10, 1, 1, 1, 1, manSprite));
-    renderer.queue(new Cube(new Vector3f(0,0,0), 1, 0, 0, 1, 10));
+    renderer.queue(new Cube(new Vector3f(0,0,-0), 1, 0, 0, 1, 1));
     
     lastError = glGetError();
     //System.out.println("lastError = " + lastError);

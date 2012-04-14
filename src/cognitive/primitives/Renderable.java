@@ -13,9 +13,13 @@ public class Renderable {
   private Vector4f color;
   
   public FloatBuffer getPosition() {
-    FloatBuffer out = BufferUtils.createFloatBuffer(16*4); // 4x4 matrix with floats
-    position.store(out);
+    FloatBuffer out = BufferUtils.createFloatBuffer(3*4); // 4x4 matrix with floats
+    position.store3f(out);
     return out;
+  }
+  
+  public Vector3f getVectorPos() {
+    return new Vector3f(position.m00, position.m12, position.m33); 
   }
   public Renderable (Vector3f pos,float r, float g, float b, float a, float size) {
     position = new Matrix4f();
@@ -28,6 +32,7 @@ public class Renderable {
       return vertices;
     }
     else {
+      System.err.println("No vertices! :-(");
       return new float[0]; // Empty!
     }
   }

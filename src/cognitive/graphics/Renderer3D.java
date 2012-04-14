@@ -14,6 +14,7 @@ import entities.Quad3D;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import java.nio.FloatBuffer;
@@ -35,6 +36,8 @@ public class Renderer3D {
   private Texture tex;
   private int lastError = 0;
   private Shader texShader;
+  private static final int FLOAT_SIZE = 4;
+  private static int frameCount = 0;
   
   public Renderer3D() {
     vboHandle = glGenBuffers();
@@ -51,53 +54,70 @@ public class Renderer3D {
     if (renderQueue.isEmpty()) {
       return;
     }
+    glBindAttribLocation(texShader.getProgram(), 0, "in_vertex");
+
+    //System.err.println("lastGL error: " + glGetError());
+    //System.out.println("This is frame: " + frameCount);
+    glDisable(GL_CULL_FACE);
     texShader.use();
     
-    FloatBuffer vertexData = BufferUtils.createFloatBuffer(getQueue().size() * (3*4*100));
-    FloatBuffer vexPosition = null;
-    Vector4f color = null;
-    for (Renderable v : getQueue()) {
-      if (v == null) { System.err.println("Renderable is null"); }
-      vertexData.put(v.getVertices());
-      vexPosition = v.getPosition();
-      color = v.getColor();
+    for(Renderable r : getQueue()) {
+      glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
+      float[] vertices = r.getVertices();
+//      System.out.println("Vertices begin:");
+      FloatBuffer vertexData = BufferUtils.createFloatBuffer(vertices.length*FLOAT_SIZE); // 36*4  floats (3 vertices* vertices
+      for(int i = 0; i < vertices.length/3;i++) {
+//        System.out.println("Rendering vertex " + i + " : " + vertices[i*3] + ", " + vertices[i*3+1] + ", " + vertices[i*3+2] );
+        vertexData.put(new float[]{vertices[i*3], vertices[i*3+1], vertices[i*3+2]});
+      }
+//      System.out.println("Vertices end.");
+      
+      FloatBuffer positionData = BufferUtils.createFloatBuffer(3*FLOAT_SIZE); // 3 floats
+      FloatBuffer colorData = BufferUtils.createFloatBuffer(4*FLOAT_SIZE); // rgba
+      
+      
+      vertexData.flip();
+      Vector3f pos = r.getVectorPos();
+//      positionData.put(r.getPosition());
+//      positionData.flip();
+//      colorData.put(r.getColor());
+//      colorData.flip();
+      Vector4f color = r.getColor();
+      
+//      System.out.println("There should be a triangle at: " + pos + ", with the color: " + color);
+      glUniform3f(texShader.uniformLocation("in_position"), pos.x, pos.y, pos.z); 
+      glUniform4f(texShader.uniformLocation("in_color"), color.x, color.y, color.z, color.w); 
+      
+
+      glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
+
+      
+      final int stride = (0 /* vertex Size */) * FLOAT_SIZE;
+
+      
+
+      int in_vertexLocation = texShader.attribLocation("in_vertex");
+      glEnableVertexAttribArray(in_vertexLocation);
+
+      glVertexAttribPointer(in_vertexLocation, 3, GL_FLOAT, false, stride, 0);
+      
+      
+      glDrawArrays(GL_TRIANGLES, 0, renderQueue.size());
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
+      glDisableVertexAttribArray(in_vertexLocation);
     }
-    vertexData.flip();
-    
-//    if (tex != null) { 
-//      glActiveTexture(GL_TEXTURE0);
-//      glBindTexture(GL_TEXTURE_2D, tex.getTextureID());
-//      glUniform1i(texShader.uniformLocation("mytex"), 0);
-//    }
-
-    glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
-    
-    glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
-    
-    
-    final int FLOAT_SIZE = 4;
-    final int stride = (  3 /* vertex Size */ ) * FLOAT_SIZE;
-    
-    glBindAttribLocation(texShader.getProgram(), 0, "vertex");
-    glUniformMatrix4(texShader.uniformLocation("position"), false, vexPosition); 
-    
-    glUniform4f(texShader.uniformLocation("color"), color.x, color.y, color.z, color.w);
-    
-    glEnableVertexAttribArray(texShader.attribLocation("vertex"));
-
-    glVertexAttribPointer(texShader.attribLocation("vertex"), 2, GL_FLOAT, false, stride, 0);
-    
-    glDrawArrays(GL_TRIANGLES, 0, renderQueue.size());
-   
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
     
     texShader.stop();
     renderQueue.clear();
     lastError = glGetError();
     if (lastError != GL_NO_ERROR) System.out.println("GL error: " + lastError);
+    frameCount++;
   }
 
+  //
+//
+//glUniform4f(texShader.uniformLocation("color"), color.x, color.y, color.z, color.w);
+//
   public void queue(Renderable[] vs) {
 
     for (Renderable v : vs) {
