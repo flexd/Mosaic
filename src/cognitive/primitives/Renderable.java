@@ -13,8 +13,8 @@ public class Renderable {
   private Vector4f color;
   
   public FloatBuffer getPosition() {
-    FloatBuffer out = BufferUtils.createFloatBuffer(3*4); // 4x4 matrix with floats
-    position.store3f(out);
+    FloatBuffer out = BufferUtils.createFloatBuffer(16*4); // 4x4 matrix with floats
+    position.store(out);
     return out;
   }
   

@@ -1,5 +1,7 @@
-uniform vec3 in_position;
+#version 120
+uniform mat4 in_position;
 uniform vec4 in_color;
+uniform mat4 projectionMatrix;
 attribute vec3 in_vertex;
 
 vec4 out_position;
@@ -9,6 +11,6 @@ varying vec4 out_color;
 void main()
 {
   out_color = in_color;
-  out_position = vec4(in_position + in_vertex, 1.0); // Add position to the vertex, and scale it?
-  gl_Position = gl_ProjectionMatrix * gl_ModelViewMatrix * out_position;
+  out_position = in_position * vec4(in_vertex, 1.0); // Add position to the vertex, and scale it?
+  gl_Position = projectionMatrix * gl_ModelViewMatrix * out_position;
 }
