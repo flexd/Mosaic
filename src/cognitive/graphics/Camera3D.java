@@ -119,7 +119,8 @@ public class Camera3D {
   }
   public void update(float delta) {
 	this.delta = delta;
-    //System.out.println("Camera: " + cameraPosition.x +", "+cameraPosition.y + ", " +cameraPosition.z);
+//    System.out.println("Camera: X: " + cameraPosition.x + " Y: " + cameraPosition.y + " Z: " + cameraPosition.z);
+//    System.out.println("Rotation: X: " + cameraRotation.x + " Y: " + cameraRotation.y + " Z: " + cameraRotation.z);
     glLoadIdentity();
     
     GL11.glRotatef(cameraRotation.x, 1.0f, 0.0f, 0.0f); // Rotate around X-axis

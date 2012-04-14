@@ -58,18 +58,19 @@ public class Renderer3D {
 
     //System.err.println("lastGL error: " + glGetError());
     //System.out.println("This is frame: " + frameCount);
+    glDisable(GL_CULL_FACE);
     texShader.use();
     
     for(Renderable r : getQueue()) {
       glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
       float[] vertices = r.getVertices();
-      System.out.println("Vertices begin:");
+//      System.out.println("Vertices begin:");
       FloatBuffer vertexData = BufferUtils.createFloatBuffer(vertices.length*FLOAT_SIZE); // 36*4  floats (3 vertices* vertices
       for(int i = 0; i < vertices.length/3;i++) {
-        System.out.println("Rendering vertex " + i + " : " + vertices[i*3] + ", " + vertices[i*3+1] + ", " + vertices[i*3+2] );
+//        System.out.println("Rendering vertex " + i + " : " + vertices[i*3] + ", " + vertices[i*3+1] + ", " + vertices[i*3+2] );
         vertexData.put(new float[]{vertices[i*3], vertices[i*3+1], vertices[i*3+2]});
       }
-      System.out.println("Vertices end.");
+//      System.out.println("Vertices end.");
       
       FloatBuffer positionData = BufferUtils.createFloatBuffer(3*FLOAT_SIZE); // 3 floats
       FloatBuffer colorData = BufferUtils.createFloatBuffer(4*FLOAT_SIZE); // rgba
@@ -83,7 +84,7 @@ public class Renderer3D {
 //      colorData.flip();
       Vector4f color = r.getColor();
       
-      System.out.println("There should be a triangle at: " + pos + ", with the color: " + color);
+//      System.out.println("There should be a triangle at: " + pos + ", with the color: " + color);
       glUniform3f(texShader.uniformLocation("in_position"), pos.x, pos.y, pos.z); 
       glUniform4f(texShader.uniformLocation("in_color"), color.x, color.y, color.z, color.w); 
       
@@ -91,7 +92,7 @@ public class Renderer3D {
       glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
 
       
-      final int stride = (3 /* vertex Size */) * FLOAT_SIZE;
+      final int stride = (0 /* vertex Size */) * FLOAT_SIZE;
 
       
 
