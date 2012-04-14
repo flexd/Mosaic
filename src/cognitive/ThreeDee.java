@@ -7,6 +7,7 @@ import org.cognitive.texturemanager.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
 
+import java.awt.Font;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.FileHandler;
@@ -20,6 +21,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.UnicodeFont;
 
 import entities.Cube;
 import entities.Quad3D;
@@ -44,14 +47,27 @@ public class ThreeDee {
   private ArrayList<Cube> cubes = new ArrayList<Cube>();
   private int lastPos = 0;
   
-  private long getTime() {
-    return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+  private int fps = 0;
+  private long lastFPS = 0;
+
+  private int fpsCounter = 0;
+  private static org.newdawn.slick.Font bigFont = new UnicodeFont(new Font("Georgia", 1, 20));
+  private static org.newdawn.slick.Font mediumFont = new UnicodeFont(new Font("Georgia", 1, 16));
+  private static org.newdawn.slick.Font smallFont = new UnicodeFont(new Font("Georgia", 1, 10));
+  
+  public void updateFPS() {
+    if (Utilities.getTime() - lastFPS > 1000) {
+      fps = fpsCounter;
+      fpsCounter = 0;
+      lastFPS += 1000;
+    }
+    fpsCounter++;
   }
   
   private float getDelta() {
-    long currentTime = getTime();
+    long currentTime = Utilities.getTime();
     float delta = (float) (currentTime - lastFrame);
-    lastFrame = getTime();
+    lastFrame = Utilities.getTime();
     return delta;
   }
   
@@ -120,7 +136,8 @@ public class ThreeDee {
     
     camera = new Camera3D (new Vector3f(0,0,-10));
     renderer = new Renderer3D();
-    lastFrame = getTime();
+    lastFrame = Utilities.getTime();
+    lastFPS = Utilities.getTime();
     //resizeGL();
     
     tm.load("characters", "rpg", 32); // spritesheet name, filename, slotSize
@@ -139,16 +156,39 @@ public class ThreeDee {
     Keyboard.destroy();
     Display.destroy();
   }
-  
+  public static enum FontSize {
+
+    Small, Medium, Large;
+  }
+
+ public void drawString(int x, int y, String string, FontSize size, Color color) {
+
+    switch (size) {
+      case Small:
+        smallFont.drawString(x, y, string, color);
+        break;
+      case Medium:
+        mediumFont.drawString(x, y, string, color);
+        break;
+      case Large:
+        bigFont.drawString(x, y, string, color);
+        break;
+      default:
+        mediumFont.drawString(x, y, string, Color.yellow);
+        break;
+    }   
+  }
   public void run() {
     while(!Display.isCloseRequested()) { //  && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)
       if(Display.isVisible()) {
+        updateFPS();
         camera.controls();
         // Clear for rendering
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         render();
         renderer.flushQueue();
         camera.update(delta); // ALWAYS LAST
+        System.out.println("FPS: " + fps);
       }
       else {
         if(Display.isDirty()) {
@@ -172,9 +212,9 @@ public class ThreeDee {
     glClearColor(1,1,1,0);
     
     if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
-      cubes.add(new Cube(new Vector3f(lastPos+10,0,10), 1, 0, 1, 1, 2));
       for(int i = 0; i < lastPos/10;i++) {
-        cubes.add(new Cube(new Vector3f(lastPos+10,0,lastPos+10*i), 1, 0, 1, 1, 2));
+        cubes.add(new Cube(new Vector3f(lastPos,0,lastPos+10*i), 1, 0, 1, 1, 2));
+        cubes.add(new Cube(new Vector3f(lastPos+10*i,0,lastPos), 1, 0, 1, 1, 2));
       }
       //cubes.add(new Cube(new Vector3f(0,0,lastPos+10), lastPos*0.02f, 0, 1, 1, 2));
       lastPos += 10;
@@ -182,6 +222,7 @@ public class ThreeDee {
     for(Cube c : cubes) {
       renderer.queue(c);
     }
+    System.out.println("Cube count: " + cubes.size());
     //renderer.queue(new Quad3D(0, 0, 0, 10, 10, 10, 1, 1, 1, 1, manSprite));
 //    renderer.queue(new Cube(new Vector3f(10,0,10), 1, 0, 1, 1, 2));
 //    renderer.queue(new Cube(new Vector3f(20,00,10), 1, 0, 1, 1, 2));

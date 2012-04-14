@@ -94,13 +94,13 @@ public class Renderer3D {
 
     //System.err.println("lastGL error: " + glGetError());
     //System.out.println("This is frame: " + frameCount);
-    glDisable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     texShader.use();
-    
+    float[] vertices;
     for(Renderable r : getQueue()) {
       glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
       int indiceCount = 0;
-      float[] vertices = r.getVertices();
+       vertices = r.getVertices();
 //      System.out.println("Vertices begin:");
       FloatBuffer vertexData = BufferUtils.createFloatBuffer(vertices.length*FLOAT_SIZE); // 36*4  floats (3 vertices* vertices
       for(int i = 0; i < vertices.length/3;i++) {

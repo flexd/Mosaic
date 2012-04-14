@@ -109,10 +109,7 @@ public class Graphics {
       default:
         mediumFont.drawString(x, y, string, Color.yellow);
         break;
-    }
- 
-
-   
+    }   
   }
   //</editor-fold>
   //<editor-fold defaultstate="collapsed" desc="various drawing methods">

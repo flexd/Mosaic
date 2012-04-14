@@ -12,5 +12,5 @@ void main()
 {
   out_color = in_color;
   out_position = in_position * vec4(in_vertex, 1.0); // Add position to the vertex, and scale it?
-  gl_Position = projectionMatrix * gl_ModelViewMatrix * out_position;
+  gl_Position = projectionMatrix  * out_position;
 }
