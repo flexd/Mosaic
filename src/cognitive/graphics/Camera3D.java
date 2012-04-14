@@ -46,7 +46,7 @@ public class Camera3D {
      * -Y er opp.
      * og +Z er mot kamera.
      */
-    gluPerspective(70f, Display.getWidth() / (float)Display.getHeight(), 0.001f, 100f);
+    gluPerspective(70f, Display.getWidth() / (float)Display.getHeight(), 0.001f, 1000f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     
