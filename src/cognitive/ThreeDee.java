@@ -33,7 +33,7 @@ import entities.Quad3D;
 
 
 public class ThreeDee {
-  private static final float zFar = 1000f;
+  private static final float zFar = 200f;
   private static final float zNear = 0.002f;
   private static final float fov = 70f;
   public static final int DISPLAY_HEIGHT = 600;
