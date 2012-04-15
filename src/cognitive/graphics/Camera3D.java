@@ -108,20 +108,17 @@ public class Camera3D {
       movementSpeed = 2;
     }
 //    System.out.println("Camera: X: " + cameraPosition.x + " Y: " + cameraPosition.y + " Z: " + cameraPosition.z);
-//    System.out.println("Rotation: X: " + cameraRotation.x + " Y: " + cameraRotation.y + " Z: " + cameraRotation.z);
+     System.out.println("Rotation: X: " + cameraRotation.x + " Y: " + cameraRotation.y + " Z: " + cameraRotation.z);
     //glLoadIdentity();
     //
     
     cameraMatrix = new Matrix4f(projectionMatrix); // Reset!
     
-//    cameraRotation.x = (float)Math.toRadians(cameraRotation.x);
-//    cameraRotation.y = (float)Math.toRadians(cameraRotation.y);
-//    cameraRotation.z = (float)Math.toRadians(cameraRotation.z);
  //   cameraRotation.y *= Math.PI*180.0;
 //    cameraRotation.z *= Math.PI*180.0;
-    cameraMatrix.rotate(cameraRotation.x, new Vector3f(1.0f, 0.0f, 0.0f));
-    cameraMatrix.rotate(cameraRotation.y, new Vector3f(0.0f, 1.0f, 0.0f));
-    cameraMatrix.rotate(cameraRotation.z, new Vector3f(0.0f, 0.0f, 1.0f));
+    cameraMatrix.rotate((float)Math.toRadians(cameraRotation.x), new Vector3f(1.0f, 0.0f, 0.0f));
+    cameraMatrix.rotate((float)Math.toRadians(cameraRotation.y), new Vector3f(0.0f, 1.0f, 0.0f));
+    cameraMatrix.rotate((float)Math.toRadians(cameraRotation.z), new Vector3f(0.0f, 0.0f, 1.0f));
 //    GL11.glRotatef(cameraRotation.x, 1.0f, 0.0f, 0.0f); // Rotate around X-axis
 //    GL11.glRotatef(cameraRotation.y, 0.0f, 1.0f, 0.0f); // Rotate around Y-axis.
 //    GL11.glRotatef(cameraRotation.z, 0.0f, 0.0f, 1.0f); // Rotate around Z-axis
