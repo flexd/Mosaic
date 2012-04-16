@@ -34,7 +34,7 @@ import cognitive.primitives.Cube;
 import cognitive.primitives.Plane;
 
 
-public class ThreeDee {
+public class Game {
   private static final float zFar = 1000f;
   private static final float zNear = 0.002f;
   private static final float fov = 70f;
@@ -44,7 +44,7 @@ public class ThreeDee {
   public static final int WORLD_WIDTH = 10;
   public static final int WORLD_HEIGHT = 10;
   public static final int WORLD_DEPTH = 10;
-  public static final Logger LOGGER = Logger.getLogger(ThreeDee.class.getName());
+  public static final Logger LOGGER = Logger.getLogger(Game.class.getName());
   private int lastError = 0;
   
   private long lastFrame;
@@ -92,9 +92,9 @@ public class ThreeDee {
   }
 
   public static void main(String[] args) {
-    ThreeDee mainWindow = null;
+    Game mainWindow = null;
     try {
-      mainWindow = new ThreeDee();
+      mainWindow = new Game();
       mainWindow.create();
       mainWindow.run();
     }
@@ -108,7 +108,7 @@ public class ThreeDee {
     }
   }
 
-  public ThreeDee() {
+  public Game() {
 
   }
 
