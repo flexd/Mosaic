@@ -34,8 +34,8 @@ public class Camera3D {
   private static int mouseSpeed = 2;
   private static float movementSpeed = 4f;
   private float delta = 0;
-  private Matrix4f projectionMatrix;
-  private Matrix4f cameraMatrix;
+  private Matrix4f projectionMatrix = new Matrix4f();
+  private Matrix4f cameraMatrix = new Matrix4f();
 
   public Camera3D(Vector3f initialPosition) {
     cameraPosition = initialPosition;

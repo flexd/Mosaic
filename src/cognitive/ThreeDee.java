@@ -139,10 +139,10 @@ public class ThreeDee {
      */
     //gluPerspective(70f, Display.getWidth() / (float)Display.getHeight(), 0.001f, 1000f);
     projectionMatrix = LoadPerspective(fov, Display.getWidth() / (float)Display.getHeight(), zNear, zFar);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
     
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+//    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     
     
     camera = new Camera3D (new Vector3f(0,0,-10));
@@ -154,14 +154,14 @@ public class ThreeDee {
     lastFPS = Utilities.getTime();
     //resizeGL();
     
-    tm.load("characters", "rpg", 32); // spritesheet name, filename, slotSize
-    tm.load("world", "default", 32); // spritesheet name, filename, slotSize
-    tm.load("hero", "generichero-blackblue", 32); // spritesheet name, filename, slotSize
-    tm.define("characters", "player",0,0); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
-    tm.define("hero", "hero", 0, 0 ); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
-    tm.define("world", "tile0", 2,3);
+//    tm.load("crate", "crate", 256); // spritesheet name, filename, slotSize
+//    tm.load("world", "default", 32); // spritesheet name, filename, slotSize
+//    tm.load("hero", "generichero-blackblue", 32); // spritesheet name, filename, slotSize
+//    tm.define("characters", "player",0,0); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
+//    tm.define("hero", "hero", 0, 0 ); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
+//    tm.define("crate", "crate", 0,0);
     
-    manSprite = tm.getSpriteByName("tile0");
+//    manSprite = tm.getSpriteByName("crate");
   }
 
   public void destroy() {
@@ -259,14 +259,37 @@ public class ThreeDee {
     delta = getDelta();
     glClearColor(1,1,1,0);
     
-    if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
-      for(int i = 0; i < lastPos/10;i++) {
-        cubes.add(new Cube(new Vector3f(lastPos,0,lastPos+10*i), 1, 0, 1, 1, 2));
-        cubes.add(new Cube(new Vector3f(lastPos+10*i,0,lastPos), 1, 0, 1, 1, 2));
+//    if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
+//      amountofRows++;
+//    }
+//      for(int i = 0; i < lastPos/10;i++) {
+//        for (int y = 0; y < lastPos/10;y++) {
+//          cubes.add(new Cube(new Vector3f(lastPos+10*y,0,i*10), 1, 0, 1, 1, 2));
+//          cubes.add(new Cube(new Vector3f(10*i,0,lastPos+10*y), 1, 0, 1, 1, 2));
+//        }
+//        
+//        //cubes.add(new Cube(new Vector3f(lastPos+10*i,0,lastPos), 1, 0, 1, 1, 2));
+//      }
+//      //cubes.add(new Cube(new Vector3f(0,0,lastPos+10), lastPos*0.02f, 0, 1, 1, 2));
+//      lastPos += 10;
+      for(int i = 0; i < 10;i++) {
+        for (int y = 0; y < 10;y++) {
+          Cube cube = new Cube(new Vector3f(i*10,y*10,0), 1, 0, 1, 1, 2);
+          renderer.queue(cube);
+        }
+        for (int y = 0; y < 10;y++) {
+          Cube cube = new Cube(new Vector3f(i*10,0,y*10), 1, 0, 1, 1, 2);
+          renderer.queue(cube);
+          for (int z = 0; z < 10;z++) {
+            Cube cube2 = new Cube(new Vector3f(i*10,y*10,z*10), 1, 0, 1, 1, 2);
+            renderer.queue(cube2);
+          }
+        }
+        Cube cube = new Cube(new Vector3f(i*10,0,0), 1, 0, 1, 1, 2);
+        
+        renderer.queue(cube);
+        
       }
-      //cubes.add(new Cube(new Vector3f(0,0,lastPos+10), lastPos*0.02f, 0, 1, 1, 2));
-      lastPos += 10;
-    }
     for(Cube c : cubes) {
       renderer.queue(c);
     }
