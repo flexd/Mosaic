@@ -4,8 +4,9 @@ package cognitive;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.cognitive.texturemanager.Sprite;
-import org.cognitive.texturemanager.SpriteSheet;
+
+import cognitive.graphics.texturemanager.Sprite;
+import cognitive.graphics.texturemanager.SpriteSheet;
 
 /**
  *

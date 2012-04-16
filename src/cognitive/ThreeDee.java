@@ -1,11 +1,12 @@
 package cognitive;
 
-import cognitive.graphics.Camera3D;
-import cognitive.graphics.Renderer3D;
-import org.cognitive.texturemanager.*;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.gluPerspective;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glGetError;
 
 import java.awt.Font;
 import java.io.IOException;
@@ -17,19 +18,20 @@ import java.util.logging.Logger;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.UnicodeFont;
 
-import entities.Cube;
-import entities.Quad3D;
+import cognitive.graphics.Camera3D;
+import cognitive.graphics.Renderer3D;
+import cognitive.graphics.texturemanager.Sprite;
+import cognitive.primitives.Cube;
+import cognitive.primitives.Plane;
 
 
 public class ThreeDee {
@@ -272,6 +274,7 @@ public class ThreeDee {
 //      }
 //      //cubes.add(new Cube(new Vector3f(0,0,lastPos+10), lastPos*0.02f, 0, 1, 1, 2));
 //      lastPos += 10;
+//      renderer.queue(new Plane(new Vector3f(), 1, 0, 0, 1, 100, 100));
       for(int i = 0; i < 10;i++) {
         for (int y = 0; y < 10;y++) {
           Cube cube = new Cube(new Vector3f(i*10,y*10,0), 1, 0, 1, 1, 2);
