@@ -4,31 +4,35 @@
  */
 package cognitive.graphics;
 
-import cognitive.Window;
-import cognitive.primitives.Renderable;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glGetError;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL20.glBindAttribLocation;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glUniform4f;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
-import org.newdawn.slick.opengl.Texture;
-import org.cognitive.shadermanager.Shader;
-import entities.Quad3D;
-
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL12;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
-
-import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
 
-import org.newdawn.slick.Color;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
-import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.*;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector4f;
+import org.newdawn.slick.opengl.Texture;
+
+import cognitive.graphics.shadermanager.Shader;
+import cognitive.primitives.Renderable;
 /**
  *
  * @author kristoffer
@@ -76,6 +80,11 @@ public class Renderer3D {
       int indiceCount = 0;
        vertices = r.getVertices();
 //      System.out.println("Vertices begin:");
+      if (vertices == null) {
+        System.err.println("There's no vertices in this, this is BAD!");
+        renderQueue.clear();
+        return;
+      }
       FloatBuffer vertexData = BufferUtils.createFloatBuffer(vertices.length*FLOAT_SIZE); // 36*4  floats (3 vertices* vertices
       for(int i = 0; i < vertices.length/3;i++) {
 //        System.out.println("Rendering vertex " + i + " : " + vertices[i*3] + ", " + vertices[i*3+1] + ", " + vertices[i*3+2] );

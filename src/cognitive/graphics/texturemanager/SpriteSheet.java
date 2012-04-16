@@ -1,11 +1,12 @@
 /*
  */
-package org.cognitive.texturemanager;
+package cognitive.graphics.texturemanager;
 
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import cognitive.Window;
+
+import cognitive.ThreeDee;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -35,7 +36,7 @@ public class SpriteSheet {
       Texture texture = TextureLoader.getTexture("PNG", getClass().getResourceAsStream("/res/" + textureName + ".png"));
       return texture;
     } catch (IOException ex) {
-      Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(ThreeDee.class.getName()).log(Level.SEVERE, null, ex);
     }
     return null;
   }

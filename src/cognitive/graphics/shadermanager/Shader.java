@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cognitive.shadermanager;
+package cognitive.graphics.shadermanager;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -28,7 +28,7 @@ public class Shader {
     shaderProgram = glCreateProgram();
     
     try {
-      BufferedReader reader = new BufferedReader(new FileReader("src/shaders/"+filename+".vs"));
+      BufferedReader reader = new BufferedReader(new FileReader("src/cognitive/graphics/shaders/"+filename+".vs"));
       String line = "";
       while ((line = reader.readLine()) != null) {
         vertexShaderSource.append(line).append("\n");
@@ -39,7 +39,7 @@ public class Shader {
       System.err.println("VertexShader: " + filename + " was not loaded!");
     }
     try {
-      BufferedReader reader = new BufferedReader(new FileReader("src/shaders/"+filename+".fs"));
+      BufferedReader reader = new BufferedReader(new FileReader("src/cognitive/graphics/shaders/"+filename+".fs"));
       String line = "";
       while ((line = reader.readLine()) != null) {
         fragmentShaderSource.append(line).append("\n");

@@ -1,9 +1,12 @@
 /*
  */
-package org.cognitive.texturemanager;
+package cognitive.graphics.texturemanager;
 
 import java.util.ArrayList;
+
 import org.newdawn.slick.opengl.Texture;
+
+import cognitive.graphics.texturemanager.SpriteSheet;
 
 /**
  *

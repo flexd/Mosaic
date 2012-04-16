@@ -1,13 +1,13 @@
-package entities;
+package cognitive.primitives;
 
 import org.lwjgl.util.vector.Vector3f;
 
 import cognitive.primitives.Renderable;
 
-public class Cube extends Renderable {
+public class Plane extends Renderable {
   
-  public Cube(Vector3f pos, float r, float g, float b, float a, float size) {
-    super(pos, r, g, b, a, size);
+  public Plane(Vector3f pos, float r, float g, float b, float a, float width, float depth) {
+    super(pos, r, g, b, a, width, 1, depth);
   }
   private final float vertices[] = {
     -1.0f,-1.0f,-1.0f, // triangle 1 : begin
@@ -47,8 +47,6 @@ public class Cube extends Renderable {
     -1.0f, 1.0f, 1.0f,
     1.0f,-1.0f, 1.0f
   };
-  public float[] getVertices() {
-    return vertices;
-  }
+  
   
 }
