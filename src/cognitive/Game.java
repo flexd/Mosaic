@@ -3,10 +3,7 @@ package cognitive;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glGetError;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Font;
 import java.io.IOException;
@@ -129,24 +126,15 @@ public class Game {
     //OpenGL
     
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL11.GL_LIGHTING);
-    //glMatrixMode(GL_PROJECTION);
-    //glLoadIdentity();
-    //glOrtho(0, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, 0, 100);
+    //glEnable(GL_LIGHTING);
     /*
-     * 30 FOV, 0.001f zNear, 100f zFar
-     * +X mot h√∏yre
+     * 70 FOV, 0.001f zNear, 200f zFar
+     * +X mot høyre
      * -Y er opp.
      * og +Z er mot kamera.
      */
-    //gluPerspective(70f, Display.getWidth() / (float)Display.getHeight(), 0.001f, 1000f);
     projectionMatrix = LoadPerspective(fov, Display.getWidth() / (float)Display.getHeight(), zNear, zFar);
-//    glMatrixMode(GL_MODELVIEW);
-//    glLoadIdentity();
-    
-//    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-    
-    
+        
     camera = new Camera3D (new Vector3f(0,0,-10));
     camera.initMatrix(projectionMatrix);
     renderer = new Renderer3D();
@@ -156,14 +144,6 @@ public class Game {
     lastFPS = Utilities.getTime();
     //resizeGL();
     
-//    tm.load("crate", "crate", 256); // spritesheet name, filename, slotSize
-//    tm.load("world", "default", 32); // spritesheet name, filename, slotSize
-//    tm.load("hero", "generichero-blackblue", 32); // spritesheet name, filename, slotSize
-//    tm.define("characters", "player",0,0); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
-//    tm.define("hero", "hero", 0, 0 ); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
-//    tm.define("crate", "crate", 0,0);
-    
-//    manSprite = tm.getSpriteByName("crate");
   }
 
   public void destroy() {
