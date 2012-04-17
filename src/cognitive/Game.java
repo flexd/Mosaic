@@ -26,7 +26,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.UnicodeFont;
 
 import cognitive.graphics.Camera3D;
-import cognitive.graphics.Renderer3D;
+import cognitive.graphics.CubeRenderer;
 import cognitive.graphics.texturemanager.TextureManager;
 import cognitive.primitives.Cube;
 import cognitive.primitives.Plane;
@@ -48,7 +48,7 @@ public class Game {
   private long lastFrame;
   private float delta = 0;
   private Camera3D camera;
-  private Renderer3D renderer;
+  private CubeRenderer renderer;
   public static TextureManager tm = new TextureManager("assets/");
   private ArrayList<Cube> cubes = new ArrayList<Cube>();
   private int lastPos = 0;
@@ -137,7 +137,7 @@ public class Game {
         
     camera = new Camera3D (new Vector3f(0,0,-10));
     camera.initMatrix(projectionMatrix);
-    renderer = new Renderer3D();
+    renderer = new CubeRenderer();
     renderer.initMatrix(projectionMatrix);
     
     lastFrame = Utilities.getTime();
@@ -241,9 +241,10 @@ public class Game {
     delta = getDelta();
     glClearColor(1,1,1,0);
     
-//    if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
-//      amountofRows++;
-//    }
+    if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
+      cubes.add(new Cube(new Vector3f(lastPos+10,0,lastPos), 1, 0, 1, 1, 2));
+      lastPos++;
+    }
 //      for(int i = 0; i < lastPos/10;i++) {
 //        for (int y = 0; y < lastPos/10;y++) {
 //          cubes.add(new Cube(new Vector3f(lastPos+10*y,0,i*10), 1, 0, 1, 1, 2));
@@ -255,24 +256,24 @@ public class Game {
 //      //cubes.add(new Cube(new Vector3f(0,0,lastPos+10), lastPos*0.02f, 0, 1, 1, 2));
 //      lastPos += 10;
       //renderer.queue(new Plane(new Vector3f(0,-3,0), 0.2f, 0.2f, 0.3f, 1, 100, 100));
-      for(int i = 0; i < 10;i++) {
-        for (int y = 0; y < 10;y++) {
-          Cube cube = new Cube(new Vector3f(i*10,y*10,0), 1, 0, 1, 1, 2);
-          renderer.queue(cube);
-        }
-        for (int y = 0; y < 10;y++) {
-          Cube cube = new Cube(new Vector3f(i*10,0,y*10), 1, 0, 1, 1, 2);
-          renderer.queue(cube);
-          for (int z = 0; z < 10;z++) {
-            Cube cube2 = new Cube(new Vector3f(i*10,y*10,z*10), 1, 0, 1, 1, 2);
-            renderer.queue(cube2);
-          }
-        }
-        Cube cube = new Cube(new Vector3f(i*10,0,0), 1, 0, 1, 1, 2);
-        
-        renderer.queue(cube);
-        
-      }
+//      for(int i = 0; i < 10;i++) {
+//        for (int y = 0; y < 10;y++) {
+//          Cube cube = new Cube(new Vector3f(i*10,y*10,0), 1, 0, 1, 1, 2);
+//          renderer.queue(cube);
+//        }
+//        for (int y = 0; y < 10;y++) {
+//          Cube cube = new Cube(new Vector3f(i*10,0,y*10), 1, 0, 1, 1, 2);
+//          renderer.queue(cube);
+//          for (int z = 0; z < 10;z++) {
+//            Cube cube2 = new Cube(new Vector3f(i*10,y*10,z*10), 1, 0, 1, 1, 2);
+//            renderer.queue(cube2);
+//          }
+//        }
+//        Cube cube = new Cube(new Vector3f(i*10,0,0), 1, 0, 1, 1, 2);
+//        
+//        renderer.queue(cube);
+//        
+//      }
     for(Cube c : cubes) {
       renderer.queue(c);
     }

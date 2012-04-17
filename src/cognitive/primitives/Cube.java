@@ -133,7 +133,6 @@ public class Cube extends Renderable {
     -1.0f,-1.0f, 1.0f,
     1.0f,-1.0f, 1.0f,
     //NORMAL: (0, 0, 1)
-    
     1.0f, 1.0f, 1.0f,
     -1.0f, 1.0f, 1.0f,
     1.0f,-1.0f, 1.0f

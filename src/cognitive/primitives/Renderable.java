@@ -23,8 +23,8 @@ public abstract class Renderable {
     return position;
   }
   
-  public Vector3f getVectorPos() {
-    return new Vector3f(position.m00, position.m12, position.m33); 
+  public float[] getVectorPos() {
+    return new float[]{position.m00, position.m12, position.m33}; 
   }
   public Renderable (Vector3f pos,float r, float g, float b, float a, float width, float height, float depth) {
     position = new Matrix4f();
