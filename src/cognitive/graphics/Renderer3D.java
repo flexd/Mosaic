@@ -53,7 +53,7 @@ public class Renderer3D {
   
   public Renderer3D() {
     vboHandle = glGenBuffers();
-    texShader = new Shader("texture3D");
+    texShader = new Shader("lighting");
   }
   public void queue(Renderable vertex) {
     renderQueue.add(vertex);
@@ -75,22 +75,30 @@ public class Renderer3D {
     glEnable(GL_CULL_FACE);
     texShader.use();
     float[] vertices;
+    float[] normals;
     for(Renderable r : getQueue()) {
       glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
       int indiceCount = 0;
        vertices = r.getVertices();
+       normals = r.getNormals();
 //      System.out.println("Vertices begin:");
       if (vertices == null) {
         System.err.println("There's no vertices in this, this is BAD!");
         renderQueue.clear();
         return;
       }
-      FloatBuffer vertexData = BufferUtils.createFloatBuffer(vertices.length*FLOAT_SIZE); // 36*4  floats (3 vertices* vertices
-      for(int i = 0; i < vertices.length/3;i++) {
-//        System.out.println("Rendering vertex " + i + " : " + vertices[i*3] + ", " + vertices[i*3+1] + ", " + vertices[i*3+2] );
-        vertexData.put(new float[]{vertices[i*3], vertices[i*3+1], vertices[i*3+2]});
-        indiceCount +=3;
+      if (normals == null) {
+        System.err.println("There's no normals in this, this is BAD!");
+        renderQueue.clear();
+        return;
       }
+      FloatBuffer vertexData = BufferUtils.createFloatBuffer(vertices.length+normals.length*FLOAT_SIZE); // 36*4  floats (3 vertices* vertices
+      for(int i = 0; i < vertices.length/3;i++) {
+        int y = i/3;
+        vertexData.put(new float[]{vertices[i*3], vertices[i*3+1], vertices[i*3+2], normals[y], normals[y+1], normals[y+2]});
+        indiceCount += 6;
+      }
+//    System.out.println("Rendering vertex " + i + " : " + vertices[i*3] + ", " + vertices[i*3+1] + ", " + vertices[i*3+2] );
 //      System.out.println("Vertices end.");
       
       //FloatBuffer positionData = BufferUtils.createFloatBuffer(3*FLOAT_SIZE); // 3 floats
@@ -117,7 +125,7 @@ public class Renderer3D {
       glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
 
       
-      final int stride = (0 /* vertex Size */) * FLOAT_SIZE;
+      final int stride = (3 /* vertex Size */ + 3 /* normal size */) * FLOAT_SIZE;
 
       
 
@@ -126,10 +134,15 @@ public class Renderer3D {
 
       glVertexAttribPointer(in_vertexLocation, 3, GL_FLOAT, false, stride, 0);
       
+      int in_normalLocation = texShader.attribLocation("in_normal");
+      glEnableVertexAttribArray(in_normalLocation);
+
+      glVertexAttribPointer(in_normalLocation, 3, GL_FLOAT, false, stride, 3*FLOAT_SIZE);
       
       glDrawArrays(GL_TRIANGLES, 0, indiceCount);
       glBindBuffer(GL_ARRAY_BUFFER, 0);
       glDisableVertexAttribArray(in_vertexLocation);
+      glDisableVertexAttribArray(in_normalLocation);
     }
     
     texShader.stop();

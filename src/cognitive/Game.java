@@ -22,6 +22,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
@@ -29,7 +30,7 @@ import org.newdawn.slick.UnicodeFont;
 
 import cognitive.graphics.Camera3D;
 import cognitive.graphics.Renderer3D;
-import cognitive.graphics.texturemanager.Sprite;
+import cognitive.graphics.texturemanager.TextureManager;
 import cognitive.primitives.Cube;
 import cognitive.primitives.Plane;
 
@@ -51,8 +52,7 @@ public class Game {
   private float delta = 0;
   private Camera3D camera;
   private Renderer3D renderer;
-  public static TextureManager tm = new TextureManager();
-  private Sprite manSprite;
+  public static TextureManager tm = new TextureManager("assets/");
   private ArrayList<Cube> cubes = new ArrayList<Cube>();
   private int lastPos = 0;
   
@@ -129,7 +129,7 @@ public class Game {
     //OpenGL
     
     glEnable(GL_DEPTH_TEST);
-
+    glEnable(GL11.GL_LIGHTING);
     //glMatrixMode(GL_PROJECTION);
     //glLoadIdentity();
     //glOrtho(0, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, 0, 100);
@@ -274,7 +274,7 @@ public class Game {
 //      }
 //      //cubes.add(new Cube(new Vector3f(0,0,lastPos+10), lastPos*0.02f, 0, 1, 1, 2));
 //      lastPos += 10;
-//      renderer.queue(new Plane(new Vector3f(), 1, 0, 0, 1, 100, 100));
+      //renderer.queue(new Plane(new Vector3f(0,-3,0), 0.2f, 0.2f, 0.3f, 1, 100, 100));
       for(int i = 0; i < 10;i++) {
         for (int y = 0; y < 10;y++) {
           Cube cube = new Cube(new Vector3f(i*10,y*10,0), 1, 0, 1, 1, 2);

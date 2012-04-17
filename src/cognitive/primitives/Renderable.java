@@ -7,12 +7,14 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-public class Renderable {
-  private final float vertices[] = {
-      -1.0f,-1.0f,-1.0f
-  };
+public abstract class Renderable {
+  private float vertices[] = null;
+//= {
+//      -1.0f,-1.0f,-1.0f
+//  };
   private Matrix4f position;
   private Vector4f color;
+  protected float normals[] = null;
   
   public Matrix4f getModelView() {
 //    FloatBuffer out = BufferUtils.createFloatBuffer(16*4); // 4x4 matrix with floats
@@ -32,6 +34,9 @@ public class Renderable {
   }
   public float[] getVertices() {
     return vertices;
+  }
+  public float[] getNormals() {
+    return normals;
   }
   
   public Vector4f getColor() {
