@@ -274,28 +274,28 @@ public class Game {
 //      }
 //      //cubes.add(new Cube(new Vector3f(0,0,lastPos+10), lastPos*0.02f, 0, 1, 1, 2));
 //      lastPos += 10;
-//      renderer.queue(new Plane(new Vector3f(), 1, 0, 0, 1, 100, 100));
-      for(int i = 0; i < 10;i++) {
-        for (int y = 0; y < 10;y++) {
-          Cube cube = new Cube(new Vector3f(i*10,y*10,0), 1, 0, 1, 1, 2);
-          renderer.queue(cube);
-        }
-        for (int y = 0; y < 10;y++) {
-          Cube cube = new Cube(new Vector3f(i*10,0,y*10), 1, 0, 1, 1, 2);
-          renderer.queue(cube);
-          for (int z = 0; z < 10;z++) {
-            Cube cube2 = new Cube(new Vector3f(i*10,y*10,z*10), 1, 0, 1, 1, 2);
-            renderer.queue(cube2);
-          }
-        }
-        Cube cube = new Cube(new Vector3f(i*10,0,0), 1, 0, 1, 1, 2);
-        
-        renderer.queue(cube);
-        
-      }
-    for(Cube c : cubes) {
-      renderer.queue(c);
-    }
+        renderer.queue(new Plane(new Vector3f(), 1, 0, 0, 1, 100, 100));
+//      for(int i = 0; i < 10;i++) {
+//        for (int y = 0; y < 10;y++) {
+//          Cube cube = new Cube(new Vector3f(i*10,y*10,0), 1, 0, 1, 1, 2);
+//          renderer.queue(cube);
+//        }
+//        for (int y = 0; y < 10;y++) {
+//          Cube cube = new Cube(new Vector3f(i*10,0,y*10), 1, 0, 1, 1, 2);
+//          renderer.queue(cube);
+//          for (int z = 0; z < 10;z++) {
+//            Cube cube2 = new Cube(new Vector3f(i*10,y*10,z*10), 1, 0, 1, 1, 2);
+//            renderer.queue(cube2);
+//          }
+//        }
+//        Cube cube = new Cube(new Vector3f(i*10,0,0), 1, 0, 1, 1, 2);
+//        
+//        renderer.queue(cube);
+//        
+//      }
+//    for(Cube c : cubes) {
+//      renderer.queue(c);
+//    }
     System.out.println("Cube count: " + cubes.size());
     //renderer.queue(new Quad3D(0, 0, 0, 10, 10, 10, 1, 1, 1, 1, manSprite));
 //    renderer.queue(new Cube(new Vector3f(10,0,10), 1, 0, 1, 1, 2));
