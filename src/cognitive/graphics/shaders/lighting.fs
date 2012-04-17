@@ -35,5 +35,5 @@ void main()
     //color += vec4(0.70*dif*vec3(1.00,0.97,0.85),1.0);
     //color += vec4(0.15*bac*vec3(1.00,0.97,0.85),1.0);
     //color += vec4(0.20*amb*vec3(0.10,0.15,0.20),1.0);
-  gl_FragColor = color;
+    gl_FragColor = vec4((out_normal + vec3(1.0, 1.0, 1.0)) * 0.5, 1.0);
 }
