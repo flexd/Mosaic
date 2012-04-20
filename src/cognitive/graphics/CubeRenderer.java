@@ -55,7 +55,7 @@ public class CubeRenderer {
   
   public CubeRenderer() {
     vboHandle = glGenBuffers();
-    texShader = new Shader("lighting");
+    texShader = new Shader("cubelighting");
     locations[0] = texShader.attribLocation("in_color");
     locations[1] = texShader.uniformLocation("projectionMatrix");
     locations[2] = texShader.attribLocation("in_vertex");

@@ -26,7 +26,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.UnicodeFont;
 
 import cognitive.graphics.Camera3D;
-import cognitive.graphics.CubeRenderer;
+import cognitive.graphics.Renderer3D;
 import cognitive.graphics.texturemanager.TextureManager;
 import cognitive.primitives.Cube;
 import cognitive.primitives.Plane;
@@ -48,7 +48,7 @@ public class Game {
   private long lastFrame;
   private float delta = 0;
   private Camera3D camera;
-  private CubeRenderer renderer;
+  private Renderer3D renderer;
   public static TextureManager tm = new TextureManager("assets/");
   private ArrayList<Cube> cubes = new ArrayList<Cube>();
   private int lastPos = 0;
@@ -126,7 +126,7 @@ public class Game {
     //OpenGL
     
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHTING);
     /*
      * 70 FOV, 0.001f zNear, 200f zFar
      * +X mot h¿yre
@@ -137,7 +137,7 @@ public class Game {
         
     camera = new Camera3D (new Vector3f(0,0,-10));
     camera.initMatrix(projectionMatrix);
-    renderer = new CubeRenderer();
+    renderer = new Renderer3D();
     renderer.initMatrix(projectionMatrix);
     
     lastFrame = Utilities.getTime();
@@ -239,7 +239,7 @@ public class Game {
 
   private void render() {
     delta = getDelta();
-    glClearColor(1,1,1,0);
+    glClearColor(0,0,0,0);
     
     if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
       cubes.add(new Cube(new Vector3f(lastPos+10,0,lastPos), 1, 0, 1, 1, 2));
@@ -255,29 +255,14 @@ public class Game {
 //      }
 //      //cubes.add(new Cube(new Vector3f(0,0,lastPos+10), lastPos*0.02f, 0, 1, 1, 2));
 //      lastPos += 10;
-      //renderer.queue(new Plane(new Vector3f(0,-3,0), 0.2f, 0.2f, 0.3f, 1, 100, 100));
-//      for(int i = 0; i < 10;i++) {
-//        for (int y = 0; y < 10;y++) {
-//          Cube cube = new Cube(new Vector3f(i*10,y*10,0), 1, 0, 1, 1, 2);
-//          renderer.queue(cube);
-//        }
-//        for (int y = 0; y < 10;y++) {
-//          Cube cube = new Cube(new Vector3f(i*10,0,y*10), 1, 0, 1, 1, 2);
-//          renderer.queue(cube);
-//          for (int z = 0; z < 10;z++) {
-//            Cube cube2 = new Cube(new Vector3f(i*10,y*10,z*10), 1, 0, 1, 1, 2);
-//            renderer.queue(cube2);
-//          }
-//        }
-//        Cube cube = new Cube(new Vector3f(i*10,0,0), 1, 0, 1, 1, 2);
-//        
-//        renderer.queue(cube);
-//        
-//      }
+      renderer.queue(new Plane(new Vector3f(0,-3,0), 0.2f, 0.2f, 0.3f, 1, 100, 100));
+      cubeGrid(5, 5, 5);
     for(Cube c : cubes) {
       renderer.queue(c);
     }
     System.out.println("Cube count: " + cubes.size());
+    cubes.clear();
+    
     //renderer.queue(new Quad3D(0, 0, 0, 10, 10, 10, 1, 1, 1, 1, manSprite));
 //    renderer.queue(new Cube(new Vector3f(10,0,10), 1, 0, 1, 1, 2));
 //    renderer.queue(new Cube(new Vector3f(20,00,10), 1, 0, 1, 1, 2));
@@ -288,6 +273,27 @@ public class Game {
   
     
     
+  }
+
+  private void cubeGrid(int width, int height, int depth) {
+    for(int i = 0; i < width;i++) {
+      for (int y = 0; y < 1;y++) {
+        Cube cube = new Cube(new Vector3f(i*10,y*10,0), 1, 0, 1, 1, 2);
+        cubes.add(cube);
+      }
+      for (int y = 0; y < height;y++) {
+        Cube cube = new Cube(new Vector3f(i*10,0,y*10), 1, 0, 1, 1, 2);
+        cubes.add(cube);
+        for (int z = 0; z < depth;z++) {
+          Cube cube2 = new Cube(new Vector3f(i*10,y*10,z*10), 1, 0, 1, 1, 2);
+          cubes.add(cube2);
+        }
+      }
+      Cube cube = new Cube(new Vector3f(i*10,0,0), 1, 0, 1, 1, 2);
+      
+      cubes.add(cube);
+      
+    }
   }  
 }
 

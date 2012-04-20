@@ -1,6 +1,4 @@
-varying vec4 out_color;
-varying vec3 pos;
-varying vec3 out_normal;
+varying vec3 out_color;
 
 vec2 map( vec3 p )
 {
@@ -22,18 +20,6 @@ vec3 calcNormal( in vec3 pos )
     return normalize(nor);
 }
 void main()
-{
-    vec3 nor = out_normal;
-    vec3 light = vec3(1.0, 1.0, 1.0);
- 
-    float con = 1.0;
-    vec4 amb = vec4(0.2, 0.2, 0.2, 1.0);
-    vec4 dif = vec4(1.0, 1.0, 1.0, 1.0);
-    float bac = max(0.2 + 0.8*dot(nor,vec3(-light.x,light.y,-light.z)),0.0);
-    vec4 spe = vec4(1.0, 1.0, 1.0, 1.0);
-    vec4 color = out_color + amb * dif *spe; // + dif + spe;
-    //color += vec4(0.70*dif*vec3(1.00,0.97,0.85),1.0);
-    //color += vec4(0.15*bac*vec3(1.00,0.97,0.85),1.0);
-    //color += vec4(0.20*amb*vec3(0.10,0.15,0.20),1.0);
-    gl_FragColor = vec4((out_normal + vec3(1.0, 1.0, 1.0)) * 0.5, 1.0);
+{ 
+  gl_FragColor = vec4(out_color, 1.0);
 }
