@@ -28,7 +28,8 @@ public class Shader {
     shaderProgram = glCreateProgram();
     
     try {
-      BufferedReader reader = new BufferedReader(new FileReader("src/cognitive/graphics/shaders/"+filename+".vs"));
+      //TODO: Fix this hardcoded crap!
+      BufferedReader reader = new BufferedReader(new FileReader("shaders/"+filename+".vs"));
       String line = "";
       while ((line = reader.readLine()) != null) {
         vertexShaderSource.append(line).append("\n");
@@ -37,9 +38,11 @@ public class Shader {
     }
     catch (IOException e) {
       System.err.println("VertexShader: " + filename + " was not loaded!");
+      Display.destroy();
+      System.exit(0);
     }
     try {
-      BufferedReader reader = new BufferedReader(new FileReader("src/cognitive/graphics/shaders/"+filename+".fs"));
+      BufferedReader reader = new BufferedReader(new FileReader("shaders/"+filename+".fs"));
       String line = "";
       while ((line = reader.readLine()) != null) {
         fragmentShaderSource.append(line).append("\n");
@@ -48,6 +51,8 @@ public class Shader {
     }
     catch (IOException e) {
       System.err.println("FragmentShader: " + filename + " was not loaded!");
+      Display.destroy();
+      System.exit(0);
     }
     vertexShader   = glCreateShader(GL_VERTEX_SHADER);
  

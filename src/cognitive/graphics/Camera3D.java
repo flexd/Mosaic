@@ -108,7 +108,7 @@ public class Camera3D {
       movementSpeed = 2;
     }
 //    System.out.println("Camera: X: " + cameraPosition.x + " Y: " + cameraPosition.y + " Z: " + cameraPosition.z);
-     System.out.println("Rotation: X: " + cameraRotation.x + " Y: " + cameraRotation.y + " Z: " + cameraRotation.z);
+//     System.out.println("Rotation: X: " + cameraRotation.x + " Y: " + cameraRotation.y + " Z: " + cameraRotation.z);
     //glLoadIdentity();
     //
     

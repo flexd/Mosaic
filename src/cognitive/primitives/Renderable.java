@@ -1,8 +1,5 @@
 package cognitive.primitives;
 
-import java.nio.FloatBuffer;
-
-import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
@@ -24,7 +21,9 @@ public abstract class Renderable {
   }
   
   public float[] getVectorPos() {
-    return new float[]{position.m00, position.m12, position.m33}; 
+//    System.out.println("Actual matrix is: ");
+//    System.out.println(position);
+    return new float[]{position.m30, position.m31, position.m32}; 
   }
   public Renderable (Vector3f pos,float r, float g, float b, float a, float width, float height, float depth) {
     position = new Matrix4f();

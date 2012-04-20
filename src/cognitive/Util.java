@@ -10,7 +10,8 @@ import org.lwjgl.Sys;
  *
  * @author kristoffer
  */
-public class Utilities {
+public class Util {
+  public static final int FLOAT_SIZE = 4;
   public static long getTime() {
     return (Sys.getTime() * 1000) / Sys.getTimerResolution();
   }
