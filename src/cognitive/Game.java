@@ -3,15 +3,16 @@ package cognitive;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glGetError;
+
+import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Font;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+
+import java.util.LinkedList;
+
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,14 +23,20 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+
+import org.lwjgl.opengl.GL11;
+
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.UnicodeFont;
 
 import cognitive.graphics.Camera3D;
+
+import cognitive.graphics.Chunk;
+import cognitive.graphics.ChunkRenderer;
 import cognitive.graphics.Renderer3D;
-import cognitive.graphics.texturemanager.Sprite;
+
 import cognitive.primitives.Cube;
 import cognitive.primitives.Plane;
 
@@ -50,9 +57,9 @@ public class Game {
   private long lastFrame;
   private float delta = 0;
   private Camera3D camera;
-  private Renderer3D renderer;
-  public static TextureManager tm = new TextureManager();
-  private Sprite manSprite;
+
+  private ChunkRenderer renderer;
+
   private ArrayList<Cube> cubes = new ArrayList<Cube>();
   private int lastPos = 0;
   
@@ -60,6 +67,10 @@ public class Game {
   private long lastFPS = 0;
 
   private int fpsCounter = 0;
+
+  private int cubeCount = 0;
+  private LinkedList<Chunk> chunks = new LinkedList<Chunk>();
+
   private static org.newdawn.slick.Font bigFont = new UnicodeFont(new Font("Georgia", 1, 20));
   private static org.newdawn.slick.Font mediumFont = new UnicodeFont(new Font("Georgia", 1, 16));
   private static org.newdawn.slick.Font smallFont = new UnicodeFont(new Font("Georgia", 1, 10));
@@ -67,7 +78,8 @@ public class Game {
   private static Matrix4f projectionMatrix;
   
   public void updateFPS() {
-    if (Utilities.getTime() - lastFPS > 1000) {
+
+    if (Util.getTime() - lastFPS > 1000) {
       fps = fpsCounter;
       fpsCounter = 0;
       lastFPS += 1000;
@@ -76,9 +88,9 @@ public class Game {
   }
   
   private float getDelta() {
-    long currentTime = Utilities.getTime();
+    long currentTime = Util.getTime();
     float delta = (float) (currentTime - lastFrame);
-    lastFrame = Utilities.getTime();
+    lastFrame = Util.getTime();
     return delta;
   }
   
@@ -129,41 +141,29 @@ public class Game {
     //OpenGL
     
     glEnable(GL_DEPTH_TEST);
-
-    //glMatrixMode(GL_PROJECTION);
-    //glLoadIdentity();
-    //glOrtho(0, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, 0, 100);
+    glEnable(GL_LIGHTING);
     /*
-     * 30 FOV, 0.001f zNear, 100f zFar
-     * +X mot h√∏yre
+     * 70 FOV, 0.001f zNear, 200f zFar
+     * +X mot høyre
      * -Y er opp.
      * og +Z er mot kamera.
      */
-    //gluPerspective(70f, Display.getWidth() / (float)Display.getHeight(), 0.001f, 1000f);
     projectionMatrix = LoadPerspective(fov, Display.getWidth() / (float)Display.getHeight(), zNear, zFar);
-//    glMatrixMode(GL_MODELVIEW);
-//    glLoadIdentity();
-    
-//    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-    
-    
+        
     camera = new Camera3D (new Vector3f(0,0,-10));
     camera.initMatrix(projectionMatrix);
-    renderer = new Renderer3D();
+    renderer = new ChunkRenderer();
     renderer.initMatrix(projectionMatrix);
     
-    lastFrame = Utilities.getTime();
-    lastFPS = Utilities.getTime();
+    lastFrame = Util.getTime();
+    lastFPS = Util.getTime();
     //resizeGL();
+    chunks.add(new Chunk(new Vector3f(0, 0, 0)));  
+    chunks.add(new Chunk(new Vector3f(100, 0, 0))); 
+//    chunks.add(new Chunk(new Vector3f(200, 0, 0)));  
+//    chunks.add(new Chunk(new Vector3f(300, 0, 0)));  
+//    chunks.add(new Chunk(new Vector3f(400, 0, 0)));  
     
-//    tm.load("crate", "crate", 256); // spritesheet name, filename, slotSize
-//    tm.load("world", "default", 32); // spritesheet name, filename, slotSize
-//    tm.load("hero", "generichero-blackblue", 32); // spritesheet name, filename, slotSize
-//    tm.define("characters", "player",0,0); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
-//    tm.define("hero", "hero", 0, 0 ); // Sheet named "world", "name of sprite", slot 0,0 in spritesheet.
-//    tm.define("crate", "crate", 0,0);
-    
-//    manSprite = tm.getSpriteByName("crate");
   }
 
   public void destroy() {
@@ -253,60 +253,41 @@ public class Game {
       }
       projectionMatrix = LoadPerspective(fov, Display.getWidth() / (float)Display.getHeight(), zNear, zFar);
       Display.update();
-      Display.sync(60);
+      //Display.sync(60);
     }
   }
 
   private void render() {
     delta = getDelta();
     glClearColor(1,1,1,0);
-    
-//    if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
-//      amountofRows++;
-//    }
-//      for(int i = 0; i < lastPos/10;i++) {
-//        for (int y = 0; y < lastPos/10;y++) {
-//          cubes.add(new Cube(new Vector3f(lastPos+10*y,0,i*10), 1, 0, 1, 1, 2));
-//          cubes.add(new Cube(new Vector3f(10*i,0,lastPos+10*y), 1, 0, 1, 1, 2));
-//        }
-//        
-//        //cubes.add(new Cube(new Vector3f(lastPos+10*i,0,lastPos), 1, 0, 1, 1, 2));
-//      }
-//      //cubes.add(new Cube(new Vector3f(0,0,lastPos+10), lastPos*0.02f, 0, 1, 1, 2));
-//      lastPos += 10;
-//      renderer.queue(new Plane(new Vector3f(), 1, 0, 0, 1, 100, 100));
-      for(int i = 0; i < 10;i++) {
-        for (int y = 0; y < 10;y++) {
-          Cube cube = new Cube(new Vector3f(i*10,y*10,0), 1, 0, 1, 1, 2);
-          renderer.queue(cube);
-        }
-        for (int y = 0; y < 10;y++) {
-          Cube cube = new Cube(new Vector3f(i*10,0,y*10), 1, 0, 1, 1, 2);
-          renderer.queue(cube);
-          for (int z = 0; z < 10;z++) {
-            Cube cube2 = new Cube(new Vector3f(i*10,y*10,z*10), 1, 0, 1, 1, 2);
-            renderer.queue(cube2);
-          }
-        }
-        Cube cube = new Cube(new Vector3f(i*10,0,0), 1, 0, 1, 1, 2);
-        
-        renderer.queue(cube);
-        
-      }
-    for(Cube c : cubes) {
+
+    for (Chunk c : chunks) {
       renderer.queue(c);
     }
-    System.out.println("Cube count: " + cubes.size());
-    //renderer.queue(new Quad3D(0, 0, 0, 10, 10, 10, 1, 1, 1, 1, manSprite));
-//    renderer.queue(new Cube(new Vector3f(10,0,10), 1, 0, 1, 1, 2));
-//    renderer.queue(new Cube(new Vector3f(20,00,10), 1, 0, 1, 1, 2));
-//    renderer.queue(new Cube(new Vector3f(30,00,10), 1, 0, 1, 1, 2));
-    
-    lastError = glGetError();
-    //System.out.println("lastError = " + lastError);
-  
-    
-    
+    System.out.println("Chunk count: " + chunks.size());
+//    renderer.queue(new Chunk(new Vector3f(10, 10, 10)));
+//    renderer.queue(new Plane(new Vector3f(0,-3,0), 0.2f, 0.2f, 0.3f, 1, 100, 100)); 
+  }
+
+  private void cubeGrid(Vector3f position, int width, int height, int depth) {
+    for(int i = 0; i < width;i++) {
+      for (int y = 0; y < 1;y++) {
+        Cube cube = new Cube(new Vector3f(position.x+i*10,position.y+y*10,position.z+0), 1, 0, 1, 1, 2);
+        cubes.add(cube);
+      }
+      for (int y = 0; y < height;y++) {
+        Cube cube = new Cube(new Vector3f(position.x+i*10,position.y+0,position.z+y*10), 1, 0, 1, 1, 2);
+        cubes.add(cube);
+        for (int z = 0; z < depth;z++) {
+          Cube cube2 = new Cube(new Vector3f(position.x+i*10,position.y+y*10,position.z+z*10), 1, 0, 1, 1, 2);
+          cubes.add(cube2);
+        }
+      }
+      Cube cube = new Cube(new Vector3f(position.x+i*10,position.y+0,position.z+0), 1, 0, 1, 1, 2);
+      
+      cubes.add(cube);
+      
+    }
   }  
 }
 
