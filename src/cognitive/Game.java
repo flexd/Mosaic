@@ -160,9 +160,21 @@ public class Game {
     //resizeGL();
     chunks.add(new Chunk(new Vector3f(0, 0, 0)));  
     chunks.add(new Chunk(new Vector3f(100, 0, 0))); 
-//    chunks.add(new Chunk(new Vector3f(200, 0, 0)));  
-//    chunks.add(new Chunk(new Vector3f(300, 0, 0)));  
-//    chunks.add(new Chunk(new Vector3f(400, 0, 0)));  
+    chunks.add(new Chunk(new Vector3f(200, 0, 0)));  
+    chunks.add(new Chunk(new Vector3f(300, 0, 0)));  
+    chunks.add(new Chunk(new Vector3f(400, 0, 0))); 
+   
+    chunks.add(new Chunk(new Vector3f(0, 0, 100)));  
+    chunks.add(new Chunk(new Vector3f(100, 0, 100))); 
+    chunks.add(new Chunk(new Vector3f(200, 0, 100)));  
+    chunks.add(new Chunk(new Vector3f(300, 0, 100)));  
+    chunks.add(new Chunk(new Vector3f(400, 0, 100))); 
+    
+    chunks.add(new Chunk(new Vector3f(0, 0, 200)));  
+    chunks.add(new Chunk(new Vector3f(100, 0, 200))); 
+    chunks.add(new Chunk(new Vector3f(200, 0, 200)));  
+    chunks.add(new Chunk(new Vector3f(300, 0, 200)));  
+    chunks.add(new Chunk(new Vector3f(400, 0, 200)));
     
   }
 
@@ -259,12 +271,14 @@ public class Game {
 
   private void render() {
     delta = getDelta();
-    glClearColor(1,1,1,0);
+    glClearColor(0,0,0,0);
 
     for (Chunk c : chunks) {
       renderer.queue(c);
     }
     System.out.println("Chunk count: " + chunks.size());
+    System.out.println("That's " + 64*chunks.size() + " cubes.");
+    System.out.println("That's " + 64*108*chunks.size() + " vertices.");
 //    renderer.queue(new Chunk(new Vector3f(10, 10, 10)));
 //    renderer.queue(new Plane(new Vector3f(0,-3,0), 0.2f, 0.2f, 0.3f, 1, 100, 100)); 
   }

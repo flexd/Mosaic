@@ -114,22 +114,22 @@ public class ChunkRenderer {
       boolean moveSlower = Keyboard.isKeyDown(Keyboard.KEY_TAB);
       
       if (moveForward) {
-        lightPosition.x += 1 * 0.016f;
+        lightPosition.x += 1 * 0.6f;
       }
       if (moveBackward) {
-        lightPosition.x -= 1 * 0.016f;;
+        lightPosition.x -= 1 * 0.6f;;
       }
       if (moveLeft) {
-        lightPosition.z -= 1 * 0.016f;
+        lightPosition.z -= 1 * 0.6f;
       }
       if (moveRight) {
-        lightPosition.z += 1 * 0.016f;;
+        lightPosition.z += 1 * 0.6f;;
       }
       if (flyUp) {
-        lightPosition.y += 1* 0.016f;;
+        lightPosition.y += 1* 0.6f;;
       }
       if (flyDown) {
-        lightPosition.y -= 1* 0.016f;;
+        lightPosition.y -= 1* 0.6f;;
       }
       //System.out.println(lightPosition);
       glUniform3f(locations[6], lightPosition.x, lightPosition.y, lightPosition.z); 

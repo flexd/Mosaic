@@ -11,7 +11,7 @@ varying vec3 out_color;
 
 void main()
 {  
-  vec4 ambient = vec4(0.05, 0.05, 0.05, 1.0);
+  vec4 ambient = vec4(0.2, 0.2, 0.2, 1.0);
   vec3 color = in_color.rgb;
   float shininess = 128;
   // Retrieves the position of the vertex in eye space by 
@@ -26,7 +26,7 @@ void main()
 
   float diffuseLightIntensity = diffuseIntensityModifier * max(0, dot(surfaceNormal, lightDirection));
 
-  out_color.rgb = diffuseLightIntensity * normalize(in_color.rgb);
+  out_color.rgb = diffuseLightIntensity * in_color.rgb);
 
   out_color += ambient.rgb;
 
