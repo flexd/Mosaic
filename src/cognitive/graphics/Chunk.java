@@ -64,7 +64,7 @@ public class Chunk {
     glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
     if (dirty) {
       vertexData.clear();
-      //indiceCount = 0;
+      indiceCount = 0; // Reset this!
       float[] vertices;
       float[] normals;
       
