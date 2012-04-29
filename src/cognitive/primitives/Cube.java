@@ -1,6 +1,7 @@
 package cognitive.primitives;
 
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import cognitive.primitives.Renderable;
 
@@ -64,8 +65,8 @@ public class Cube extends Renderable {
       0.0f, 0.0f, 1.0f,
       // Triangle 12
   };
-  public Cube(Vector3f pos, float r, float g, float b, float a, float size) {
-    super(pos, r, g, b, a, size, size, size);
+  public Cube(Vector3f pos, Vector4f color, float size) {
+    super(pos, color, new Vector3f(size, size, size));
   }
   public float[] getNormals() {
     return normals;
@@ -79,68 +80,64 @@ public class Cube extends Renderable {
   }
   private final float vertices[] = {
     
-    -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-    -1.0f,-1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f, // triangle 1 : end
+    -0.5f,-0.5f,-0.5f, // triangle 1 : begin
+    -0.5f,-0.5f, 0.5f,
+    -0.5f, 0.5f, 0.5f, // triangle 1 : end
     // NORMAL: (-1,0,0)
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
+    -0.5f,-0.5f,-0.5f,
+    -0.5f, 0.5f, 0.5f,
+    -0.5f, 0.5f,-0.5f,
     //NORMAL: (-1, 0, 0)
     
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
+    0.5f,-0.5f, 0.5f,
+    -0.5f,-0.5f,-0.5f,
+    0.5f,-0.5f,-0.5f,
     
     //NORMAL (0,-1, 0)
     
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
+    0.5f,-0.5f, 0.5f,
+    -0.5f,-0.5f, 0.5f,
+    -0.5f,-0.5f,-0.5f,
     //NORMAL: (0, -1, 0)
 
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
+    0.5f, 0.5f,-0.5f,
+    0.5f,-0.5f,-0.5f,
+    -0.5f,-0.5f,-0.5f,
     //NORMAL: (0, 0, -1)
     
-    1.0f, 1.0f,-1.0f, 
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f, 
+    0.5f, 0.5f,-0.5f, 
+    -0.5f,-0.5f,-0.5f,
+    -0.5f, 0.5f,-0.5f, 
     //NORMAL: (0,0,-1)
     
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
+    0.5f, 0.5f, 0.5f,
+    0.5f,-0.5f,-0.5f,
+    0.5f, 0.5f,-0.5f,
     //NORMAL: (1, 0, 0)
     
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
+    0.5f,-0.5f,-0.5f,
+    0.5f, 0.5f, 0.5f,
+    0.5f,-0.5f, 0.5f,
     //NORMAL: (1, 0, 0)
     
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f,
+    0.5f, 0.5f, 0.5f,
+    0.5f, 0.5f,-0.5f,
+    -0.5f, 0.5f,-0.5f,
     //NORMAL: (0, 1, 0)
     
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
+    0.5f, 0.5f, 0.5f,
+    -0.5f, 0.5f,-0.5f,
+    -0.5f, 0.5f, 0.5f,
     //NORMAL: (0, 1, 0)
     
-    -1.0f, 1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
+    -0.5f, 0.5f, 0.5f,
+    -0.5f,-0.5f, 0.5f,
+    0.5f,-0.5f, 0.5f,
     //NORMAL: (0, 0, 1)
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f
+    0.5f, 0.5f, 0.5f,
+    -0.5f, 0.5f, 0.5f,
+    0.5f,-0.5f, 0.5f
     //NORMAL: (0, 0, 1)
-    
-    
-
-
   };
   
   public float[] getVertices() {

@@ -80,7 +80,7 @@ public class ChunkRenderer {
       return;
     }
     
-    GL11.glEnable(GL_CULL_FACE);
+    GL11.glDisable(GL_CULL_FACE);
     texShader.use();
 
     

@@ -99,7 +99,7 @@ public class Renderer3D {
     float[] normals;
     FloatBuffer vertexData;
     
-    queue(new Cube(lightPosition, 1, 1, 1, 1, 2));
+    //queue(new Cube(lightPosition, 1, 1, 1, 1, 2));
     for(Renderable r : getQueue()) {
       glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
       int indiceCount = 0;

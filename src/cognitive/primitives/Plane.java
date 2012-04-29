@@ -1,13 +1,14 @@
 package cognitive.primitives;
 
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import cognitive.primitives.Renderable;
 
 public class Plane extends Renderable {
   
-  public Plane(Vector3f pos, float r, float g, float b, float a, float width, float depth) {
-    super(pos, r, g, b, a, width, 0.1f, depth);
+  public Plane(Vector3f pos, Vector4f color, float width, float depth) {
+    super(pos, color, new Vector3f(width, 0.1f, depth));
   }
   public float[] getNormals() {
     return normals;
