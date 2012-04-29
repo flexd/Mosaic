@@ -141,7 +141,8 @@ public class Game {
     //OpenGL
     
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
+   // glEnable(GL_LIGHTING);
+
     /*
      * 70 FOV, 0.001f zNear, 200f zFar
      * +X mot h¿yre
