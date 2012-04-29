@@ -28,17 +28,17 @@ void main()
 
   out_color.rgb = diffuseLightIntensity * in_color.rgb;
   //out_color.rgb = in_color.rgb;
-  out_color += ambient.rgb;
+  out_color += mix(out_color.rgb, ambient.rgb, 0.5);
 
 
   vec3 reflectionDirection = normalize(reflect(-lightDirection, surfaceNormal));
 
-  float specular = max(0.0, dot(surfaceNormal, reflectionDirection));
-  if (diffuseLightIntensity != 0) {
+  //float specular = max(0.0, dot(surfaceNormal, reflectionDirection));
+  //if (diffuseLightIntensity != 0) {
 
-    float fspecular = pow(specular, shininess);
+    //float fspecular = pow(specular, shininess);
 
-    out_color.rgb += vec3(fspecular, fspecular, fspecular);
-  }
+    //out_color.rgb += vec3(fspecular, fspecular, fspecular);
+  //}
   gl_Position = modelProjectionMatrix * vec4(in_vertex + in_position, 1.0);
 }

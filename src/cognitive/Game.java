@@ -43,16 +43,12 @@ import cognitive.primitives.Plane;
 
 public class Game {
   private static final float zFar = 1000f;
-  private static final float zNear = 0.002f;
+  private static final float zNear = 1f;
   private static final float fov = 70f;
   public static final int DISPLAY_HEIGHT = 600;
   public static final int DISPLAY_WIDTH = 800;
   
-  public static final int WORLD_WIDTH = 10;
-  public static final int WORLD_HEIGHT = 10;
-  public static final int WORLD_DEPTH = 10;
   public static final Logger LOGGER = Logger.getLogger(Game.class.getName());
-  private int lastError = 0;
   
   private long lastFrame;
   private float delta = 0;
@@ -60,15 +56,12 @@ public class Game {
 
   private ChunkRenderer renderer;
 
-  private ArrayList<Cube> cubes = new ArrayList<Cube>();
-  private int lastPos = 0;
   
   private int fps = 0;
   private long lastFPS = 0;
 
   private int fpsCounter = 0;
 
-  private int cubeCount = 0;
   private LinkedList<Chunk> chunks = new LinkedList<Chunk>();
 
   private static org.newdawn.slick.Font bigFont = new UnicodeFont(new Font("Georgia", 1, 20));
@@ -202,6 +195,38 @@ public class Game {
    projectionMatrix.store(out);
    return (FloatBuffer) out.flip();
  }
+ public Matrix4f LoadOrtho(float left, float right, float bottom, float top, float zNear, float zFar)
+ {
+   float r_l = right - left;
+   float t_b = top - bottom;
+   float f_n = zFar - zNear;
+   float tx = - (right + left) / (right - left);
+   float ty = - (top + bottom) / (top - bottom);
+   float tz = - (zFar + zNear) / (zFar - zNear);
+
+   Matrix4f out = new Matrix4f();
+   
+   out.m00 = 2.0f / r_l;
+   out.m01 = 0.0f;
+   out.m02 = 0.0f;
+   out.m03 = 0.0f;
+   
+   out.m10 = 0.0f;
+   out.m11 = 2.0f / t_b;
+   out.m12 = 0.0f;
+   out.m13 = 0.0f;
+   
+   out.m20 = 0.0f;
+   out.m21 = 0.0f;
+   out.m22 = -2.0f / f_n;
+   out.m23 = -1.0f;
+   
+   out.m30 = tx;
+   out.m31 = ty;
+   out.m32 = tz;
+   out.m33 = 1.0f;
+   return out;
+}
  public Matrix4f LoadPerspective(float fov, float aspect, float zNear, float zFar)
  {
      float f = (float) (1.0f / Math.tan(Math.toRadians(fov)/2.0f));
@@ -263,7 +288,7 @@ public class Game {
   private void render() {
     delta = getDelta();
     glClearColor(0,0,0,0);
-
+    
     for (Chunk c : chunks) {
       renderer.queue(c);
     }
