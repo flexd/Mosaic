@@ -158,24 +158,13 @@ public class Game {
     lastFrame = Util.getTime();
     lastFPS = Util.getTime();
     //resizeGL();
-    chunks.add(new Chunk(new Vector3f(0, 0, 0)));  
-    chunks.add(new Chunk(new Vector3f(100, 0, 0))); 
-    chunks.add(new Chunk(new Vector3f(200, 0, 0)));  
-    chunks.add(new Chunk(new Vector3f(300, 0, 0)));  
-    chunks.add(new Chunk(new Vector3f(400, 0, 0))); 
-   
-    chunks.add(new Chunk(new Vector3f(0, 0, 100)));  
-    chunks.add(new Chunk(new Vector3f(100, 0, 100))); 
-    chunks.add(new Chunk(new Vector3f(200, 0, 100)));  
-    chunks.add(new Chunk(new Vector3f(300, 0, 100)));  
-    chunks.add(new Chunk(new Vector3f(400, 0, 100))); 
-    
-    chunks.add(new Chunk(new Vector3f(0, 0, 200)));  
-    chunks.add(new Chunk(new Vector3f(100, 0, 200))); 
-    chunks.add(new Chunk(new Vector3f(200, 0, 200)));  
-    chunks.add(new Chunk(new Vector3f(300, 0, 200)));  
-    chunks.add(new Chunk(new Vector3f(400, 0, 200)));
-    
+    for(int x = 0; x < 1; x++) {
+      for(int y = 0; y < 1; y++) {
+        for(int z = 0; z < 1; z++) {
+          chunks.add(new Chunk(new Vector3f(x*100, y*100, z*100)));
+        }
+      }
+    }
   }
 
   public void destroy() {
@@ -277,8 +266,8 @@ public class Game {
       renderer.queue(c);
     }
     System.out.println("Chunk count: " + chunks.size());
-    System.out.println("That's " + 64*chunks.size() + " cubes.");
-    System.out.println("That's " + 64*108*chunks.size() + " vertices.");
+    //System.out.println("That's " + 64*chunks.size() + " cubes.");
+   // System.out.println("That's " + 64*108*chunks.size() + " vertices.");
 //    renderer.queue(new Chunk(new Vector3f(10, 10, 10)));
 //    renderer.queue(new Plane(new Vector3f(0,-3,0), 0.2f, 0.2f, 0.3f, 1, 100, 100)); 
   }

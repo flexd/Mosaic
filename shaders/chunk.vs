@@ -26,7 +26,7 @@ void main()
 
   float diffuseLightIntensity = diffuseIntensityModifier * max(0, dot(surfaceNormal, lightDirection));
 
-  out_color.rgb = diffuseLightIntensity * in_color.rgb);
+  out_color.rgb = diffuseLightIntensity * in_color.rgb;
 
   out_color += ambient.rgb;
 

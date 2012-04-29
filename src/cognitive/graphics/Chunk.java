@@ -40,11 +40,12 @@ public class Chunk {
     for(int x = 0; x < 4; x++) {
       for (int y = 0; y < 4; y++) {
         for (int z = 0; z < 4;z++) {
-          Cube cube = new Cube(new Vector3f(10*x,10*y,10*z), 1, 0, 0, 1, 1);
+          Cube cube = new Cube(new Vector3f(x,y,z), 1, 0, 0, 1, 0.1f);
           cubes.add(cube);
         }
       }
     }
+    System.err.println("Cube count: " + cubes.size());
     this.position.translate(position); // Since we move it, the chunk is dirty by default.
   }
   public int getCubeCount() {
