@@ -24,11 +24,11 @@ public abstract class Renderable {
 //    System.out.println(position);
     return new float[]{position.m30, position.m31, position.m32}; 
   }
-  public Renderable (Vector3f pos,float r, float g, float b, float a, float width, float height, float depth) {
+  public Renderable (Vector3f pos, Vector4f color, Vector3f size) {
     position = new Matrix4f();
     position.translate(pos);
-    position.scale(new Vector3f(width, height, depth));
-    setColor(new Vector4f(r, g, b ,a));
+    position.scale(size);
+    setColor(color);
   }
   public float[] getVertices() {
     return vertices;

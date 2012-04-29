@@ -271,27 +271,6 @@ public class Game {
    // System.out.println("That's " + 64*108*chunks.size() + " vertices.");
 //    renderer.queue(new Chunk(new Vector3f(10, 10, 10)));
 //    renderer.queue(new Plane(new Vector3f(0,-3,0), 0.2f, 0.2f, 0.3f, 1, 100, 100)); 
-  }
-
-  private void cubeGrid(Vector3f position, int width, int height, int depth) {
-    for(int i = 0; i < width;i++) {
-      for (int y = 0; y < 1;y++) {
-        Cube cube = new Cube(new Vector3f(position.x+i*10,position.y+y*10,position.z+0), 1, 0, 1, 1, 2);
-        cubes.add(cube);
-      }
-      for (int y = 0; y < height;y++) {
-        Cube cube = new Cube(new Vector3f(position.x+i*10,position.y+0,position.z+y*10), 1, 0, 1, 1, 2);
-        cubes.add(cube);
-        for (int z = 0; z < depth;z++) {
-          Cube cube2 = new Cube(new Vector3f(position.x+i*10,position.y+y*10,position.z+z*10), 1, 0, 1, 1, 2);
-          cubes.add(cube2);
-        }
-      }
-      Cube cube = new Cube(new Vector3f(position.x+i*10,position.y+0,position.z+0), 1, 0, 1, 1, 2);
-      
-      cubes.add(cube);
-      
-    }
-  }  
+  } 
 }
 
