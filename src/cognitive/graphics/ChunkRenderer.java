@@ -5,41 +5,24 @@
 package cognitive.graphics;
 
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
-import static org.lwjgl.opengl.GL20.glBindAttribLocation;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glUniform3f;
-import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
-import org.newdawn.slick.opengl.Texture;
-
 import cognitive.Util;
 import cognitive.graphics.shadermanager.Shader;
-import cognitive.primitives.Cube;
-import cognitive.primitives.Renderable;
 /**
  *
  * @author kristoffer
@@ -80,7 +63,7 @@ public class ChunkRenderer {
       return;
     }
     
-    GL11.glDisable(GL_CULL_FACE);
+    GL11.glEnable(GL_CULL_FACE);
     texShader.use();
 
     
@@ -114,22 +97,22 @@ public class ChunkRenderer {
       boolean moveSlower = Keyboard.isKeyDown(Keyboard.KEY_TAB);
       
       if (moveForward) {
-        lightPosition.x += 1 * 0.6f;
+        lightPosition.x += 1 * 0.016f;
       }
       if (moveBackward) {
-        lightPosition.x -= 1 * 0.6f;;
+        lightPosition.x -= 1 * 0.016f;
       }
       if (moveLeft) {
-        lightPosition.z -= 1 * 0.6f;
+        lightPosition.z -= 1 * 0.016f;
       }
       if (moveRight) {
-        lightPosition.z += 1 * 0.6f;;
+        lightPosition.z += 1 * 0.016f;
       }
       if (flyUp) {
-        lightPosition.y += 1* 0.6f;;
+        lightPosition.y += 1 * 0.016f;
       }
       if (flyDown) {
-        lightPosition.y -= 1* 0.6f;;
+        lightPosition.y -= 1 * 0.016f;
       }
       //System.out.println(lightPosition);
       glUniform3f(locations[6], lightPosition.x, lightPosition.y, lightPosition.z); 
