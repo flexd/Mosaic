@@ -10,6 +10,7 @@ import java.awt.Font;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import java.util.LinkedList;
 
@@ -28,6 +29,7 @@ import org.lwjgl.opengl.GL11;
 
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.UnicodeFont;
 
@@ -62,7 +64,7 @@ public class Game {
 
   private int fpsCounter = 0;
 
-  private LinkedList<Chunk> chunks = new LinkedList<Chunk>();
+  private Chunk[][][] chunks = new Chunk[64][64][64]; // This would like 9.5 million triangles.
 
   private static org.newdawn.slick.Font bigFont = new UnicodeFont(new Font("Georgia", 1, 20));
   private static org.newdawn.slick.Font mediumFont = new UnicodeFont(new Font("Georgia", 1, 16));
@@ -156,7 +158,7 @@ public class Game {
     for(int x = 0; x < 4; x++) {
       for(int y = 0; y < 4; y++) {
         for(int z = 0; z < 4; z++) {
-          chunks.add(new Chunk(new Vector3f(x*4, y*4, z*4)));
+          chunks[x][y][z] =  new Chunk(new Vector3f(x*4, y*4, z*4));
         }
       }
     }
@@ -289,12 +291,44 @@ public class Game {
     delta = getDelta();
     glClearColor(0,0,0,0);
     
-    for (Chunk c : chunks) {
-      renderer.queue(c);
+    if (Keyboard.isKeyDown(Keyboard.KEY_B)) {
+     
+      for (int i = 0; i < 3;i++) {
+        Chunk c = chunks[1+i][i][1+i];
+        c.setColors(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+        c.setVisible(true);
+      }
+      System.err.println("This?");
+       
     }
-    System.out.println("Chunk count: " + chunks.size());
-    System.out.println("That's " + 64*chunks.size() + " cubes.");
-    System.out.println("That's " + 64*108*chunks.size() + " vertices.");
+    if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
+      for (int x = 0; x < 64; x++) {
+        for (int y = 0; y < 64; y++) {
+          for (int z = 0; z < 64; z++) {
+            Chunk c = chunks[x][y][z];
+            if (c == null) continue;
+            c.randomiseColors();
+            System.err.println("Randomising colors!");
+          }
+        }
+        
+      }
+    }
+    
+    
+    for (int x = 0; x < 64; x++) {
+      for (int y = 0; y < 64; y++) {
+        for (int z = 0; z < 64; z++) {
+          Chunk c = chunks[x][y][z];
+          if (c == null) continue;
+          renderer.queue(c);
+        }
+      }
+      
+    }
+    System.out.println("Chunk count: " + chunks.length);
+    System.out.println("That's " + 64*chunks.length + " cubes.");
+    System.out.println("That's " + 64*108*chunks.length + " vertices.");
 //    renderer.queue(new Chunk(new Vector3f(10, 10, 10)));
 //    renderer.queue(new Plane(new Vector3f(0,-3,0), 0.2f, 0.2f, 0.3f, 1, 100, 100)); 
   } 

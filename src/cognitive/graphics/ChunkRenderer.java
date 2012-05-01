@@ -69,6 +69,15 @@ public class ChunkRenderer {
     
     for(Chunk c : getQueue()) {
       
+       if (c.getVisibleCubeCount() == 0) {
+         System.err.println("No cubes in this chunk are visible");
+         return;
+       }
+//      Vector3f chunkPos = c.getVectorPos();
+//      
+//      Vector3f cameraPos = new Vector3f(cameraProjMatrix.m30, cameraProjMatrix.m31, cameraProjMatrix.m32);
+//      
+     // float distance = (float) Math.sqrt((double)((chunkPos.x + cameraPos.x)^2 ));
       c.render(locations); // generate the vbo
       
       //glBindBuffer(GL_ARRAY_BUFFER, c.getVBO()); // Bind the vbo again, since we unbind it in the Chunk.render()
