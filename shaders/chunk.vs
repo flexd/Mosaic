@@ -1,6 +1,7 @@
 #version 120
 uniform mat4 modelProjectionMatrix;
 uniform mat4 modelViewMatrix;
+uniform mat4 normalMatrix;
 uniform vec3 lightPosition;
 uniform float diffuseIntensityModifier;
 attribute vec3 in_vertex;
@@ -13,7 +14,7 @@ void main()
 {  
   vec4 ambient = vec4(0.2, 0.2, 0.2, 1.0);
   vec3 color = in_color.rgb;
-  float shininess = 128;
+  float shininess = 10;
   // Retrieves the position of the vertex in eye space by 
   // multiplying the vertex in object space with the 
   // modelview matrix and stores it in a 3D vertex.
@@ -21,8 +22,7 @@ void main()
   // Retrieves the direction of the light and stores it in a 
   // normalized 3D vector (normalized = length of 1).
   vec3 lightDirection = normalize(lightPosition - vertexPosition);
-
-  vec3 surfaceNormal  = (gl_NormalMatrix * in_normal).xyz;
+  vec3 surfaceNormal  = (normalMatrix * vec4(in_normal, 1.0)).xyz;
 
   float diffuseLightIntensity = diffuseIntensityModifier * max(0, dot(surfaceNormal, lightDirection));
 
@@ -33,12 +33,12 @@ void main()
 
   vec3 reflectionDirection = normalize(reflect(-lightDirection, surfaceNormal));
 
-  //float specular = max(0.0, dot(surfaceNormal, reflectionDirection));
-  //if (diffuseLightIntensity != 0) {
+  float specular = max(0.0, dot(surfaceNormal, reflectionDirection));
+  if (diffuseLightIntensity != 0) {
 
-    //float fspecular = pow(specular, shininess);
+    float fspecular = pow(specular, shininess);
 
-    //out_color.rgb += vec3(fspecular, fspecular, fspecular);
-  //}
+    out_color.rgb += vec3(fspecular, fspecular, fspecular);
+  }
   gl_Position = modelProjectionMatrix * vec4(in_vertex + in_position, 1.0);
 }

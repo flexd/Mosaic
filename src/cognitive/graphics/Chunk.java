@@ -24,32 +24,42 @@ import org.lwjgl.util.vector.Vector4f;
 import cognitive.Util;
 import cognitive.primitives.*;
 public class Chunk {
-  private ArrayList<Cube> cubes = new ArrayList<Cube>();
+  public static final int WIDTH = 4;
+  public static final int HEIGHT = 4;
+  public static final int DEPTH = 4;
+  private Vector3f chunkID = new Vector3f();
+
+  private Cube[][][] cubes = new Cube[WIDTH][HEIGHT][DEPTH];
   private Matrix4f position = new Matrix4f();
+
   private int vboHandle;
   private int indiceCount = 0;
-  private ByteBuffer vertexData = BufferUtils.createByteBuffer(64 /* 27 cubes, (3x3 chunk)*/ * ((36 /* 36 vertices per cube */ + 36 /* 36 normals per cube */) * 3  + 36*4 /* colors */ + 36*3 /* Position*/) * Util.FLOAT_SIZE);
+
+  private ByteBuffer vertexData = BufferUtils.createByteBuffer(WIDTH*HEIGHT*DEPTH /* 27 cubes, (3x3 chunk)*/ * ((36 /* 36 vertices per cube */ + 36 /* 36 normals per cube */) * 3  + 36*4 /* colors */ + 36*3 /* Position*/) * Util.FLOAT_SIZE);
   private ByteBuffer driverSideBuffer = null;
-  private Matrix4f oldPosition = null;
+
   private boolean initialized = false;
   private boolean dirty = true;
-  public Chunk(Vector3f position) {
+  public Chunk(Vector3f position, Vector3f chunkID) {
+    this.chunkID = chunkID;
     vboHandle = glGenBuffers();
     // 4x4x4 = 64
-    for(int x = 0; x < 4; x++) {
-      for (int y = 0; y < 4; y++) {
-        for (int z = 0; z < 4;z++) {
+    for(int x = 0; x < WIDTH; x++) {
+      for (int y = 0; y < HEIGHT; y++) {
+        for (int z = 0; z < DEPTH;z++) {
           Cube cube = new Cube(new Vector3f(x,y,z), new Vector4f((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 1f); // Spacing and size should be the same!
-          cubes.add(cube);
+          cube.setChunkPos(new Vector3f(x, y, z));
+          cube.setChunkID(chunkID);
+          cubes[x][y][z] = cube;
         }
       }
     }
-    System.err.println("Cube count: " + cubes.size());
+    System.err.println("Cube count: " + cubes.length);
     this.position.translate(position); // Since we move it, the chunk is dirty by default.
     prepareBuffer();
   }
   public int getCubeCount() {
-    return cubes.size();
+    return cubes.length;
   }
   public int getVBO() {
     return vboHandle;
@@ -70,40 +80,56 @@ public class Chunk {
     float[] normals;
     Vector4f color;
     float[] pos;
-    for(Cube r : cubes) {
-      if (!r.isVisible()) continue;
-      vertices = r.getVertices(); // Set vertices and normals (again)
-      normals = r.getNormals();
-      color = r.getColor();
-      pos = r.getVectorPos();
-      // Loop through the vertices and normals, and add them to the vertexData buffer 3 by 3, as well as all the other stuff, like color and crap. Textures in the future!
-      for(int i = 0; i < vertices.length/3;i++) {
-        // Vertices
-        vertexData.putFloat(vertices[i*3]);
-        vertexData.putFloat(vertices[i*3+1]);
-        vertexData.putFloat(vertices[i*3+2]);
-        // Normals
-        vertexData.putFloat(normals[i*3]);
-        vertexData.putFloat(normals[i*3+1]);
-        vertexData.putFloat(normals[i*3+2]);
-        // Colors
-        vertexData.putFloat(color.x);
-        vertexData.putFloat(color.y);
-        vertexData.putFloat(color.z);
-        vertexData.putFloat(color.w);
-        // Position
-        vertexData.putFloat(pos[0]);
-        vertexData.putFloat(pos[1]);
-        vertexData.putFloat(pos[2]);
+    for(int x = 0; x < WIDTH; x++) {
+      for (int y = 0; y < HEIGHT; y++) {
+        for (int z = 0; z < DEPTH;z++) {
+          Cube cube = cubes[x][y][z];
+          if (!cube.isVisible()) continue;
+          vertices = cube.getVertices(); // Set vertices and normals (again)
+          normals = cube.getNormals();
+          color = cube.getColor();
+          pos = cube.getVectorPos();
+          // Loop through the vertices and normals, and add them to the vertexData buffer 3 by 3, as well as all the other stuff, like color and crap. Textures in the future!
+          for(int i = 0; i < vertices.length/3;i++) {
+            // Vertices
+            vertexData.putFloat(vertices[i*3]);
+            vertexData.putFloat(vertices[i*3+1]);
+            vertexData.putFloat(vertices[i*3+2]);
+            // Normals
+            vertexData.putFloat(normals[i*3]);
+            vertexData.putFloat(normals[i*3+1]);
+            vertexData.putFloat(normals[i*3+2]);
+            // Colors
+            vertexData.putFloat(color.x);
+            vertexData.putFloat(color.y);
+            vertexData.putFloat(color.z);
+            vertexData.putFloat(color.w);
+            // Position
+            vertexData.putFloat(pos[0]);
+            vertexData.putFloat(pos[1]);
+            vertexData.putFloat(pos[2]);
 
-        indiceCount += 1;
+            indiceCount += 1;
+          }
+        }
       }
     }
     vertexData.order(ByteOrder.nativeOrder());
     vertexData.flip();
     dirty = false;
   }
-  public void render(int[] locations)  {
+  public void update(float delta) {
+    for(int x = 0; x < WIDTH; x++) {
+      for (int y = 0; y < HEIGHT; y++) {
+        for (int z = 0; z < DEPTH;z++) {
+          Cube cube = cubes[x][y][z];
+          cube.update(delta);
+        }
+      }
+    }
+    
+  }
+  public void render(int[] locations, float delta)  {
     glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
     if (dirty) {
       prepareBuffer();
@@ -139,8 +165,13 @@ public class Chunk {
 
   }
   public void randomiseColors() {
-    for (Cube c : cubes) {
-      c.setColor(new Vector4f((float)Math.random(), (float)Math.random(), (float)Math.random(), (float)Math.random()));
+    for(int x = 0; x < WIDTH; x++) {
+      for (int y = 0; y < HEIGHT; y++) {
+        for (int z = 0; z < DEPTH;z++) {
+          Cube c = cubes[x][y][z];
+          c.setColor(new Vector4f((float)Math.random(), (float)Math.random(), (float)Math.random(), (float)Math.random()));
+        }
+      }
     }
     dirty = true;
   }
@@ -149,27 +180,47 @@ public class Chunk {
 
   }
   public void setColors(Vector4f color) {
-    for (Cube c : cubes) {
-      c.setColor(color);
+    for(int x = 0; x < WIDTH; x++) {
+      for (int y = 0; y < HEIGHT; y++) {
+        for (int z = 0; z < DEPTH;z++) {
+          Cube c = cubes[x][y][z];
+          c.setColor(color);
+        }
+      }
     }
     dirty = true;
   }
   public void setVisible(boolean b) {
-    for (Cube c : cubes) {
-      c.setVisible(b);
+    for(int x = 0; x < WIDTH; x++) {
+      for (int y = 0; y < HEIGHT; y++) {
+        for (int z = 0; z < DEPTH;z++) {
+          Cube c = cubes[x][y][z];
+          c.setVisible(b);
+        }
+      }
     }
     dirty = true;
   }
   public void toggleVisible() {
-    for (Cube c : cubes) {
-      c.toggleVisible();
+    for(int x = 0; x < WIDTH; x++) {
+      for (int y = 0; y < HEIGHT; y++) {
+        for (int z = 0; z < DEPTH;z++) {
+          Cube c = cubes[x][y][z];
+          c.toggleVisible();
+        }
+      }
     }
     dirty = true;
   }
   public int getVisibleCubeCount() {
     int visible = 0;
-    for (Cube c : cubes) {
-      if (c.isVisible()) visible++;
+    for(int x = 0; x < WIDTH; x++) {
+      for (int y = 0; y < HEIGHT; y++) {
+        for (int z = 0; z < DEPTH;z++) {
+          Cube c = cubes[x][y][z];
+          if (c.isVisible()) visible++;
+        }
+      }
     }
     return visible;
   }

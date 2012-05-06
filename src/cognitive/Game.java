@@ -47,6 +47,9 @@ public class Game {
   private static final float zFar = 1000f;
   private static final float zNear = 1f;
   private static final float fov = 70f;
+  private static final int CHUNK_X = 5;
+  private static final int CHUNK_Y = 5;
+  private static final int CHUNK_Z = 5;
   public static final int DISPLAY_HEIGHT = 600;
   public static final int DISPLAY_WIDTH = 800;
   
@@ -64,7 +67,7 @@ public class Game {
 
   private int fpsCounter = 0;
 
-  private Chunk[][][] chunks = new Chunk[64][64][64]; // This would like 9.5 million triangles.
+  private static Chunk[][][] chunks = new Chunk[CHUNK_X][CHUNK_Y][CHUNK_Z]; // This would like 9.5 million triangles.
 
   private static org.newdawn.slick.Font bigFont = new UnicodeFont(new Font("Georgia", 1, 20));
   private static org.newdawn.slick.Font mediumFont = new UnicodeFont(new Font("Georgia", 1, 16));
@@ -155,10 +158,10 @@ public class Game {
     lastFPS = Util.getTime();
     
     //resizeGL();
-    for(int x = 0; x < 4; x++) {
-      for(int y = 0; y < 4; y++) {
-        for(int z = 0; z < 4; z++) {
-          chunks[x][y][z] =  new Chunk(new Vector3f(x*4, y*4, z*4));
+    for(int x = 0; x < CHUNK_X; x++) {
+      for(int y = 0; y < CHUNK_Y; y++) {
+        for(int z = 0; z < CHUNK_Z; z++) {
+          getChunks()[x][y][z] =  new Chunk(new Vector3f(x*4, y*4, z*4), new Vector3f(x, y, z));
         }
       }
     }
@@ -259,20 +262,35 @@ public class Game {
     while(!Display.isCloseRequested()) { //  && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)
       
       if(Display.isVisible()) {
+        if (!Display.isActive()) {
+          System.out.println("Press to focus!");
+          continue; // Don't do anything in the game unless we have focus!
+        }
         updateFPS();
         
       
         // Clear for rendering
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+        
         render();
-        renderer.flushQueue(camera.getCameraMatrix());
+        for (int x = 0; x < CHUNK_X; x++) {
+          for (int y = 0; y < CHUNK_Y; y++) {
+            for (int z = 0; z < CHUNK_Z; z++) {
+              Chunk c = getChunks()[x][y][z];
+              if (c != null) {
+                c.update(delta);
+              }
+            }
+          }
+        }
+        renderer.flushQueue(camera.getCameraMatrix(), delta);
         camera.update(delta); // ALWAYS LAST
         System.out.println("FPS: " + fps);
       }
       else {
         if(Display.isDirty()) {
           render();
-          renderer.flushQueue(camera.getCameraMatrix());
+          renderer.flushQueue(camera.getCameraMatrix(), delta);
           camera.update(delta); // ALWAYS LAST
         }
         try {
@@ -294,21 +312,18 @@ public class Game {
     if (Keyboard.isKeyDown(Keyboard.KEY_B)) {
      
       for (int i = 0; i < 3;i++) {
-        Chunk c = chunks[1+i][i][1+i];
+        Chunk c = getChunks()[1+i][i][1+i];
         c.setColors(new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
         c.setVisible(true);
-      }
-      System.err.println("This?");
-       
+      }       
     }
     if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
-      for (int x = 0; x < 64; x++) {
-        for (int y = 0; y < 64; y++) {
-          for (int z = 0; z < 64; z++) {
-            Chunk c = chunks[x][y][z];
+      for (int x = 0; x < CHUNK_X; x++) {
+        for (int y = 0; y < CHUNK_Y; y++) {
+          for (int z = 0; z < CHUNK_Z; z++) {
+            Chunk c = getChunks()[x][y][z];
             if (c == null) continue;
             c.randomiseColors();
-            System.err.println("Randomising colors!");
           }
         }
         
@@ -316,21 +331,30 @@ public class Game {
     }
     
     
-    for (int x = 0; x < 64; x++) {
-      for (int y = 0; y < 64; y++) {
-        for (int z = 0; z < 64; z++) {
-          Chunk c = chunks[x][y][z];
+    for (int x = 0; x < CHUNK_X; x++) {
+      for (int y = 0; y < CHUNK_Y; y++) {
+        for (int z = 0; z < CHUNK_Z; z++) {
+          Chunk c = getChunks()[x][y][z];
           if (c == null) continue;
           renderer.queue(c);
         }
       }
       
     }
-    System.out.println("Chunk count: " + chunks.length);
-    System.out.println("That's " + 64*chunks.length + " cubes.");
-    System.out.println("That's " + 64*108*chunks.length + " vertices.");
+    System.out.println("Chunk count: " + CHUNK_X*CHUNK_Y*CHUNK_Z + " chunks");
+    System.out.println("That's " + 64*CHUNK_X*CHUNK_Y*CHUNK_Z + " cubes.");
+    System.out.println("That's " + 64*108*CHUNK_X*CHUNK_Y*CHUNK_Z + " vertices.");
+    System.out.println("That's " + (64*108*CHUNK_X*CHUNK_Y*CHUNK_Z)/3 + " triangles.");
 //    renderer.queue(new Chunk(new Vector3f(10, 10, 10)));
 //    renderer.queue(new Plane(new Vector3f(0,-3,0), 0.2f, 0.2f, 0.3f, 1, 100, 100)); 
+  }
+
+  public static Chunk[][][] getChunks() {
+    return chunks;
+  }
+
+  public void setChunks(Chunk[][][] chunks) {
+    this.chunks = chunks;
   } 
 }
 

@@ -47,8 +47,9 @@ public class ChunkRenderer {
     locations[3] = texShader.attribLocation("in_position");
     locations[4] = texShader.uniformLocation("modelProjectionMatrix");
     locations[5] = texShader.uniformLocation("modelViewMatrix");
-    locations[6] = texShader.uniformLocation("lightPosition");
-    locations[7] = texShader.uniformLocation("diffuseIntensityModifier");
+    locations[6] = texShader.uniformLocation("normalMatrix");
+    locations[7] = texShader.uniformLocation("lightPosition");
+    locations[8] = texShader.uniformLocation("diffuseIntensityModifier");
   }
   public void queue(Chunk c) {
     renderQueue.add(c);
@@ -57,7 +58,7 @@ public class ChunkRenderer {
     return renderQueue;
   }
   
-  public void flushQueue(Matrix4f cameraProjMatrix) {
+  public void flushQueue(Matrix4f cameraProjMatrix, float delta) {
     
     if (renderQueue.isEmpty()) {
       return;
@@ -78,7 +79,7 @@ public class ChunkRenderer {
 //      Vector3f cameraPos = new Vector3f(cameraProjMatrix.m30, cameraProjMatrix.m31, cameraProjMatrix.m32);
 //      
      // float distance = (float) Math.sqrt((double)((chunkPos.x + cameraPos.x)^2 ));
-      c.render(locations); // generate the vbo
+      c.render(locations, delta); // generate the vbo
       
       //glBindBuffer(GL_ARRAY_BUFFER, c.getVBO()); // Bind the vbo again, since we unbind it in the Chunk.render()
     
@@ -93,9 +94,18 @@ public class ChunkRenderer {
       c.getModelView().store(modelViewMatrixBuffer);
       modelViewMatrixBuffer.flip();
     
+      
+      FloatBuffer normalMatrixBuffer = BufferUtils.createFloatBuffer(16*Util.FLOAT_SIZE);
+      Matrix4f normalMatrix = Matrix4f.invert(c.getModelView(), null);
+      normalMatrix.transpose();
+      normalMatrix.store(normalMatrixBuffer);
+      normalMatrixBuffer.flip();
+      
+      
       glUniformMatrix4(locations[4], false, modelProjectionMatrixBuffer); 
       glUniformMatrix4(locations[5], false, modelViewMatrixBuffer);
-     
+      glUniformMatrix4(locations[6], false, normalMatrixBuffer);
+      
       boolean moveForward = Keyboard.isKeyDown(Keyboard.KEY_UP);
       boolean moveBackward = Keyboard.isKeyDown(Keyboard.KEY_DOWN);
       boolean moveLeft = Keyboard.isKeyDown(Keyboard.KEY_LEFT);
@@ -124,11 +134,11 @@ public class ChunkRenderer {
         lightPosition.y -= 1 * 0.016f;
       }
       //System.out.println(lightPosition);
-      glUniform3f(locations[6], lightPosition.x, lightPosition.y, lightPosition.z); 
+      glUniform3f(locations[7], lightPosition.x, lightPosition.y, lightPosition.z); 
  
      float diffuseIntensityModifier = 0.8f;
       
-      GL20.glUniform1f(locations[7], diffuseIntensityModifier); 
+      GL20.glUniform1f(locations[8], diffuseIntensityModifier); 
 
       
       glDrawArrays(GL_TRIANGLES, 0, c.getIndiceCount());

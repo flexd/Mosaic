@@ -8,7 +8,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/Users/kristoffer/Dropbox/code/Java/LWJGL/lwjgl-2.8.3/jar/lwjgl-debug.jar"/>
-	<classpathentry kind="lib" path="/Users/kristoffer/Dropbox/code/Java/LWJGL/lwjgl-2.8.3/jar/lwjgl.jar">
+	<classpathentry kind="lib" path="/Users/kristoffer/Dropbox/code/Java/LWJGL/lwjgl-2.8.3/jar/lwjgl.jar" sourcepath="/Users/kristoffer/Dropbox/code/Java/LWJGL/lwjgl-source-2.8.3/src">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/Users/kristoffer/Dropbox/code/Java/LWJGL/lwjgl-docs-2.8.3.zip!/javadoc"/>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/Users/kristoffer/Dropbox/code/Java/LWJGL/lwjgl-2.8.3/native/macosx"/>
